@@ -85,3 +85,14 @@ export const revokeSession = createServerFn({ method: 'POST' })
     await db.delete(session).where(eq(session.id, data.sessionId))
     return { success: true }
   })
+
+export const updateUserAvatar = createServerFn({ method: 'POST' })
+  .inputValidator((input: { userId: string; avatarUrl: string }) => input)
+  .handler(async ({ data }) => {
+    await db
+      .update(user)
+      .set({ image: data.avatarUrl, updatedAt: new Date() })
+      .where(eq(user.id, data.userId))
+
+    return { success: true, avatarUrl: data.avatarUrl }
+  })
