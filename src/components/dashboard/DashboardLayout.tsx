@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
-import { LayoutDashboard, Settings, CreditCard, ShieldCheck, Menu, X, LogOut } from 'lucide-react'
+import { LayoutDashboard, Settings, ShieldCheck, Menu, X, LogOut } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { authClient } from '#/lib/auth-client'
 import ThemeToggle from '#/components/ThemeToggle'
@@ -16,8 +16,7 @@ interface NavItem {
 
 const baseNavItems: NavItem[] = [
   { to: '/dashboard', label: 'Overview', icon: LayoutDashboard, exact: true },
-  { to: '/dashboard/settings', label: 'Settings', icon: Settings, exact: false, disabled: true },
-  { to: '/dashboard/billing', label: 'Billing', icon: CreditCard, exact: false, disabled: true },
+  { to: '/dashboard/settings', label: 'Settings', icon: Settings, exact: false },
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -95,7 +94,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             return (
               <Link
                 key={item.to}
-                to={item.to as '/dashboard'}
+                to={item.to as string}
                 activeOptions={{ exact: item.exact }}
                 className={cn(
                   'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition',
