@@ -33,25 +33,29 @@ async function handleStripeWebhook({ request }: { request: Request }) {
     return new Response('Invalid signature', { status: 400 })
   }
 
-  switch (event.type) {
-    case 'checkout.session.completed':
-      await handleCheckoutCompleted(
-        event.data.object as Stripe.Checkout.Session,
-      )
-      break
-    case 'customer.subscription.updated':
-      await handleSubscriptionUpdated(
-        event.data.object as Stripe.Subscription,
-      )
-      break
-    case 'customer.subscription.deleted':
-      await handleSubscriptionDeleted(
-        event.data.object as Stripe.Subscription,
-      )
-      break
-    case 'invoice.payment_failed':
-      await handlePaymentFailed(event.data.object as Stripe.Invoice)
-      break
+  try {
+    switch (event.type) {
+      case 'checkout.session.completed':
+        await handleCheckoutCompleted(
+          event.data.object as Stripe.Checkout.Session,
+        )
+        break
+      case 'customer.subscription.updated':
+        await handleSubscriptionUpdated(
+          event.data.object as Stripe.Subscription,
+        )
+        break
+      case 'customer.subscription.deleted':
+        await handleSubscriptionDeleted(
+          event.data.object as Stripe.Subscription,
+        )
+        break
+      case 'invoice.payment_failed':
+        await handlePaymentFailed(event.data.object as Stripe.Invoice)
+        break
+    }
+  } catch (err) {
+    console.error(`Webhook handler failed for ${event.type}:`, err)
   }
 
   return new Response('ok', { status: 200 })
