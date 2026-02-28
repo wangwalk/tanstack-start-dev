@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    name: Type Check / Build / Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Build first — generates .content-collections/generated types
+      # and validates the Cloudflare Workers output
+      - name: Build
+        run: pnpm build
+
+      # Type check — tsconfig.json already sets noEmit: true
+      # Runs after build so generated types (content-collections) are available
+      - name: Type check
+        run: pnpm exec tsc
+
+      - name: Test
+        run: pnpm test
