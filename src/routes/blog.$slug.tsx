@@ -24,11 +24,16 @@ export const Route = createFileRoute('/blog/$slug')({
     const title = loaderData?.title ?? 'Post'
     const description = loaderData?.description ?? ''
     const image = loaderData?.heroImage ?? '/images/lagoon-1.svg'
+    const canonical = `${SITE_URL}/blog/${params.slug}`
     return {
-      links: [{ rel: 'canonical', href: `${SITE_URL}/blog/${params.slug}` }],
+      links: [{ rel: 'canonical', href: canonical }],
       meta: [
         { title },
         { name: 'description', content: description },
+        { property: 'og:type', content: 'article' },
+        { property: 'og:url', content: canonical },
+        { property: 'og:title', content: title },
+        { property: 'og:description', content: description },
         {
           property: 'og:image',
           content: image.startsWith('http') ? image : `${SITE_URL}${image}`,

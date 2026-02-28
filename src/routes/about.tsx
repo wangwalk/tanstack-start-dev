@@ -1,6 +1,19 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { SITE_TITLE, SITE_URL } from '#/lib/site'
 
 export const Route = createFileRoute('/about')({
+  head: () => ({
+    links: [{ rel: 'canonical', href: `${SITE_URL}/about` }],
+    meta: [
+      { title: `About | ${SITE_TITLE}` },
+      {
+        name: 'description',
+        content:
+          'TanStack Start gives you type-safe routing, server functions, and modern SSR defaults.',
+      },
+      { property: 'og:url', content: `${SITE_URL}/about` },
+    ],
+  }),
   component: About,
 })
 

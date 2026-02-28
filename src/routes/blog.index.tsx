@@ -11,6 +11,10 @@ export const Route = createFileRoute('/blog/')({
     meta: [
       { title: pageTitle },
       { name: 'description', content: SITE_DESCRIPTION },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:url', content: canonical },
+      { property: 'og:title', content: pageTitle },
+      { property: 'og:description', content: SITE_DESCRIPTION },
       { property: 'og:image', content: `${SITE_URL}/images/lagoon-1.svg` },
     ],
   }),
