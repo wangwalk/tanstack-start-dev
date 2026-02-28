@@ -10,6 +10,15 @@ import { db } from '#/db/index'
 import * as schema from '#/db/schema'
 
 export const auth = betterAuth({
+  user: {
+    additionalFields: {
+      role: {
+        type: 'string',
+        defaultValue: 'user',
+        input: false,
+      },
+    },
+  },
   database: drizzleAdapter(db, {
     provider: 'pg',
     schema: {

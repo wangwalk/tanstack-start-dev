@@ -58,7 +58,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
-  const isDashboard = pathname.startsWith('/dashboard')
+  const isDashboard = pathname.startsWith('/dashboard') || pathname.startsWith('/admin')
 
   return (
     <html lang="en" suppressHydrationWarning>
