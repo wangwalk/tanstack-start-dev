@@ -20,6 +20,8 @@ import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
+import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
+import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const TermsRoute = TermsRouteImport.update({
@@ -77,6 +79,16 @@ const AuthSignInRoute = AuthSignInRouteImport.update({
   path: '/auth/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
+  id: '/auth/reset-password',
+  path: '/auth/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/auth/forgot-password',
+  path: '/auth/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -91,6 +103,8 @@ export interface FileRoutesByFullPath {
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -105,6 +119,8 @@ export interface FileRoutesByTo {
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -120,6 +136,8 @@ export interface FileRoutesById {
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -136,6 +154,8 @@ export interface FileRouteTypes {
     | '/rss.xml'
     | '/sitemap.xml'
     | '/terms'
+    | '/auth/forgot-password'
+    | '/auth/reset-password'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/blog/$slug'
@@ -150,6 +170,8 @@ export interface FileRouteTypes {
     | '/rss.xml'
     | '/sitemap.xml'
     | '/terms'
+    | '/auth/forgot-password'
+    | '/auth/reset-password'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/blog/$slug'
@@ -164,6 +186,8 @@ export interface FileRouteTypes {
     | '/rss.xml'
     | '/sitemap.xml'
     | '/terms'
+    | '/auth/forgot-password'
+    | '/auth/reset-password'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/blog/$slug'
@@ -179,6 +203,8 @@ export interface RootRouteChildren {
   RssDotxmlRoute: typeof RssDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   AuthSignInRoute: typeof AuthSignInRoute
   AuthSignUpRoute: typeof AuthSignUpRoute
   BlogSlugRoute: typeof BlogSlugRoute
@@ -265,6 +291,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignInRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/reset-password': {
+      id: '/auth/reset-password'
+      path: '/auth/reset-password'
+      fullPath: '/auth/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/forgot-password': {
+      id: '/auth/forgot-password'
+      path: '/auth/forgot-password'
+      fullPath: '/auth/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -283,6 +323,8 @@ const rootRouteChildren: RootRouteChildren = {
   RssDotxmlRoute: RssDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
   AuthSignInRoute: AuthSignInRoute,
   AuthSignUpRoute: AuthSignUpRoute,
   BlogSlugRoute: BlogSlugRoute,
