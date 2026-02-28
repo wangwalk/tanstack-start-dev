@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from '#/lib/site'
 import { authClient } from '#/lib/auth-client'
-import { createCheckoutSession } from '#/lib/billing.server'
+import { createCheckoutSession } from '#/lib/billing'
 import type { PlanKey, BillingInterval } from '#/config/billing'
 
 export const Route = createFileRoute('/')({
