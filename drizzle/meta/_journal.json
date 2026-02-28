@@ -8,6 +8,13 @@
       "when": 1772269566009,
       "tag": "0000_lying_tag",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1772287956631,
+      "tag": "0001_mighty_korath",
+      "breakpoints": true
     }
   ]
 }
