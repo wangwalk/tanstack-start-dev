@@ -1,5 +1,9 @@
+import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from '#/lib/site'
+import { authClient } from '#/lib/auth-client'
+import { createCheckoutSession } from '#/lib/billing'
+import type { PlanKey, BillingInterval } from '#/config/billing'
 
 export const Route = createFileRoute('/')({
   head: () => ({
@@ -72,7 +76,17 @@ const features = [
   },
 ]
 
-const plans = [
+const plans: Array<{
+  name: string
+  price: string
+  period: string
+  desc: string
+  features: string[]
+  cta: string
+  highlighted: boolean
+  planKey: PlanKey | null
+  href: string | null
+}> = [
   {
     name: 'Free',
     price: '$0',
@@ -81,6 +95,8 @@ const plans = [
     features: ['Up to 3 projects', '1 GB storage', 'Community support', 'Basic analytics'],
     cta: 'Get Started',
     highlighted: false,
+    planKey: null,
+    href: '/auth/sign-in',
   },
   {
     name: 'Pro',
@@ -90,6 +106,8 @@ const plans = [
     features: ['Unlimited projects', '100 GB storage', 'Priority support', 'Advanced analytics', 'Custom domains', 'Team collaboration'],
     cta: 'Start Free Trial',
     highlighted: true,
+    planKey: 'pro',
+    href: null,
   },
   {
     name: 'Enterprise',
@@ -99,10 +117,33 @@ const plans = [
     features: ['Everything in Pro', 'Unlimited storage', 'Dedicated support', 'SSO & SAML', 'SLA guarantee', 'Custom integrations'],
     cta: 'Contact Sales',
     highlighted: false,
+    planKey: null,
+    href: '/contact',
   },
 ]
 
 function LandingPage() {
+  const { data: session } = authClient.useSession()
+  const [checkoutLoading, setCheckoutLoading] = useState(false)
+
+  async function handleUpgrade(planKey: PlanKey, interval: BillingInterval = 'monthly') {
+    if (!session?.user) {
+      window.location.href = '/auth/sign-in'
+      return
+    }
+    setCheckoutLoading(true)
+    try {
+      const result = await createCheckoutSession({
+        data: { userId: session.user.id, plan: planKey, interval },
+      })
+      if (result.url) {
+        window.location.href = result.url
+      }
+    } finally {
+      setCheckoutLoading(false)
+    }
+  }
+
   return (
     <main className="page-wrap px-4 pb-8 pt-14">
       {/* Hero */}
@@ -214,16 +255,31 @@ function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <a
-                href="/pricing"
-                className={`block rounded-full px-5 py-2.5 text-center text-sm font-semibold no-underline transition hover:-translate-y-0.5 ${
-                  plan.highlighted
-                    ? 'border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:bg-[var(--lagoon-deep)]'
-                    : 'border border-[var(--line)] bg-[var(--surface)] text-[var(--sea-ink)] hover:border-[var(--lagoon)]'
-                }`}
-              >
-                {plan.cta}
-              </a>
+              {plan.planKey ? (
+                <button
+                  type="button"
+                  disabled={checkoutLoading}
+                  onClick={() => handleUpgrade(plan.planKey!)}
+                  className={`block w-full rounded-full px-5 py-2.5 text-center text-sm font-semibold transition hover:-translate-y-0.5 disabled:opacity-50 ${
+                    plan.highlighted
+                      ? 'border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:bg-[var(--lagoon-deep)]'
+                      : 'border border-[var(--line)] bg-[var(--surface)] text-[var(--sea-ink)] hover:border-[var(--lagoon)]'
+                  }`}
+                >
+                  {checkoutLoading ? 'Redirecting...' : plan.cta}
+                </button>
+              ) : (
+                <a
+                  href={plan.href!}
+                  className={`block rounded-full px-5 py-2.5 text-center text-sm font-semibold no-underline transition hover:-translate-y-0.5 ${
+                    plan.highlighted
+                      ? 'border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:bg-[var(--lagoon-deep)]'
+                      : 'border border-[var(--line)] bg-[var(--surface)] text-[var(--sea-ink)] hover:border-[var(--lagoon)]'
+                  }`}
+                >
+                  {plan.cta}
+                </a>
+              )}
             </article>
           ))}
         </div>
