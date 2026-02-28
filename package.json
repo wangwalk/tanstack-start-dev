@@ -48,6 +48,7 @@
     "vite-plugin-db": "^0.7.0"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260228.1",
     "@content-collections/core": "^0.13.1",
     "@content-collections/markdown": "^0.1.4",
     "@content-collections/mdx": "^0.1.2",
