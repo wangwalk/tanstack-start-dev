@@ -1,6 +1,19 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from '#/lib/site'
 
-export const Route = createFileRoute('/')({ component: LandingPage })
+export const Route = createFileRoute('/')({
+  head: () => ({
+    links: [{ rel: 'canonical', href: SITE_URL }],
+    meta: [
+      { title: SITE_TITLE },
+      { name: 'description', content: SITE_DESCRIPTION },
+      { property: 'og:url', content: SITE_URL },
+      { property: 'og:title', content: SITE_TITLE },
+      { property: 'og:description', content: SITE_DESCRIPTION },
+    ],
+  }),
+  component: LandingPage,
+})
 
 const features = [
   {
