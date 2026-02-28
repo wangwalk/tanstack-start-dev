@@ -11,6 +11,7 @@ export const user = pgTable('user', {
   stripeCustomerId: text('stripe_customer_id').unique(),
   subscriptionStatus: text('subscription_status'),
   subscriptionPlan: text('subscription_plan'),
+  role: text('role').notNull().default('user'),
 })
 
 export const session = pgTable('session', {

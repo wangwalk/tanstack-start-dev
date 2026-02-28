@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
-import { LayoutDashboard, Settings, ShieldCheck, Menu, X, LogOut } from 'lucide-react'
+import { LayoutDashboard, Users, Menu, X, LogOut } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { authClient } from '#/lib/auth-client'
 import ThemeToggle from '#/components/ThemeToggle'
@@ -11,25 +11,17 @@ interface NavItem {
   label: string
   icon: LucideIcon
   exact: boolean
-  disabled?: boolean
 }
 
-const baseNavItems: NavItem[] = [
-  { to: '/dashboard', label: 'Overview', icon: LayoutDashboard, exact: true },
-  { to: '/dashboard/settings', label: 'Settings', icon: Settings, exact: false },
+const navItems: NavItem[] = [
+  { to: '/admin', label: 'Overview', icon: LayoutDashboard, exact: true },
+  { to: '/admin/users', label: 'Users', icon: Users, exact: false },
 ]
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const { data: session } = authClient.useSession()
-
-  const navItems: NavItem[] = [
-    ...baseNavItems,
-    ...((session?.user as Record<string, unknown>)?.role === 'admin'
-      ? [{ to: '/admin', label: 'Admin', icon: ShieldCheck, exact: false }]
-      : []),
-  ]
 
   useEffect(() => {
     setSidebarOpen(false)
@@ -61,6 +53,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           >
             <span className="h-2 w-2 rounded-full bg-[linear-gradient(90deg,#56c6be,#7ed3bf)]" />
             Stockholm
+            <span className="rounded bg-[rgba(79,184,178,0.15)] px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wider text-[var(--lagoon-deep)]">
+              Admin
+            </span>
           </Link>
           <button
             type="button"
@@ -78,23 +73,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               ? pathname === item.to
               : pathname.startsWith(item.to)
 
-            if (item.disabled) {
-              return (
-                <span
-                  key={item.to}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[var(--sea-ink-soft)] opacity-50 cursor-not-allowed"
-                >
-                  <item.icon className="h-4 w-4" />
-                  {item.label}
-                  <span className="ml-auto text-[0.65rem] uppercase tracking-wider opacity-70">Soon</span>
-                </span>
-              )
-            }
-
             return (
               <Link
                 key={item.to}
-                to={item.to as string}
+                to={item.to as '/admin'}
                 activeOptions={{ exact: item.exact }}
                 className={cn(
                   'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition',
@@ -109,6 +91,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             )
           })}
         </nav>
+
+        {/* Back to dashboard link */}
+        <div className="border-t border-[var(--line)] px-3 py-3">
+          <Link
+            to="/dashboard"
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
+          >
+            Back to Dashboard
+          </Link>
+        </div>
 
         {/* User section */}
         {session?.user && (

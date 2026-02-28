@@ -15,6 +15,13 @@
       "when": 1772287956631,
       "tag": "0001_mighty_korath",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1772289142659,
+      "tag": "0002_ordinary_rage",
+      "breakpoints": true
     }
   ]
 }
