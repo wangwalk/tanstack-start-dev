@@ -25,6 +25,13 @@ const footerLinks: { title: string; links: FooterLink[] }[] = [
       { label: 'About', to: '/about' },
     ],
   },
+  {
+    title: 'Legal',
+    links: [
+      { label: 'Privacy Policy', to: '/privacy' },
+      { label: 'Terms of Service', to: '/terms' },
+    ],
+  },
 ]
 
 export default function Footer() {
@@ -34,7 +41,7 @@ export default function Footer() {
     <footer className="mt-20 border-t border-[var(--line)] px-4 pb-14 pt-10 text-[var(--sea-ink-soft)]">
       <div className="page-wrap">
         {/* Link columns */}
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
           {footerLinks.map((group) => (
             <div key={group.title}>
               <p className="island-kicker mb-3">{group.title}</p>
