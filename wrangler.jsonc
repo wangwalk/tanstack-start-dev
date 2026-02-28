@@ -6,7 +6,11 @@
   "main": "@tanstack/react-start/server-entry"
 
   // Secrets (set via: wrangler secret put <NAME>):
-  //   RESEND_API_KEY  — from resend.com dashboard
-  //   RESEND_FROM     — verified sender, e.g. "App Name <noreply@yourdomain.com>"
-  //   DATABASE_URL    — Neon connection string
+  //   RESEND_API_KEY           — from resend.com dashboard
+  //   RESEND_FROM              — verified sender, e.g. "App Name <noreply@yourdomain.com>"
+  //   DATABASE_URL             — Neon connection string
+  //   STRIPE_SECRET_KEY        — from Stripe Dashboard > Developers > API keys
+  //   STRIPE_PUBLISHABLE_KEY   — from Stripe Dashboard > Developers > API keys
+  //   STRIPE_PRICE_PRO_MONTHLY — Price ID for Pro monthly plan (price_xxx)
+  //   STRIPE_PRICE_PRO_YEARLY  — Price ID for Pro yearly plan (price_xxx)
 }
