@@ -18,6 +18,8 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
+import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const TermsRoute = TermsRouteImport.update({
@@ -65,6 +67,16 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthSignUpRoute = AuthSignUpRouteImport.update({
+  id: '/auth/sign-up',
+  path: '/auth/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthSignInRoute = AuthSignInRouteImport.update({
+  id: '/auth/sign-in',
+  path: '/auth/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -79,6 +91,8 @@ export interface FileRoutesByFullPath {
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/auth/sign-in': typeof AuthSignInRoute
+  '/auth/sign-up': typeof AuthSignUpRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/': typeof BlogIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -91,6 +105,8 @@ export interface FileRoutesByTo {
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/auth/sign-in': typeof AuthSignInRoute
+  '/auth/sign-up': typeof AuthSignUpRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog': typeof BlogIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -104,6 +120,8 @@ export interface FileRoutesById {
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/auth/sign-in': typeof AuthSignInRoute
+  '/auth/sign-up': typeof AuthSignUpRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/': typeof BlogIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -118,6 +136,8 @@ export interface FileRouteTypes {
     | '/rss.xml'
     | '/sitemap.xml'
     | '/terms'
+    | '/auth/sign-in'
+    | '/auth/sign-up'
     | '/blog/$slug'
     | '/blog/'
     | '/api/auth/$'
@@ -130,6 +150,8 @@ export interface FileRouteTypes {
     | '/rss.xml'
     | '/sitemap.xml'
     | '/terms'
+    | '/auth/sign-in'
+    | '/auth/sign-up'
     | '/blog/$slug'
     | '/blog'
     | '/api/auth/$'
@@ -142,6 +164,8 @@ export interface FileRouteTypes {
     | '/rss.xml'
     | '/sitemap.xml'
     | '/terms'
+    | '/auth/sign-in'
+    | '/auth/sign-up'
     | '/blog/$slug'
     | '/blog/'
     | '/api/auth/$'
@@ -155,6 +179,8 @@ export interface RootRouteChildren {
   RssDotxmlRoute: typeof RssDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  AuthSignInRoute: typeof AuthSignInRoute
+  AuthSignUpRoute: typeof AuthSignUpRoute
   BlogSlugRoute: typeof BlogSlugRoute
   BlogIndexRoute: typeof BlogIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -225,6 +251,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/sign-up': {
+      id: '/auth/sign-up'
+      path: '/auth/sign-up'
+      fullPath: '/auth/sign-up'
+      preLoaderRoute: typeof AuthSignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/sign-in': {
+      id: '/auth/sign-in'
+      path: '/auth/sign-in'
+      fullPath: '/auth/sign-in'
+      preLoaderRoute: typeof AuthSignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -243,6 +283,8 @@ const rootRouteChildren: RootRouteChildren = {
   RssDotxmlRoute: RssDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  AuthSignInRoute: AuthSignInRoute,
+  AuthSignUpRoute: AuthSignUpRoute,
   BlogSlugRoute: BlogSlugRoute,
   BlogIndexRoute: BlogIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
@@ -250,12 +292,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
