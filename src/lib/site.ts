@@ -1,4 +1,4 @@
-export const SITE_TITLE = 'TanStack Start'
+export const SITE_TITLE = 'Stockholm'
 export const SITE_DESCRIPTION =
-  'A tropical, breathable app starter with full-document SSR, server functions, streaming, and type-safe routing.'
+  'The modern platform for building, deploying, and scaling your next great product.'
 export const SITE_URL = 'https://example.com'
