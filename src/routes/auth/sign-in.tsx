@@ -56,7 +56,8 @@ function SignInPage() {
         return
       }
 
-      navigate({ to: redirect ?? '/' })
+      const safeTo = redirect && redirect.startsWith('/') ? redirect : '/'
+      navigate({ to: safeTo })
     } catch {
       setError('An unexpected error occurred. Please try again.')
     } finally {
