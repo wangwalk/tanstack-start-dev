@@ -82,7 +82,7 @@ function ProfilePage() {
         body: formData,
       })
 
-      const data = await res.json()
+      const data = (await res.json()) as { url?: string; error?: string }
 
       if (!res.ok) {
         throw new Error(data.error ?? 'Upload failed')
