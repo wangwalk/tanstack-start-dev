@@ -8,6 +8,9 @@ export const user = pgTable('user', {
   image: text('image'),
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at').notNull(),
+  stripeCustomerId: text('stripe_customer_id').unique(),
+  subscriptionStatus: text('subscription_status'),
+  subscriptionPlan: text('subscription_plan'),
 })
 
 export const session = pgTable('session', {
