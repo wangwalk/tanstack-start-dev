@@ -86,14 +86,15 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     .where(eq(user.stripeCustomerId, customerId))
 
   const stripe = getStripe()
-  const subscriptionData = session.subscription
-    ? await stripe.subscriptions.retrieve(
-        typeof session.subscription === 'string'
-          ? session.subscription
-          : session.subscription.id,
-      )
-    : null
-  const periodEnd = subscriptionData?.current_period_end as number | undefined
+  let periodEnd: number | undefined
+  if (session.subscription) {
+    const sub = (await stripe.subscriptions.retrieve(
+      typeof session.subscription === 'string'
+        ? session.subscription
+        : session.subscription.id,
+    )) as unknown as Stripe.Subscription
+    periodEnd = sub.current_period_end
+  }
 
   await sendEmail({
     to: dbUser.email,
