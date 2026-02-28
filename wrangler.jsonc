@@ -13,4 +13,8 @@
   //   STRIPE_PUBLISHABLE_KEY   — from Stripe Dashboard > Developers > API keys
   //   STRIPE_PRICE_PRO_MONTHLY — Price ID for Pro monthly plan (price_xxx)
   //   STRIPE_PRICE_PRO_YEARLY  — Price ID for Pro yearly plan (price_xxx)
+  //   GITHUB_CLIENT_ID        — from GitHub Developer Settings > OAuth Apps
+  //   GITHUB_CLIENT_SECRET    — from GitHub Developer Settings > OAuth Apps
+  //   GOOGLE_CLIENT_ID        — from Google Cloud Console > Credentials
+  //   GOOGLE_CLIENT_SECRET    — from Google Cloud Console > Credentials
 }
