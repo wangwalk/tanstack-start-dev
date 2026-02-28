@@ -1,6 +1,6 @@
 {
-  "id": "9dee1a2b-88bb-4ad1-9b0b-dece94974386",
-  "prevId": "24e1bcc6-918f-4afc-a05f-d76f4f20c538",
+  "id": "eb8d8905-d546-46c9-ada8-939a69f51db8",
+  "prevId": "9dee1a2b-88bb-4ad1-9b0b-dece94974386",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -330,6 +330,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'user'"
         }
       },
       "indexes": {},
