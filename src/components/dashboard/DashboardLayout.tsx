@@ -1,14 +1,23 @@
 import { useState, useEffect } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
 import { LayoutDashboard, Settings, CreditCard, Menu, X, LogOut } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { authClient } from '#/lib/auth-client'
 import ThemeToggle from '#/components/ThemeToggle'
 import { cn } from '#/lib/utils'
 
-const navItems = [
-  { to: '/dashboard' as const, label: 'Overview', icon: LayoutDashboard, exact: true },
-  { to: '/dashboard/settings' as const, label: 'Settings', icon: Settings, exact: false },
-  { to: '/dashboard/billing' as const, label: 'Billing', icon: CreditCard, exact: false },
+interface NavItem {
+  to: string
+  label: string
+  icon: LucideIcon
+  exact: boolean
+  disabled?: boolean
+}
+
+const navItems: NavItem[] = [
+  { to: '/dashboard', label: 'Overview', icon: LayoutDashboard, exact: true },
+  { to: '/dashboard/settings', label: 'Settings', icon: Settings, exact: false, disabled: true },
+  { to: '/dashboard/billing', label: 'Billing', icon: CreditCard, exact: false, disabled: true },
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -58,21 +67,41 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Navigation */}
         <nav className="flex-1 space-y-1 px-3 py-4">
-          {navItems.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              activeOptions={{ exact: item.exact }}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
-              activeProps={{
-                className:
-                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium bg-[rgba(79,184,178,0.12)] text-[var(--sea-ink)] font-semibold',
-              }}
-            >
-              <item.icon className="h-4 w-4" />
-              {item.label}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const isActive = item.exact
+              ? pathname === item.to
+              : pathname.startsWith(item.to)
+
+            if (item.disabled) {
+              return (
+                <span
+                  key={item.to}
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[var(--sea-ink-soft)] opacity-50 cursor-not-allowed"
+                >
+                  <item.icon className="h-4 w-4" />
+                  {item.label}
+                  <span className="ml-auto text-[0.65rem] uppercase tracking-wider opacity-70">Soon</span>
+                </span>
+              )
+            }
+
+            return (
+              <Link
+                key={item.to}
+                to={item.to as '/dashboard'}
+                activeOptions={{ exact: item.exact }}
+                className={cn(
+                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition',
+                  isActive
+                    ? 'bg-[rgba(79,184,178,0.12)] text-[var(--sea-ink)] font-semibold'
+                    : 'text-[var(--sea-ink-soft)] hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]',
+                )}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.label}
+              </Link>
+            )
+          })}
         </nav>
 
         {/* User section */}
