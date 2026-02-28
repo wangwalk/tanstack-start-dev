@@ -58,6 +58,20 @@ export const createCheckoutSession = createServerFn({ method: 'POST' })
     return { url: session.url }
   })
 
+export const getUserSubscription = createServerFn()
+  .inputValidator((input: { userId: string }) => input)
+  .handler(async ({ data }) => {
+    const [dbUser] = await db
+      .select({
+        subscriptionStatus: user.subscriptionStatus,
+        subscriptionPlan: user.subscriptionPlan,
+      })
+      .from(user)
+      .where(eq(user.id, data.userId))
+      .limit(1)
+    return dbUser ?? { subscriptionStatus: null, subscriptionPlan: null }
+  })
+
 export const createBillingPortalSession = createServerFn({ method: 'POST' })
   .inputValidator((input: { userId: string }) => input)
   .handler(async ({ data }) => {
