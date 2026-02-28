@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { z } from 'zod'
 import { listUsers } from '#/lib/admin'
 import { cn } from '#/lib/utils'
@@ -34,7 +34,7 @@ const statusColors: Record<string, string> = {
 function AdminUsersPage() {
   const { userList } = Route.useRouteContext()
   const search = Route.useSearch()
-  const navigate = useNavigate()
+  const navigate = Route.useNavigate()
 
   const { users, total, page, totalPages } = userList
 
