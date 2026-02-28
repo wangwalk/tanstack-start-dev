@@ -32,6 +32,26 @@ const blog = defineCollection({
   },
 })
 
+const legal = defineCollection({
+  name: 'legal',
+  directory: 'content/legal',
+  include: '**/*.mdx',
+  schema: z.object({
+    title: z.string(),
+    lastUpdated: z.string(),
+    content: z.string(),
+  }),
+  transform: async (document, context) => {
+    return {
+      ...document,
+      slug: document._meta.path,
+      mdx: await compileMDX(context, document, {
+        remarkPlugins: [remarkGfm],
+      }),
+    }
+  },
+})
+
 export default defineConfig({
-  collections: [blog],
+  collections: [blog, legal],
 })
