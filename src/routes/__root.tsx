@@ -2,6 +2,7 @@ import {
   HeadContent,
   Scripts,
   createRootRouteWithContext,
+  useRouterState,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
@@ -56,6 +57,9 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const isDashboard = pathname.startsWith('/dashboard')
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -64,9 +68,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]">
         <TanStackQueryProvider>
-          <Header />
+          {!isDashboard && <Header />}
           {children}
-          <Footer />
+          {!isDashboard && <Footer />}
           <TanStackDevtools
             config={{
               position: 'bottom-right',
