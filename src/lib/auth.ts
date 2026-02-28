@@ -22,7 +22,7 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url }) => {
-      await sendEmail({
+      const result = await sendEmail({
         to: user.email,
         subject: `Verify your email for ${SITE_TITLE}`,
         template: VerificationEmail,
@@ -31,12 +31,15 @@ export const auth = betterAuth({
           verificationUrl: url,
         },
       })
+      if (!result.success) {
+        throw new Error(`Failed to send verification email: ${result.error}`)
+      }
     },
   },
   emailAndPassword: {
     enabled: true,
     sendResetPassword: async ({ user, url }) => {
-      await sendEmail({
+      const result = await sendEmail({
         to: user.email,
         subject: `Reset your ${SITE_TITLE} password`,
         template: PasswordResetEmail,
@@ -45,6 +48,9 @@ export const auth = betterAuth({
           resetUrl: url,
         },
       })
+      if (!result.success) {
+        throw new Error(`Failed to send reset email: ${result.error}`)
+      }
     },
   },
   plugins: [tanstackStartCookies()],
