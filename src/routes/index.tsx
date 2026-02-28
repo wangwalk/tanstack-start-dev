@@ -8,6 +8,8 @@ export const Route = createFileRoute('/')({
       { title: SITE_TITLE },
       { name: 'description', content: SITE_DESCRIPTION },
       { property: 'og:url', content: SITE_URL },
+      { property: 'og:title', content: SITE_TITLE },
+      { property: 'og:description', content: SITE_DESCRIPTION },
     ],
   }),
   component: App,

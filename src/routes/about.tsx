@@ -11,7 +11,15 @@ export const Route = createFileRoute('/about')({
         content:
           'TanStack Start gives you type-safe routing, server functions, and modern SSR defaults.',
       },
+      { property: 'og:type', content: 'website' },
       { property: 'og:url', content: `${SITE_URL}/about` },
+      { property: 'og:title', content: `About | ${SITE_TITLE}` },
+      {
+        property: 'og:description',
+        content:
+          'TanStack Start gives you type-safe routing, server functions, and modern SSR defaults.',
+      },
+      { property: 'og:image', content: `${SITE_URL}/images/lagoon-about.svg` },
     ],
   }),
   component: About,
