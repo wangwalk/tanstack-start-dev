@@ -86,13 +86,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     .where(eq(user.stripeCustomerId, customerId))
 
   const stripe = getStripe()
-  const subscription = session.subscription
+  const subscriptionData = session.subscription
     ? await stripe.subscriptions.retrieve(
         typeof session.subscription === 'string'
           ? session.subscription
           : session.subscription.id,
       )
     : null
+  const periodEnd = subscriptionData?.current_period_end as number | undefined
 
   await sendEmail({
     to: dbUser.email,
@@ -104,11 +105,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       amount: session.amount_total
         ? `$${(session.amount_total / 100).toFixed(2)}`
         : '',
-      nextBillingDate: subscription?.current_period_end
-        ? new Date(subscription.current_period_end * 1000).toLocaleDateString(
-            'en-US',
-            { year: 'numeric', month: 'long', day: 'numeric' },
-          )
+      nextBillingDate: periodEnd
+        ? new Date(periodEnd * 1000).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })
         : undefined,
     },
   })
