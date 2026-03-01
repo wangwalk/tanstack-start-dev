@@ -36,6 +36,8 @@ import { Route as DashboardSettingsNotificationsRouteImport } from './routes/das
 import { Route as DashboardSettingsBillingRouteImport } from './routes/dashboard/settings/billing'
 import { Route as DashboardSettingsApiKeysRouteImport } from './routes/dashboard/settings/api-keys'
 import { Route as ApiWebhooksStripeRouteImport } from './routes/api/webhooks/stripe'
+import { Route as ApiAvatarUploadRouteImport } from './routes/api/avatar/upload'
+import { Route as ApiAvatarSplatRouteImport } from './routes/api/avatar/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AdminUsersUserIdRouteImport } from './routes/admin/users.$userId'
 
@@ -179,6 +181,16 @@ const ApiWebhooksStripeRoute = ApiWebhooksStripeRouteImport.update({
   path: '/api/webhooks/stripe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAvatarUploadRoute = ApiAvatarUploadRouteImport.update({
+  id: '/api/avatar/upload',
+  path: '/api/avatar/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAvatarSplatRoute = ApiAvatarSplatRouteImport.update({
+  id: '/api/avatar/$',
+  path: '/api/avatar/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -214,6 +226,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/': typeof DashboardIndexRoute
   '/admin/users/$userId': typeof AdminUsersUserIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/avatar/$': typeof ApiAvatarSplatRoute
+  '/api/avatar/upload': typeof ApiAvatarUploadRoute
   '/api/webhooks/stripe': typeof ApiWebhooksStripeRoute
   '/dashboard/settings/api-keys': typeof DashboardSettingsApiKeysRoute
   '/dashboard/settings/billing': typeof DashboardSettingsBillingRoute
@@ -243,6 +257,8 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardIndexRoute
   '/admin/users/$userId': typeof AdminUsersUserIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/avatar/$': typeof ApiAvatarSplatRoute
+  '/api/avatar/upload': typeof ApiAvatarUploadRoute
   '/api/webhooks/stripe': typeof ApiWebhooksStripeRoute
   '/dashboard/settings/api-keys': typeof DashboardSettingsApiKeysRoute
   '/dashboard/settings/billing': typeof DashboardSettingsBillingRoute
@@ -275,6 +291,8 @@ export interface FileRoutesById {
   '/dashboard/': typeof DashboardIndexRoute
   '/admin/users/$userId': typeof AdminUsersUserIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/avatar/$': typeof ApiAvatarSplatRoute
+  '/api/avatar/upload': typeof ApiAvatarUploadRoute
   '/api/webhooks/stripe': typeof ApiWebhooksStripeRoute
   '/dashboard/settings/api-keys': typeof DashboardSettingsApiKeysRoute
   '/dashboard/settings/billing': typeof DashboardSettingsBillingRoute
@@ -308,6 +326,8 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/admin/users/$userId'
     | '/api/auth/$'
+    | '/api/avatar/$'
+    | '/api/avatar/upload'
     | '/api/webhooks/stripe'
     | '/dashboard/settings/api-keys'
     | '/dashboard/settings/billing'
@@ -337,6 +357,8 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/admin/users/$userId'
     | '/api/auth/$'
+    | '/api/avatar/$'
+    | '/api/avatar/upload'
     | '/api/webhooks/stripe'
     | '/dashboard/settings/api-keys'
     | '/dashboard/settings/billing'
@@ -368,6 +390,8 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/admin/users/$userId'
     | '/api/auth/$'
+    | '/api/avatar/$'
+    | '/api/avatar/upload'
     | '/api/webhooks/stripe'
     | '/dashboard/settings/api-keys'
     | '/dashboard/settings/billing'
@@ -395,6 +419,8 @@ export interface RootRouteChildren {
   BlogSlugRoute: typeof BlogSlugRoute
   BlogIndexRoute: typeof BlogIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiAvatarSplatRoute: typeof ApiAvatarSplatRoute
+  ApiAvatarUploadRoute: typeof ApiAvatarUploadRoute
   ApiWebhooksStripeRoute: typeof ApiWebhooksStripeRoute
 }
 
@@ -589,6 +615,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiWebhooksStripeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/avatar/upload': {
+      id: '/api/avatar/upload'
+      path: '/api/avatar/upload'
+      fullPath: '/api/avatar/upload'
+      preLoaderRoute: typeof ApiAvatarUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/avatar/$': {
+      id: '/api/avatar/$'
+      path: '/api/avatar/$'
+      fullPath: '/api/avatar/$'
+      preLoaderRoute: typeof ApiAvatarSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -682,6 +722,8 @@ const rootRouteChildren: RootRouteChildren = {
   BlogSlugRoute: BlogSlugRoute,
   BlogIndexRoute: BlogIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiAvatarSplatRoute: ApiAvatarSplatRoute,
+  ApiAvatarUploadRoute: ApiAvatarUploadRoute,
   ApiWebhooksStripeRoute: ApiWebhooksStripeRoute,
 }
 export const routeTree = rootRouteImport
