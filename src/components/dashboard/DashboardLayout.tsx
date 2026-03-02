@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useRouterState } from '@tanstack/react-router'
+import { Link, useRouteContext, useRouterState } from '@tanstack/react-router'
 import { LayoutDashboard, Settings, ShieldCheck, Menu, X, LogOut } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { authClient } from '#/lib/auth-client'
@@ -23,11 +23,11 @@ const baseNavItems: NavItem[] = [
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = useRouterState({ select: (s) => s.location.pathname })
-  const { data: session } = authClient.useSession()
+  const { session } = useRouteContext({ from: '/dashboard' })
 
   const navItems: NavItem[] = [
     ...baseNavItems,
-    ...((session?.user as Record<string, unknown>)?.role === 'admin'
+    ...(session?.user.role === 'admin'
       ? [{ to: '/admin', label: 'Admin', icon: ShieldCheck, exact: false }]
       : []),
   ]

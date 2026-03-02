@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { authClient } from '#/lib/auth-client'
 import { createBillingPortalSession } from '#/lib/billing'
 import { BILLING_PLANS } from '#/config/billing'
@@ -39,7 +40,7 @@ function DashboardOverviewPage() {
         window.location.href = result.url
       }
     } catch {
-      // billing portal not available
+      toast.error('Unable to open billing portal. Please try again.')
     }
   }
 

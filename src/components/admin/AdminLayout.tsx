@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useRouterState } from '@tanstack/react-router'
+import { Link, useRouteContext, useRouterState } from '@tanstack/react-router'
 import { LayoutDashboard, Users, Menu, X, LogOut } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { authClient } from '#/lib/auth-client'
@@ -22,7 +22,7 @@ const navItems: NavItem[] = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = useRouterState({ select: (s) => s.location.pathname })
-  const { data: session } = authClient.useSession()
+  const { session } = useRouteContext({ from: '/admin' })
 
   useEffect(() => {
     setSidebarOpen(false)

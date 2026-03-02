@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect } from '@tanstack/react-router'
 import { useState } from 'react'
 import { z } from 'zod'
 import { authClient } from '#/lib/auth-client'
@@ -13,6 +13,11 @@ const forgotPasswordSchema = z.object({
 })
 
 export const Route = createFileRoute('/auth/forgot-password')({
+  beforeLoad: async ({ context }) => {
+    if (context.session) {
+      throw redirect({ to: '/dashboard' })
+    }
+  },
   head: () => ({
     links: [{ rel: 'canonical', href: `${SITE_URL}/auth/forgot-password` }],
     meta: [
