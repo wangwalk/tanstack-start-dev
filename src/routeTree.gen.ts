@@ -16,6 +16,7 @@ import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ChangelogRouteImport } from './routes/changelog'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
@@ -39,6 +40,7 @@ import { Route as DashboardSettingsCreditsRouteImport } from './routes/dashboard
 import { Route as DashboardSettingsBillingRouteImport } from './routes/dashboard/settings/billing'
 import { Route as DashboardSettingsApiKeysRouteImport } from './routes/dashboard/settings/api-keys'
 import { Route as ApiWebhooksStripeRouteImport } from './routes/api/webhooks/stripe'
+import { Route as ApiCronDistributeCreditsRouteImport } from './routes/api/cron/distribute-credits'
 import { Route as ApiAvatarUploadRouteImport } from './routes/api/avatar/upload'
 import { Route as ApiAvatarSplatRouteImport } from './routes/api/avatar/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -77,6 +79,11 @@ const PricingRoute = PricingRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChangelogRoute = ChangelogRouteImport.update({
@@ -200,6 +207,12 @@ const ApiWebhooksStripeRoute = ApiWebhooksStripeRouteImport.update({
   path: '/api/webhooks/stripe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCronDistributeCreditsRoute =
+  ApiCronDistributeCreditsRouteImport.update({
+    id: '/api/cron/distribute-credits',
+    path: '/api/cron/distribute-credits',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiAvatarUploadRoute = ApiAvatarUploadRouteImport.update({
   id: '/api/avatar/upload',
   path: '/api/avatar/upload',
@@ -226,6 +239,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/changelog': typeof ChangelogRoute
+  '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -249,6 +263,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/avatar/$': typeof ApiAvatarSplatRoute
   '/api/avatar/upload': typeof ApiAvatarUploadRoute
+  '/api/cron/distribute-credits': typeof ApiCronDistributeCreditsRoute
   '/api/webhooks/stripe': typeof ApiWebhooksStripeRoute
   '/dashboard/settings/api-keys': typeof DashboardSettingsApiKeysRoute
   '/dashboard/settings/billing': typeof DashboardSettingsBillingRoute
@@ -261,6 +276,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/changelog': typeof ChangelogRoute
+  '/contact': typeof ContactRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -283,6 +299,7 @@ export interface FileRoutesByTo {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/avatar/$': typeof ApiAvatarSplatRoute
   '/api/avatar/upload': typeof ApiAvatarUploadRoute
+  '/api/cron/distribute-credits': typeof ApiCronDistributeCreditsRoute
   '/api/webhooks/stripe': typeof ApiWebhooksStripeRoute
   '/dashboard/settings/api-keys': typeof DashboardSettingsApiKeysRoute
   '/dashboard/settings/billing': typeof DashboardSettingsBillingRoute
@@ -297,6 +314,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/changelog': typeof ChangelogRoute
+  '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -320,6 +338,7 @@ export interface FileRoutesById {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/avatar/$': typeof ApiAvatarSplatRoute
   '/api/avatar/upload': typeof ApiAvatarUploadRoute
+  '/api/cron/distribute-credits': typeof ApiCronDistributeCreditsRoute
   '/api/webhooks/stripe': typeof ApiWebhooksStripeRoute
   '/dashboard/settings/api-keys': typeof DashboardSettingsApiKeysRoute
   '/dashboard/settings/billing': typeof DashboardSettingsBillingRoute
@@ -335,6 +354,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/changelog'
+    | '/contact'
     | '/dashboard'
     | '/pricing'
     | '/privacy'
@@ -358,6 +378,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/api/avatar/$'
     | '/api/avatar/upload'
+    | '/api/cron/distribute-credits'
     | '/api/webhooks/stripe'
     | '/dashboard/settings/api-keys'
     | '/dashboard/settings/billing'
@@ -370,6 +391,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/changelog'
+    | '/contact'
     | '/pricing'
     | '/privacy'
     | '/robots.txt'
@@ -392,6 +414,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/api/avatar/$'
     | '/api/avatar/upload'
+    | '/api/cron/distribute-credits'
     | '/api/webhooks/stripe'
     | '/dashboard/settings/api-keys'
     | '/dashboard/settings/billing'
@@ -405,6 +428,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/changelog'
+    | '/contact'
     | '/dashboard'
     | '/pricing'
     | '/privacy'
@@ -428,6 +452,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/api/avatar/$'
     | '/api/avatar/upload'
+    | '/api/cron/distribute-credits'
     | '/api/webhooks/stripe'
     | '/dashboard/settings/api-keys'
     | '/dashboard/settings/billing'
@@ -442,6 +467,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRouteWithChildren
   ChangelogRoute: typeof ChangelogRoute
+  ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRouteWithChildren
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -460,6 +486,7 @@ export interface RootRouteChildren {
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiAvatarSplatRoute: typeof ApiAvatarSplatRoute
   ApiAvatarUploadRoute: typeof ApiAvatarUploadRoute
+  ApiCronDistributeCreditsRoute: typeof ApiCronDistributeCreditsRoute
   ApiWebhooksStripeRoute: typeof ApiWebhooksStripeRoute
 }
 
@@ -512,6 +539,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/changelog': {
@@ -675,6 +709,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiWebhooksStripeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/cron/distribute-credits': {
+      id: '/api/cron/distribute-credits'
+      path: '/api/cron/distribute-credits'
+      fullPath: '/api/cron/distribute-credits'
+      preLoaderRoute: typeof ApiCronDistributeCreditsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/avatar/upload': {
       id: '/api/avatar/upload'
       path: '/api/avatar/upload'
@@ -770,6 +811,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AdminRoute: AdminRouteWithChildren,
   ChangelogRoute: ChangelogRoute,
+  ContactRoute: ContactRoute,
   DashboardRoute: DashboardRouteWithChildren,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
@@ -788,6 +830,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAvatarSplatRoute: ApiAvatarSplatRoute,
   ApiAvatarUploadRoute: ApiAvatarUploadRoute,
+  ApiCronDistributeCreditsRoute: ApiCronDistributeCreditsRoute,
   ApiWebhooksStripeRoute: ApiWebhooksStripeRoute,
 }
 export const routeTree = rootRouteImport

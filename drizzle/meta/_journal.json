@@ -43,6 +43,13 @@
       "when": 1772448083106,
       "tag": "0005_blushing_nighthawk",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1772462843237,
+      "tag": "0006_absent_silver_fox",
+      "breakpoints": true
     }
   ]
 }
