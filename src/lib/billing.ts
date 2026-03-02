@@ -114,9 +114,12 @@ export const createCreditCheckoutSession = userFn({ method: 'POST' })
 
 export const getCheckoutSessionStatus = userFn()
   .inputValidator((input: { sessionId: string }) => input)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const stripe = getStripe()
     const session = await stripe.checkout.sessions.retrieve(data.sessionId)
+    if (session.metadata?.userId !== context.user.id) {
+      throw new Error('Forbidden')
+    }
     return {
       paymentStatus: session.payment_status,
       metadata: session.metadata,

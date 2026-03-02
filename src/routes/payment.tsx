@@ -1,7 +1,9 @@
+import { useRef } from 'react'
 import { createFileRoute, redirect, Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { getCheckoutSessionStatus } from '#/lib/billing'
 import { BILLING_PLANS, CREDIT_PACKS } from '#/config/billing'
+import { siteConfig } from '#/config/site'
 import type { PlanKey, CreditPackKey } from '#/config/billing'
 
 const POLL_INTERVAL_MS = 2000
@@ -27,14 +29,14 @@ export const Route = createFileRoute('/payment')({
 
 function PaymentConfirmation() {
   const { session_id, type } = Route.useSearch()
-  const startTime = Date.now()
+  const startTime = useRef(Date.now())
 
   const { data, isError } = useQuery({
     queryKey: ['checkout-session-status', session_id],
     queryFn: () => getCheckoutSessionStatus({ data: { sessionId: session_id } }),
     refetchInterval: (query) => {
       const paid = query.state.data?.paymentStatus === 'paid'
-      const timedOut = Date.now() - startTime >= TIMEOUT_MS
+      const timedOut = Date.now() - startTime.current >= TIMEOUT_MS
       if (paid || timedOut) return false
       return POLL_INTERVAL_MS
     },
@@ -43,7 +45,7 @@ function PaymentConfirmation() {
 
   const isPaid = data?.paymentStatus === 'paid'
   const isTimedOut =
-    !isPaid && data !== undefined && Date.now() - startTime >= TIMEOUT_MS
+    !isPaid && data !== undefined && Date.now() - startTime.current >= TIMEOUT_MS
 
   if (isError || !session_id) {
     return <ErrorState />
@@ -180,7 +182,7 @@ function TimeoutState() {
           前往 Dashboard
         </Link>
         <a
-          href="mailto:support@example.com"
+          href={`mailto:${siteConfig.supportEmail}`}
           className="rounded-md border px-6 py-2 text-sm font-medium hover:bg-accent"
         >
           联系支持
