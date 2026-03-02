@@ -1,4 +1,3 @@
-import { createServerFn } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
 import { getStripe } from '#/lib/stripe'
 import { SITE_URL } from '#/lib/site'
@@ -6,13 +5,13 @@ import { db } from '#/db/index'
 import { user } from '#/db/schema'
 import { BILLING_PLANS } from '#/config/billing'
 import type { PlanKey, BillingInterval } from '#/config/billing'
+import { userFn } from '#/lib/server-fn'
 
-export const createCheckoutSession = createServerFn({ method: 'POST' })
-  .inputValidator(
-    (input: { userId: string; plan: PlanKey; interval: BillingInterval }) => input,
-  )
-  .handler(async ({ data }) => {
-    const { userId, plan, interval } = data
+export const createCheckoutSession = userFn({ method: 'POST' })
+  .inputValidator((input: { plan: PlanKey; interval: BillingInterval }) => input)
+  .handler(async ({ data, context }) => {
+    const userId = context.user.id
+    const { plan, interval } = data
     const stripe = getStripe()
 
     const [dbUser] = await db
@@ -58,24 +57,21 @@ export const createCheckoutSession = createServerFn({ method: 'POST' })
     return { url: session.url }
   })
 
-export const getUserSubscription = createServerFn()
-  .inputValidator((input: { userId: string }) => input)
-  .handler(async ({ data }) => {
-    const [dbUser] = await db
-      .select({
-        subscriptionStatus: user.subscriptionStatus,
-        subscriptionPlan: user.subscriptionPlan,
-      })
-      .from(user)
-      .where(eq(user.id, data.userId))
-      .limit(1)
-    return dbUser ?? { subscriptionStatus: null, subscriptionPlan: null }
-  })
+export const getUserSubscription = userFn().handler(async ({ context }) => {
+  const [dbUser] = await db
+    .select({
+      subscriptionStatus: user.subscriptionStatus,
+      subscriptionPlan: user.subscriptionPlan,
+    })
+    .from(user)
+    .where(eq(user.id, context.user.id))
+    .limit(1)
+  return dbUser ?? { subscriptionStatus: null, subscriptionPlan: null }
+})
 
-export const createBillingPortalSession = createServerFn({ method: 'POST' })
-  .inputValidator((input: { userId: string }) => input)
-  .handler(async ({ data }) => {
-    const { userId } = data
+export const createBillingPortalSession = userFn({ method: 'POST' }).handler(
+  async ({ context }) => {
+    const userId = context.user.id
     const stripe = getStripe()
 
     const [dbUser] = await db
@@ -94,4 +90,5 @@ export const createBillingPortalSession = createServerFn({ method: 'POST' })
     })
 
     return { url: session.url }
-  })
+  },
+)

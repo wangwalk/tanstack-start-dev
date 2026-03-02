@@ -104,9 +104,7 @@ function PricingPage() {
 
   useEffect(() => {
     if (session?.user) {
-      getUserSubscription({ data: { userId: session.user.id } }).then(
-        setSubscription,
-      )
+      getUserSubscription().then(setSubscription)
     }
   }, [session?.user?.id])
 
@@ -128,7 +126,7 @@ function PricingPage() {
     setCheckoutLoading(true)
     try {
       const result = await createCheckoutSession({
-        data: { userId: session.user.id, plan: planKey, interval },
+        data: { plan: planKey, interval },
       })
       if (result.url) {
         window.location.href = result.url

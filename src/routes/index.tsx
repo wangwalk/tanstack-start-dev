@@ -134,7 +134,7 @@ function LandingPage() {
     setCheckoutLoading(true)
     try {
       const result = await createCheckoutSession({
-        data: { userId: session.user.id, plan: planKey, interval },
+        data: { plan: planKey, interval },
       })
       if (result.url) {
         window.location.href = result.url
