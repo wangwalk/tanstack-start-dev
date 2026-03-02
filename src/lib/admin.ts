@@ -35,6 +35,7 @@ export const listUsers = adminFn({ method: 'GET' })
           subscriptionStatus: user.subscriptionStatus,
           subscriptionPlan: user.subscriptionPlan,
           role: user.role,
+          banned: user.banned,
         })
         .from(user)
         .where(where)
@@ -57,22 +58,24 @@ export const getUserById = adminFn({ method: 'GET' })
   .inputValidator((input: { userId: string }) => input)
   .handler(async ({ data }) => {
     const [row] = await db
-      .select()
+      .select({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        emailVerified: user.emailVerified,
+        image: user.image,
+        createdAt: user.createdAt,
+        role: user.role,
+        subscriptionStatus: user.subscriptionStatus,
+        subscriptionPlan: user.subscriptionPlan,
+        banned: user.banned,
+        banReason: user.banReason,
+        banExpires: user.banExpires,
+      })
       .from(user)
       .where(eq(user.id, data.userId))
       .limit(1)
 
     if (!row) throw new Error('User not found')
     return row
-  })
-
-export const updateUserRole = adminFn({ method: 'POST' })
-  .inputValidator((input: { userId: string; role: 'user' | 'admin' }) => input)
-  .handler(async ({ data }) => {
-    await db
-      .update(user)
-      .set({ role: data.role, updatedAt: new Date() })
-      .where(eq(user.id, data.userId))
-
-    return { success: true }
   })

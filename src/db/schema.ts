@@ -12,6 +12,9 @@ export const user = pgTable('user', {
   subscriptionStatus: text('subscription_status'),
   subscriptionPlan: text('subscription_plan'),
   role: text('role').notNull().default('user'),
+  banned: boolean('banned'),
+  banReason: text('ban_reason'),
+  banExpires: timestamp('ban_expires'),
 })
 
 export const session = pgTable('session', {

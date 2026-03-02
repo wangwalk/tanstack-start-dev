@@ -22,6 +22,13 @@
       "when": 1772289142659,
       "tag": "0002_ordinary_rage",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1772432882562,
+      "tag": "0003_sour_selene",
+      "breakpoints": true
     }
   ]
 }

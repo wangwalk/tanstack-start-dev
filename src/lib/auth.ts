@@ -1,6 +1,7 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
+import { admin } from 'better-auth/plugins/admin'
 import { sendEmail } from '#/lib/email'
 import VerificationEmail from '#/emails/verification'
 import PasswordResetEmail from '#/emails/password-reset'
@@ -10,13 +11,14 @@ import { db } from '#/db/index'
 import * as schema from '#/db/schema'
 
 export const auth = betterAuth({
-  user: {
-    additionalFields: {
-      role: {
-        type: 'string',
-        defaultValue: 'user',
-        input: false,
-      },
+  session: {
+    // Cache session in a short-lived signed cookie to avoid a DB lookup on
+    // every SSR render. Keep maxAge short so that admin actions (ban, role
+    // change) propagate quickly — users may remain unaffected for up to this
+    // many seconds after a change is made.
+    cookieCache: {
+      enabled: true,
+      maxAge: 60,
     },
   },
   database: drizzleAdapter(db, {
@@ -73,5 +75,5 @@ export const auth = betterAuth({
       }
     },
   },
-  plugins: [tanstackStartCookies()],
+  plugins: [admin(), tanstackStartCookies()],
 })
