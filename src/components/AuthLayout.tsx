@@ -21,7 +21,7 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
               Stockholm
             </Link>
           </div>
-          <CardTitle asChild>
+          <CardTitle>
             <h1 className="display-title text-2xl font-bold text-[var(--sea-ink)] sm:text-3xl">
               {title}
             </h1>
