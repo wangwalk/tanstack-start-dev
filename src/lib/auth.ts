@@ -1,6 +1,7 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
+import { admin } from 'better-auth/plugins'
 import { sendEmail } from '#/lib/email'
 import VerificationEmail from '#/emails/verification'
 import PasswordResetEmail from '#/emails/password-reset'
@@ -10,15 +11,6 @@ import { db } from '#/db/index'
 import * as schema from '#/db/schema'
 
 export const auth = betterAuth({
-  user: {
-    additionalFields: {
-      role: {
-        type: 'string',
-        defaultValue: 'user',
-        input: false,
-      },
-    },
-  },
   database: drizzleAdapter(db, {
     provider: 'pg',
     schema: {
@@ -73,5 +65,5 @@ export const auth = betterAuth({
       }
     },
   },
-  plugins: [tanstackStartCookies()],
+  plugins: [tanstackStartCookies(), admin()],
 })

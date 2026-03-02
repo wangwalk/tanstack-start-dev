@@ -1,7 +1,9 @@
 import { eq, ilike, and, count, desc } from 'drizzle-orm'
+import { getRequest } from '@tanstack/react-start/server'
 import { db } from '#/db/index'
 import { user } from '#/db/schema'
 import { adminFn } from '#/lib/server-fn'
+import { auth } from '#/lib/auth'
 
 const PAGE_SIZE = 20
 
@@ -35,6 +37,7 @@ export const listUsers = adminFn({ method: 'GET' })
           subscriptionStatus: user.subscriptionStatus,
           subscriptionPlan: user.subscriptionPlan,
           role: user.role,
+          banned: user.banned,
         })
         .from(user)
         .where(where)
@@ -69,10 +72,39 @@ export const getUserById = adminFn({ method: 'GET' })
 export const updateUserRole = adminFn({ method: 'POST' })
   .inputValidator((input: { userId: string; role: 'user' | 'admin' }) => input)
   .handler(async ({ data }) => {
-    await db
-      .update(user)
-      .set({ role: data.role, updatedAt: new Date() })
-      .where(eq(user.id, data.userId))
+    const request = getRequest()
+    await auth.api.setRole({
+      body: { userId: data.userId, role: data.role },
+      headers: request.headers,
+    })
+    return { success: true }
+  })
 
+export const banUser = adminFn({ method: 'POST' })
+  .inputValidator(
+    (input: { userId: string; banReason?: string; banExpiresIn?: number }) =>
+      input,
+  )
+  .handler(async ({ data }) => {
+    const request = getRequest()
+    await auth.api.banUser({
+      body: {
+        userId: data.userId,
+        banReason: data.banReason,
+        banExpiresIn: data.banExpiresIn,
+      },
+      headers: request.headers,
+    })
+    return { success: true }
+  })
+
+export const unbanUser = adminFn({ method: 'POST' })
+  .inputValidator((input: { userId: string }) => input)
+  .handler(async ({ data }) => {
+    const request = getRequest()
+    await auth.api.unbanUser({
+      body: { userId: data.userId },
+      headers: request.headers,
+    })
     return { success: true }
   })
