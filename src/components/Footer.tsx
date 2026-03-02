@@ -24,6 +24,7 @@ const footerLinks: { title: string; links: FooterLink[] }[] = [
     title: 'Company',
     links: [
       { label: 'About', to: '/about' },
+      { label: 'Contact', to: '/contact' },
     ],
   },
   {
