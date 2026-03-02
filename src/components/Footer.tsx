@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import NewsletterForm from '#/components/NewsletterForm'
 
 type FooterLink =
   | { label: string; to: string; href?: never; external?: never }
@@ -69,6 +70,15 @@ export default function Footer() {
               </ul>
             </div>
           ))}
+        </div>
+
+        {/* Newsletter */}
+        <div className="mt-10 border-t border-[var(--line)] pt-10">
+          <p className="island-kicker mb-2">Stay in the loop</p>
+          <p className="mb-4 text-sm text-[var(--sea-ink-soft)]">
+            Get product updates and news delivered to your inbox.
+          </p>
+          <NewsletterForm />
         </div>
 
         {/* Bottom bar */}
