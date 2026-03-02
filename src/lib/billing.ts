@@ -3,8 +3,8 @@ import { getStripe } from '#/lib/stripe'
 import { SITE_URL } from '#/lib/site'
 import { db } from '#/db/index'
 import { user } from '#/db/schema'
-import { BILLING_PLANS } from '#/config/billing'
-import type { PlanKey, BillingInterval } from '#/config/billing'
+import { BILLING_PLANS, CREDIT_PACKS } from '#/config/billing'
+import type { PlanKey, BillingInterval, CreditPackKey } from '#/config/billing'
 import { userFn } from '#/lib/server-fn'
 
 export const createCheckoutSession = userFn({ method: 'POST' })
@@ -63,6 +63,50 @@ export const createCheckoutSession = userFn({ method: 'POST' })
       success_url: `${SITE_URL}/dashboard?checkout=success`,
       cancel_url: `${SITE_URL}/pricing?checkout=cancelled`,
       metadata: { userId, plan, interval: interval ?? '' },
+    })
+
+    return { url: session.url }
+  })
+
+export const createCreditCheckoutSession = userFn({ method: 'POST' })
+  .inputValidator((input: { pack: CreditPackKey }) => input)
+  .handler(async ({ data, context }) => {
+    const userId = context.user.id
+    const stripe = getStripe()
+
+    const [dbUser] = await db
+      .select()
+      .from(user)
+      .where(eq(user.id, userId))
+      .limit(1)
+
+    if (!dbUser) throw new Error('User not found')
+
+    let customerId = dbUser.stripeCustomerId
+
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        email: dbUser.email,
+        name: dbUser.name,
+        metadata: { userId },
+      })
+      customerId = customer.id
+
+      await db
+        .update(user)
+        .set({ stripeCustomerId: customerId })
+        .where(eq(user.id, userId))
+    }
+
+    const pack = CREDIT_PACKS[data.pack]
+
+    const session = await stripe.checkout.sessions.create({
+      customer: customerId,
+      mode: 'payment',
+      line_items: [{ price: pack.priceId, quantity: 1 }],
+      success_url: `${SITE_URL}/dashboard/settings/credits?checkout=success`,
+      cancel_url: `${SITE_URL}/dashboard/settings/credits`,
+      metadata: { userId, type: 'credit_purchase', pack: data.pack },
     })
 
     return { url: session.url }

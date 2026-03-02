@@ -1,11 +1,12 @@
 import { createFileRoute, Link, Outlet, redirect, useRouterState } from '@tanstack/react-router'
-import { User, Shield, CreditCard, Bell, Key } from 'lucide-react'
+import { User, Shield, CreditCard, Bell, Key, Zap } from 'lucide-react'
 import { cn } from '#/lib/utils'
 
 const tabs = [
   { to: '/dashboard/settings/profile', label: 'Profile', icon: User },
   { to: '/dashboard/settings/security', label: 'Security', icon: Shield },
   { to: '/dashboard/settings/billing', label: 'Billing', icon: CreditCard },
+  { to: '/dashboard/settings/credits', label: 'Credits', icon: Zap },
   { to: '/dashboard/settings/notifications', label: 'Notifications', icon: Bell },
   { to: '/dashboard/settings/api-keys', label: 'API Keys', icon: Key },
 ] as const
