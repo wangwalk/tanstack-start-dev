@@ -7,6 +7,9 @@ import { user } from '#/db/schema'
 import { sendEmail } from '#/lib/email'
 import SubscriptionEmail from '#/emails/subscription'
 import PaymentFailedEmail from '#/emails/payment-failed'
+import { addCredits } from '#/lib/credits'
+import { CREDIT_PACKS } from '#/config/billing'
+import type { CreditPackKey } from '#/config/billing'
 
 async function handleStripeWebhook({ request }: { request: Request }) {
   const stripe = getStripe()
@@ -77,9 +80,27 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       : session.customer?.id
   if (!customerId) return
 
-  const plan = (session.metadata?.plan as string) ?? 'pro'
   const dbUser = await findUserByCustomerId(customerId)
   if (!dbUser) return
+
+  // Handle one-time credit purchases
+  if (
+    session.mode === 'payment' &&
+    session.metadata?.type === 'credit_purchase'
+  ) {
+    const packKey = session.metadata.pack as CreditPackKey
+    const pack = CREDIT_PACKS[packKey]
+    if (pack) {
+      await addCredits(
+        dbUser.id,
+        pack.credits,
+        `Purchased ${pack.name} (${pack.credits} credits)`,
+      )
+    }
+    return
+  }
+
+  const plan = (session.metadata?.plan as string) ?? 'pro'
 
   await db
     .update(user)

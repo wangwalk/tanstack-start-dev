@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useRouteContext, useRouterState } from '@tanstack/react-router'
-import { LayoutDashboard, Settings, ShieldCheck, Menu, X, LogOut } from 'lucide-react'
+import { LayoutDashboard, Settings, ShieldCheck, Menu, X, LogOut, Zap } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { authClient } from '#/lib/auth-client'
 import ThemeToggle from '#/components/ThemeToggle'
@@ -23,7 +23,7 @@ const baseNavItems: NavItem[] = [
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = useRouterState({ select: (s) => s.location.pathname })
-  const { session } = useRouteContext({ from: '/dashboard' })
+  const { session, creditBalance } = useRouteContext({ from: '/dashboard' })
 
   const navItems: NavItem[] = [
     ...baseNavItems,
@@ -112,6 +112,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             )
           })}
         </nav>
+
+        {/* Credit balance */}
+        <div className="px-3 pb-2">
+          <Link
+            to="/dashboard/settings/credits"
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
+          >
+            <Zap className="h-4 w-4 text-teal-500" />
+            <span className="text-teal-600 dark:text-teal-400 font-semibold">
+              {creditBalance?.balance ?? 0} credits
+            </span>
+          </Link>
+        </div>
 
         {/* User section */}
         {session?.user && (

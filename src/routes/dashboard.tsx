@@ -1,5 +1,6 @@
 import { createFileRoute, redirect, Outlet } from '@tanstack/react-router'
 import { getUserSubscription } from '#/lib/billing'
+import { getCreditBalance } from '#/lib/credits'
 import DashboardLayout from '#/components/dashboard/DashboardLayout'
 
 export const Route = createFileRoute('/dashboard')({
@@ -11,9 +12,12 @@ export const Route = createFileRoute('/dashboard')({
       })
     }
 
-    const subscription = await getUserSubscription()
+    const [subscription, creditBalance] = await Promise.all([
+      getUserSubscription(),
+      getCreditBalance(),
+    ])
 
-    return { subscription }
+    return { subscription, creditBalance }
   },
   component: DashboardLayoutRoute,
 })

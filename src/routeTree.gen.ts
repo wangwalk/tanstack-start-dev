@@ -34,6 +34,7 @@ import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as DashboardSettingsSecurityRouteImport } from './routes/dashboard/settings/security'
 import { Route as DashboardSettingsProfileRouteImport } from './routes/dashboard/settings/profile'
 import { Route as DashboardSettingsNotificationsRouteImport } from './routes/dashboard/settings/notifications'
+import { Route as DashboardSettingsCreditsRouteImport } from './routes/dashboard/settings/credits'
 import { Route as DashboardSettingsBillingRouteImport } from './routes/dashboard/settings/billing'
 import { Route as DashboardSettingsApiKeysRouteImport } from './routes/dashboard/settings/api-keys'
 import { Route as ApiWebhooksStripeRouteImport } from './routes/api/webhooks/stripe'
@@ -170,6 +171,12 @@ const DashboardSettingsNotificationsRoute =
     path: '/notifications',
     getParentRoute: () => DashboardSettingsRoute,
   } as any)
+const DashboardSettingsCreditsRoute =
+  DashboardSettingsCreditsRouteImport.update({
+    id: '/credits',
+    path: '/credits',
+    getParentRoute: () => DashboardSettingsRoute,
+  } as any)
 const DashboardSettingsBillingRoute =
   DashboardSettingsBillingRouteImport.update({
     id: '/billing',
@@ -238,6 +245,7 @@ export interface FileRoutesByFullPath {
   '/api/webhooks/stripe': typeof ApiWebhooksStripeRoute
   '/dashboard/settings/api-keys': typeof DashboardSettingsApiKeysRoute
   '/dashboard/settings/billing': typeof DashboardSettingsBillingRoute
+  '/dashboard/settings/credits': typeof DashboardSettingsCreditsRoute
   '/dashboard/settings/notifications': typeof DashboardSettingsNotificationsRoute
   '/dashboard/settings/profile': typeof DashboardSettingsProfileRoute
   '/dashboard/settings/security': typeof DashboardSettingsSecurityRoute
@@ -270,6 +278,7 @@ export interface FileRoutesByTo {
   '/api/webhooks/stripe': typeof ApiWebhooksStripeRoute
   '/dashboard/settings/api-keys': typeof DashboardSettingsApiKeysRoute
   '/dashboard/settings/billing': typeof DashboardSettingsBillingRoute
+  '/dashboard/settings/credits': typeof DashboardSettingsCreditsRoute
   '/dashboard/settings/notifications': typeof DashboardSettingsNotificationsRoute
   '/dashboard/settings/profile': typeof DashboardSettingsProfileRoute
   '/dashboard/settings/security': typeof DashboardSettingsSecurityRoute
@@ -305,6 +314,7 @@ export interface FileRoutesById {
   '/api/webhooks/stripe': typeof ApiWebhooksStripeRoute
   '/dashboard/settings/api-keys': typeof DashboardSettingsApiKeysRoute
   '/dashboard/settings/billing': typeof DashboardSettingsBillingRoute
+  '/dashboard/settings/credits': typeof DashboardSettingsCreditsRoute
   '/dashboard/settings/notifications': typeof DashboardSettingsNotificationsRoute
   '/dashboard/settings/profile': typeof DashboardSettingsProfileRoute
   '/dashboard/settings/security': typeof DashboardSettingsSecurityRoute
@@ -341,6 +351,7 @@ export interface FileRouteTypes {
     | '/api/webhooks/stripe'
     | '/dashboard/settings/api-keys'
     | '/dashboard/settings/billing'
+    | '/dashboard/settings/credits'
     | '/dashboard/settings/notifications'
     | '/dashboard/settings/profile'
     | '/dashboard/settings/security'
@@ -373,6 +384,7 @@ export interface FileRouteTypes {
     | '/api/webhooks/stripe'
     | '/dashboard/settings/api-keys'
     | '/dashboard/settings/billing'
+    | '/dashboard/settings/credits'
     | '/dashboard/settings/notifications'
     | '/dashboard/settings/profile'
     | '/dashboard/settings/security'
@@ -407,6 +419,7 @@ export interface FileRouteTypes {
     | '/api/webhooks/stripe'
     | '/dashboard/settings/api-keys'
     | '/dashboard/settings/billing'
+    | '/dashboard/settings/credits'
     | '/dashboard/settings/notifications'
     | '/dashboard/settings/profile'
     | '/dashboard/settings/security'
@@ -614,6 +627,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSettingsNotificationsRouteImport
       parentRoute: typeof DashboardSettingsRoute
     }
+    '/dashboard/settings/credits': {
+      id: '/dashboard/settings/credits'
+      path: '/credits'
+      fullPath: '/dashboard/settings/credits'
+      preLoaderRoute: typeof DashboardSettingsCreditsRouteImport
+      parentRoute: typeof DashboardSettingsRoute
+    }
     '/dashboard/settings/billing': {
       id: '/dashboard/settings/billing'
       path: '/billing'
@@ -693,6 +713,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 interface DashboardSettingsRouteChildren {
   DashboardSettingsApiKeysRoute: typeof DashboardSettingsApiKeysRoute
   DashboardSettingsBillingRoute: typeof DashboardSettingsBillingRoute
+  DashboardSettingsCreditsRoute: typeof DashboardSettingsCreditsRoute
   DashboardSettingsNotificationsRoute: typeof DashboardSettingsNotificationsRoute
   DashboardSettingsProfileRoute: typeof DashboardSettingsProfileRoute
   DashboardSettingsSecurityRoute: typeof DashboardSettingsSecurityRoute
@@ -701,6 +722,7 @@ interface DashboardSettingsRouteChildren {
 const DashboardSettingsRouteChildren: DashboardSettingsRouteChildren = {
   DashboardSettingsApiKeysRoute: DashboardSettingsApiKeysRoute,
   DashboardSettingsBillingRoute: DashboardSettingsBillingRoute,
+  DashboardSettingsCreditsRoute: DashboardSettingsCreditsRoute,
   DashboardSettingsNotificationsRoute: DashboardSettingsNotificationsRoute,
   DashboardSettingsProfileRoute: DashboardSettingsProfileRoute,
   DashboardSettingsSecurityRoute: DashboardSettingsSecurityRoute,

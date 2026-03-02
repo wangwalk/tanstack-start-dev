@@ -1,3 +1,26 @@
+export const CREDIT_PACKS = {
+  starter: {
+    name: 'Starter Pack',
+    credits: 100,
+    amount: '$9',
+    priceId: process.env.STRIPE_PRICE_CREDITS_STARTER!,
+  },
+  growth: {
+    name: 'Growth Pack',
+    credits: 500,
+    amount: '$39',
+    priceId: process.env.STRIPE_PRICE_CREDITS_GROWTH!,
+  },
+  pro: {
+    name: 'Pro Pack',
+    credits: 2000,
+    amount: '$129',
+    priceId: process.env.STRIPE_PRICE_CREDITS_PRO!,
+  },
+} as const
+
+export type CreditPackKey = keyof typeof CREDIT_PACKS
+
 export const BILLING_PLANS = {
   pro: {
     name: 'Pro',
