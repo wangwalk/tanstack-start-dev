@@ -23,22 +23,31 @@ export const Route = createFileRoute('/admin/users/$userId')({
 function AdminUserDetailPage() {
   const { userDetail } = Route.useRouteContext()
   const router = useRouter()
+  const { data: session } = authClient.useSession()
+  const isSelf = session?.user.id === userDetail.id
 
   const [role, setRole] = useState<'user' | 'admin'>(
     (userDetail.role as 'user' | 'admin') ?? 'user',
   )
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [roleError, setRoleError] = useState<string | null>(null)
 
   const [banReason, setBanReason] = useState('')
   const [banDuration, setBanDuration] = useState<number>(0)
   const [banning, setBanning] = useState(false)
+  const [banError, setBanError] = useState<string | null>(null)
   const isBanned = userDetail.banned === true
 
   async function handleRoleSave() {
     setSaving(true)
+    setRoleError(null)
     try {
-      await authClient.admin.setRole({ userId: userDetail.id, role })
+      const { error } = await authClient.admin.setRole({ userId: userDetail.id, role })
+      if (error) {
+        setRoleError(error.message ?? 'Failed to update role.')
+        return
+      }
       setSaved(true)
       setTimeout(() => setSaved(false), 2000)
       await router.invalidate()
@@ -49,12 +58,17 @@ function AdminUserDetailPage() {
 
   async function handleBan() {
     setBanning(true)
+    setBanError(null)
     try {
-      await authClient.admin.banUser({
+      const { error } = await authClient.admin.banUser({
         userId: userDetail.id,
         banReason: banReason || undefined,
         banExpiresIn: banDuration > 0 ? banDuration : undefined,
       })
+      if (error) {
+        setBanError(error.message ?? 'Failed to ban user.')
+        return
+      }
       await router.invalidate()
     } finally {
       setBanning(false)
@@ -63,8 +77,13 @@ function AdminUserDetailPage() {
 
   async function handleUnban() {
     setBanning(true)
+    setBanError(null)
     try {
-      await authClient.admin.unbanUser({ userId: userDetail.id })
+      const { error } = await authClient.admin.unbanUser({ userId: userDetail.id })
+      if (error) {
+        setBanError(error.message ?? 'Failed to unban user.')
+        return
+      }
       await router.invalidate()
     } finally {
       setBanning(false)
@@ -152,14 +171,15 @@ function AdminUserDetailPage() {
           <select
             value={role}
             onChange={(e) => setRole(e.target.value as 'user' | 'admin')}
-            className="rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--sea-ink)] focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20"
+            disabled={isSelf}
+            className="rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--sea-ink)] focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-50"
           >
             <option value="user">user</option>
             <option value="admin">admin</option>
           </select>
           <button
             type="button"
-            disabled={saving || role === userDetail.role}
+            disabled={saving || role === userDetail.role || isSelf}
             onClick={() => void handleRoleSave()}
             className={cn(
               'rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-5 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:opacity-90',
@@ -169,15 +189,27 @@ function AdminUserDetailPage() {
             {saving ? 'Saving...' : saved ? 'Saved!' : 'Save role'}
           </button>
         </div>
-        <p className="mt-2 text-xs text-[var(--sea-ink-soft)]">
-          Role changes take effect immediately on the user's next request.
-        </p>
+        {isSelf && (
+          <p className="mt-2 text-xs text-amber-600">
+            You cannot change your own role.
+          </p>
+        )}
+        {roleError && (
+          <p className="mt-2 text-xs text-red-500">{roleError}</p>
+        )}
+        {!isSelf && (
+          <p className="mt-2 text-xs text-[var(--sea-ink-soft)]">
+            Role changes take effect immediately on the user's next request.
+          </p>
+        )}
       </section>
 
       {/* Ban / unban */}
       <section className="island-shell rounded-2xl px-6 py-6">
         <p className="island-kicker mb-4">Access</p>
-        {isBanned ? (
+        {isSelf ? (
+          <p className="text-sm text-amber-600">You cannot ban your own account.</p>
+        ) : isBanned ? (
           <div className="flex items-center gap-4">
             <p className="text-sm text-[var(--sea-ink-soft)]">
               This user is currently banned.
@@ -229,6 +261,9 @@ function AdminUserDetailPage() {
               Banning immediately revokes all active sessions.
             </p>
           </div>
+        )}
+        {banError && (
+          <p className="mt-2 text-xs text-red-500">{banError}</p>
         )}
       </section>
     </div>
