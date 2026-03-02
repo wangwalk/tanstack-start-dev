@@ -6,6 +6,7 @@ import { authClient } from '#/lib/auth-client'
 import ThemeToggle from '#/components/ThemeToggle'
 import { cn } from '#/lib/utils'
 import { Button } from '#/components/ui/button'
+import { siteConfig } from '#/config/site'
 
 interface NavItem {
   to: string
@@ -114,17 +115,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </nav>
 
         {/* Credit balance */}
-        <div className="px-3 pb-2">
-          <Link
-            to="/dashboard/settings/credits"
-            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
-          >
-            <Zap className="h-4 w-4 text-teal-500" />
-            <span className="text-teal-600 dark:text-teal-400 font-semibold">
-              {creditBalance?.balance ?? 0} credits
-            </span>
-          </Link>
-        </div>
+        {siteConfig.features.credits && (
+          <div className="px-3 pb-2">
+            <Link
+              to="/dashboard/settings/credits"
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
+            >
+              <Zap className="h-4 w-4 text-teal-500" />
+              <span className="text-teal-600 dark:text-teal-400 font-semibold">
+                {creditBalance?.balance ?? 0} credits
+              </span>
+            </Link>
+          </div>
+        )}
 
         {/* User section */}
         {session?.user && (
