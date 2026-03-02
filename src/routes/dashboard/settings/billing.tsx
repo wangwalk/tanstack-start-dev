@@ -25,9 +25,7 @@ function BillingPage() {
     setError(null)
     setPortalLoading(true)
     try {
-      const result = await createBillingPortalSession({
-        data: { userId: session.user.id },
-      })
+      const result = await createBillingPortalSession()
       if (result.url) {
         window.location.href = result.url
       }

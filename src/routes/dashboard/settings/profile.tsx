@@ -38,7 +38,7 @@ function ProfilePage() {
 
     setStatus('loading')
     try {
-      await updateUserName({ data: { userId: session.user.id, name: result.data } })
+      await updateUserName({ data: { name: result.data } })
       setStatus('success')
       setTimeout(() => setStatus('idle'), 2000)
     } catch {

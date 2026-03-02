@@ -1,5 +1,5 @@
 import { createFileRoute, redirect, Outlet } from '@tanstack/react-router'
-import { getUserSubscription } from '#/lib/user'
+import { getUserSubscription } from '#/lib/billing'
 import DashboardLayout from '#/components/dashboard/DashboardLayout'
 
 export const Route = createFileRoute('/dashboard')({
@@ -11,9 +11,7 @@ export const Route = createFileRoute('/dashboard')({
       })
     }
 
-    const subscription = await getUserSubscription({
-      data: { userId: context.session.user.id },
-    })
+    const subscription = await getUserSubscription()
 
     return { subscription }
   },
