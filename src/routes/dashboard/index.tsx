@@ -3,6 +3,8 @@ import { useState } from 'react'
 import { authClient } from '#/lib/auth-client'
 import { createBillingPortalSession } from '#/lib/billing'
 import { BILLING_PLANS } from '#/config/billing'
+import { Button } from '#/components/ui/button'
+import { Badge } from '#/components/ui/badge'
 
 export const Route = createFileRoute('/dashboard/')({
   component: DashboardOverviewPage,
@@ -57,11 +59,12 @@ function DashboardOverviewPage() {
             Your email address is not verified. Please check your inbox for a
             verification link.
           </p>
-          <button
+          <Button
             type="button"
+            size="sm"
             onClick={handleResend}
             disabled={resendStatus === 'loading' || resendStatus === 'sent'}
-            className="shrink-0 rounded-full border border-amber-300 bg-amber-100 px-4 py-1.5 text-sm font-medium text-amber-800 transition hover:bg-amber-200 disabled:opacity-60 dark:border-amber-700 dark:bg-amber-900/50 dark:text-amber-200 dark:hover:bg-amber-800/50"
+            className="shrink-0 rounded-full border border-amber-300 bg-amber-100 text-amber-800 hover:bg-amber-200 disabled:opacity-60 dark:border-amber-700 dark:bg-amber-900/50 dark:text-amber-200 dark:hover:bg-amber-800/50"
           >
             {resendStatus === 'loading'
               ? 'Sending\u2026'
@@ -70,7 +73,7 @@ function DashboardOverviewPage() {
                 : resendStatus === 'error'
                   ? 'Failed \u2014 try again'
                   : 'Resend email'}
-          </button>
+          </Button>
         </div>
       )}
 
@@ -91,37 +94,38 @@ function DashboardOverviewPage() {
         {isActive && planName ? (
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-              <span className="inline-flex items-center rounded-full border border-[rgba(79,184,178,0.3)] bg-[rgba(79,184,178,0.15)] px-3 py-1 text-sm font-semibold text-[var(--lagoon-deep)]">
+              <Badge className="rounded-full border border-[rgba(79,184,178,0.3)] bg-[rgba(79,184,178,0.15)] text-[var(--lagoon-deep)] hover:bg-[rgba(79,184,178,0.2)]">
                 {planName}
-              </span>
+              </Badge>
               <span className="text-sm text-[var(--sea-ink-soft)]">Active</span>
             </div>
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={handleManageBilling}
-              className="rounded-full border border-[var(--line)] px-5 py-2 text-sm font-medium text-[var(--sea-ink)] transition hover:bg-[var(--link-bg-hover)]"
+              className="rounded-full border-[var(--line)] hover:bg-[var(--link-bg-hover)]"
             >
               Manage billing
-            </button>
+            </Button>
           </div>
         ) : (
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-              <span className="inline-flex items-center rounded-full border border-[var(--line)] bg-[rgba(23,58,64,0.06)] px-3 py-1 text-sm font-medium text-[var(--sea-ink-soft)]">
+              <Badge variant="outline" className="rounded-full border-[var(--line)] bg-[rgba(23,58,64,0.06)] text-[var(--sea-ink-soft)]">
                 Free
-              </span>
+              </Badge>
               {subscription.subscriptionStatus === 'canceled' && (
                 <span className="text-sm text-[var(--sea-ink-soft)]">
                   Canceled
                 </span>
               )}
             </div>
-            <a
-              href="/#pricing"
-              className="inline-flex items-center justify-center rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-5 py-2 text-sm font-semibold text-white no-underline shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:opacity-90"
+            <Button
+              asChild
+              className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
             >
-              Upgrade to Pro
-            </a>
+              <a href="/#pricing">Upgrade to Pro</a>
+            </Button>
           </div>
         )}
       </section>

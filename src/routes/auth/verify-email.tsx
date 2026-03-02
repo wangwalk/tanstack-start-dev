@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { authClient } from '#/lib/auth-client'
 import AuthLayout from '#/components/AuthLayout'
 import { SITE_TITLE, SITE_URL } from '#/lib/site'
+import { Button } from '#/components/ui/button'
 
 const searchSchema = z.object({
   error: z.string().optional(),
@@ -53,17 +54,17 @@ function VerifyEmailPage() {
           </p>
           {session?.user ? (
             <>
-              <button
+              <Button
                 onClick={handleResend}
                 disabled={resendStatus === 'loading' || resendStatus === 'sent'}
-                className="inline-block rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)] disabled:pointer-events-none disabled:opacity-60"
+                className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
               >
                 {resendStatus === 'loading'
                   ? 'Sending…'
                   : resendStatus === 'sent'
                     ? 'Email sent!'
                     : 'Resend verification email'}
-              </button>
+              </Button>
               {resendStatus === 'error' && (
                 <p className="mt-3 text-sm text-red-600 dark:text-red-400">
                   Failed to send. Please try again.
@@ -71,12 +72,12 @@ function VerifyEmailPage() {
               )}
             </>
           ) : (
-            <Link
-              to="/auth/sign-in"
-              className="inline-block rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] no-underline transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+            <Button
+              asChild
+              className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
             >
-              Sign in to resend
-            </Link>
+              <Link to="/auth/sign-in">Sign in to resend</Link>
+            </Button>
           )}
         </div>
       </AuthLayout>
@@ -94,12 +95,12 @@ function VerifyEmailPage() {
         <p className="mb-6 text-sm text-[var(--sea-ink-soft)]">
           You're all set. Your account is now fully activated.
         </p>
-        <Link
-          to="/dashboard"
-          className="inline-block rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] no-underline transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+        <Button
+          asChild
+          className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
         >
-          Go to Dashboard
-        </Link>
+          <Link to="/dashboard">Go to Dashboard</Link>
+        </Button>
       </div>
     </AuthLayout>
   )

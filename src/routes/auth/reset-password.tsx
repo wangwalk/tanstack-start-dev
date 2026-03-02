@@ -4,6 +4,9 @@ import { z } from 'zod'
 import { authClient } from '#/lib/auth-client'
 import AuthLayout from '#/components/AuthLayout'
 import { SITE_TITLE, SITE_URL } from '#/lib/site'
+import { Button } from '#/components/ui/button'
+import { Input } from '#/components/ui/input'
+import { Label } from '#/components/ui/label'
 
 const searchSchema = z.object({
   token: z.string().optional(),
@@ -46,12 +49,12 @@ function ResetPasswordPage() {
           <p className="mb-6 text-sm text-[var(--sea-ink-soft)]">
             Reset links are only valid when opened from the email we send you.
           </p>
-          <Link
-            to="/auth/forgot-password"
-            className="inline-block rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] no-underline transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+          <Button
+            asChild
+            className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
           >
-            Request a new link
-          </Link>
+            <Link to="/auth/forgot-password">Request a new link</Link>
+          </Button>
         </div>
       </AuthLayout>
     )
@@ -99,12 +102,12 @@ function ResetPasswordPage() {
           <p className="mb-6 text-sm text-[var(--sea-ink-soft)]">
             You can now sign in with your new password.
           </p>
-          <Link
-            to="/auth/sign-in"
-            className="inline-block rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] no-underline transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+          <Button
+            asChild
+            className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
           >
-            Sign In
-          </Link>
+            <Link to="/auth/sign-in">Sign In</Link>
+          </Button>
         </div>
       </AuthLayout>
     )
@@ -114,10 +117,10 @@ function ResetPasswordPage() {
     <AuthLayout title="Reset your password" subtitle="Choose a new password for your account">
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <div>
-          <label htmlFor="newPassword" className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]">
+          <Label htmlFor="newPassword" className="mb-1.5">
             New Password
-          </label>
-          <input
+          </Label>
+          <Input
             id="newPassword"
             type="password"
             value={newPassword}
@@ -125,15 +128,14 @@ function ResetPasswordPage() {
             placeholder="At least 8 characters"
             required
             disabled={isLoading}
-            className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-60"
           />
         </div>
 
         <div>
-          <label htmlFor="confirmPassword" className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]">
+          <Label htmlFor="confirmPassword" className="mb-1.5">
             Confirm New Password
-          </label>
-          <input
+          </Label>
+          <Input
             id="confirmPassword"
             type="password"
             value={confirmPassword}
@@ -141,7 +143,6 @@ function ResetPasswordPage() {
             placeholder="Re-enter your new password"
             required
             disabled={isLoading}
-            className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-60"
           />
         </div>
 
@@ -151,10 +152,10 @@ function ResetPasswordPage() {
           </div>
         )}
 
-        <button
+        <Button
           type="submit"
           disabled={isLoading}
-          className="w-full rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)] disabled:pointer-events-none disabled:opacity-60"
+          className="w-full rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
         >
           {isLoading ? (
             <span className="inline-flex items-center gap-2">
@@ -167,7 +168,7 @@ function ResetPasswordPage() {
           ) : (
             'Reset Password'
           )}
-        </button>
+        </Button>
 
         <p className="text-center text-sm text-[var(--sea-ink-soft)]">
           Remember your password?{' '}

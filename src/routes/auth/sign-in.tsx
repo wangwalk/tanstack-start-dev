@@ -4,6 +4,9 @@ import { z } from 'zod'
 import { authClient } from '#/lib/auth-client'
 import AuthLayout from '#/components/AuthLayout'
 import { SITE_TITLE, SITE_URL } from '#/lib/site'
+import { Button } from '#/components/ui/button'
+import { Input } from '#/components/ui/input'
+import { Label } from '#/components/ui/label'
 
 const signInSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -70,10 +73,10 @@ function SignInPage() {
     <AuthLayout title="Welcome back" subtitle="Sign in to your account">
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <div>
-          <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]">
+          <Label htmlFor="email" className="mb-1.5">
             Email
-          </label>
-          <input
+          </Label>
+          <Input
             id="email"
             type="email"
             value={email}
@@ -81,15 +84,14 @@ function SignInPage() {
             placeholder="you@example.com"
             required
             disabled={isLoading}
-            className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-60"
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]">
+          <Label htmlFor="password" className="mb-1.5">
             Password
-          </label>
-          <input
+          </Label>
+          <Input
             id="password"
             type="password"
             value={password}
@@ -97,7 +99,6 @@ function SignInPage() {
             placeholder="Enter your password"
             required
             disabled={isLoading}
-            className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-60"
           />
         </div>
 
@@ -116,10 +117,10 @@ function SignInPage() {
           </div>
         )}
 
-        <button
+        <Button
           type="submit"
           disabled={isLoading}
-          className="w-full rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)] disabled:pointer-events-none disabled:opacity-60"
+          className="w-full rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
         >
           {isLoading ? (
             <span className="inline-flex items-center gap-2">
@@ -132,7 +133,7 @@ function SignInPage() {
           ) : (
             'Sign In'
           )}
-        </button>
+        </Button>
 
         <div className="relative my-2">
           <div className="absolute inset-0 flex items-center">
@@ -144,8 +145,9 @@ function SignInPage() {
         </div>
 
         <div className="flex flex-col gap-3">
-          <button
+          <Button
             type="button"
+            variant="outline"
             disabled={isLoading || socialLoading !== null}
             onClick={async () => {
               setSocialLoading('github')
@@ -160,7 +162,7 @@ function SignInPage() {
                 setSocialLoading(null)
               }
             }}
-            className="flex w-full items-center justify-center gap-2.5 rounded-full border border-[var(--line)] bg-[var(--surface)] px-6 py-2.5 text-sm font-medium text-[var(--sea-ink)] transition hover:bg-[var(--sand)] disabled:pointer-events-none disabled:opacity-60"
+            className="w-full rounded-full border-[var(--line)] bg-[var(--surface)] hover:bg-[var(--sand)]"
           >
             {socialLoading === 'github' ? (
               <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
@@ -173,10 +175,11 @@ function SignInPage() {
               </svg>
             )}
             Continue with GitHub
-          </button>
+          </Button>
 
-          <button
+          <Button
             type="button"
+            variant="outline"
             disabled={isLoading || socialLoading !== null}
             onClick={async () => {
               setSocialLoading('google')
@@ -191,7 +194,7 @@ function SignInPage() {
                 setSocialLoading(null)
               }
             }}
-            className="flex w-full items-center justify-center gap-2.5 rounded-full border border-[var(--line)] bg-[var(--surface)] px-6 py-2.5 text-sm font-medium text-[var(--sea-ink)] transition hover:bg-[var(--sand)] disabled:pointer-events-none disabled:opacity-60"
+            className="w-full rounded-full border-[var(--line)] bg-[var(--surface)] hover:bg-[var(--sand)]"
           >
             {socialLoading === 'google' ? (
               <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
@@ -207,7 +210,7 @@ function SignInPage() {
               </svg>
             )}
             Continue with Google
-          </button>
+          </Button>
         </div>
 
         <p className="text-center text-sm text-[var(--sea-ink-soft)]">
