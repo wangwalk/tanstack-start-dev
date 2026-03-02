@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Link, useRouterState } from '@tanstack/react-router'
+import { Link, useRouteContext, useRouterState } from '@tanstack/react-router'
 import { LayoutDashboard, Users, Menu, X, LogOut } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { authClient } from '#/lib/auth-client'
 import ThemeToggle from '#/components/ThemeToggle'
 import { cn } from '#/lib/utils'
+import { Button } from '#/components/ui/button'
 
 interface NavItem {
   to: string
@@ -21,7 +22,7 @@ const navItems: NavItem[] = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = useRouterState({ select: (s) => s.location.pathname })
-  const { data: session } = authClient.useSession()
+  const { session } = useRouteContext({ from: '/admin' })
 
   useEffect(() => {
     setSidebarOpen(false)
@@ -57,13 +58,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               Admin
             </span>
           </Link>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => setSidebarOpen(false)}
-            className="rounded-lg p-1 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)] md:hidden"
+            className="text-[var(--sea-ink-soft)] hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)] md:hidden"
           >
             <X className="h-5 w-5" />
-          </button>
+          </Button>
         </div>
 
         {/* Navigation */}
@@ -126,14 +129,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </p>
               </div>
             </div>
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               onClick={() => void authClient.signOut()}
-              className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--line)] px-3 py-1.5 text-sm font-medium text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
+              className="mt-3 w-full gap-2 rounded-lg border-[var(--line)] text-[var(--sea-ink-soft)] hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
             >
               <LogOut className="h-3.5 w-3.5" />
               Sign out
-            </button>
+            </Button>
           </div>
         )}
       </aside>
@@ -142,13 +147,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top header */}
         <header className="flex h-14 shrink-0 items-center gap-3 border-b border-[var(--line)] bg-[var(--header-bg)] px-4 backdrop-blur-sm md:px-6">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => setSidebarOpen(true)}
-            className="rounded-lg p-1.5 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)] md:hidden"
+            className="text-[var(--sea-ink-soft)] hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)] md:hidden"
           >
             <Menu className="h-5 w-5" />
-          </button>
+          </Button>
 
           <div className="ml-auto flex items-center gap-2">
             <ThemeToggle />

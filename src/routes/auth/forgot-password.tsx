@@ -1,15 +1,23 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect } from '@tanstack/react-router'
 import { useState } from 'react'
 import { z } from 'zod'
 import { authClient } from '#/lib/auth-client'
 import AuthLayout from '#/components/AuthLayout'
 import { SITE_TITLE, SITE_URL } from '#/lib/site'
+import { Button } from '#/components/ui/button'
+import { Input } from '#/components/ui/input'
+import { Label } from '#/components/ui/label'
 
 const forgotPasswordSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
 })
 
 export const Route = createFileRoute('/auth/forgot-password')({
+  beforeLoad: async ({ context }) => {
+    if (context.session) {
+      throw redirect({ to: '/dashboard' })
+    }
+  },
   head: () => ({
     links: [{ rel: 'canonical', href: `${SITE_URL}/auth/forgot-password` }],
     meta: [
@@ -68,12 +76,12 @@ function ForgotPasswordPage() {
           <p className="mb-6 text-sm text-[var(--sea-ink-soft)]">
             Click the link in the email to reset your password. The link expires in 60 minutes.
           </p>
-          <Link
-            to="/auth/sign-in"
-            className="inline-block rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] no-underline transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+          <Button
+            asChild
+            className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
           >
-            Back to Sign In
-          </Link>
+            <Link to="/auth/sign-in">Back to Sign In</Link>
+          </Button>
         </div>
       </AuthLayout>
     )
@@ -83,10 +91,10 @@ function ForgotPasswordPage() {
     <AuthLayout title="Forgot your password?" subtitle="Enter your email and we'll send you a reset link">
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <div>
-          <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]">
+          <Label htmlFor="email" className="mb-1.5">
             Email
-          </label>
-          <input
+          </Label>
+          <Input
             id="email"
             type="email"
             value={email}
@@ -94,7 +102,6 @@ function ForgotPasswordPage() {
             placeholder="you@example.com"
             required
             disabled={isLoading}
-            className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-60"
           />
         </div>
 
@@ -104,10 +111,10 @@ function ForgotPasswordPage() {
           </div>
         )}
 
-        <button
+        <Button
           type="submit"
           disabled={isLoading}
-          className="w-full rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)] disabled:pointer-events-none disabled:opacity-60"
+          className="w-full rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
         >
           {isLoading ? (
             <span className="inline-flex items-center gap-2">
@@ -120,7 +127,7 @@ function ForgotPasswordPage() {
           ) : (
             'Send Reset Link'
           )}
-        </button>
+        </Button>
 
         <p className="text-center text-sm text-[var(--sea-ink-soft)]">
           Remember your password?{' '}

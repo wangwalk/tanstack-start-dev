@@ -14,6 +14,7 @@ import TanStackQueryProvider from '../integrations/tanstack-query/root-provider'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
+import { Toaster } from '#/components/ui/sonner'
 import appCss from '../styles.css?url'
 import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from '#/lib/site'
 import { getSession } from '#/lib/auth-guard'
@@ -78,6 +79,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           {!isDashboard && <Header />}
           {children}
           {!isDashboard && <Footer />}
+          <Toaster />
           <TanStackDevtools
             config={{
               position: 'bottom-right',

@@ -1,9 +1,12 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect } from '@tanstack/react-router'
 import { useState } from 'react'
 import { z } from 'zod'
 import { authClient } from '#/lib/auth-client'
 import AuthLayout from '#/components/AuthLayout'
 import { SITE_TITLE, SITE_URL } from '#/lib/site'
+import { Button } from '#/components/ui/button'
+import { Input } from '#/components/ui/input'
+import { Label } from '#/components/ui/label'
 
 const signUpSchema = z
   .object({
@@ -18,6 +21,11 @@ const signUpSchema = z
   })
 
 export const Route = createFileRoute('/auth/sign-up')({
+  beforeLoad: async ({ context }) => {
+    if (context.session) {
+      throw redirect({ to: '/dashboard' })
+    }
+  },
   head: () => ({
     links: [{ rel: 'canonical', href: `${SITE_URL}/auth/sign-up` }],
     meta: [
@@ -81,12 +89,12 @@ function SignUpPage() {
           <p className="mb-6 text-sm text-[var(--sea-ink-soft)]">
             Click the link in the email to verify your account, then sign in.
           </p>
-          <Link
-            to="/auth/sign-in"
-            className="inline-block rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] no-underline transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+          <Button
+            asChild
+            className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
           >
-            Go to Sign In
-          </Link>
+            <Link to="/auth/sign-in">Go to Sign In</Link>
+          </Button>
         </div>
       </AuthLayout>
     )
@@ -96,10 +104,10 @@ function SignUpPage() {
     <AuthLayout title="Create an account" subtitle="Get started for free">
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <div>
-          <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]">
+          <Label htmlFor="name" className="mb-1.5">
             Name
-          </label>
-          <input
+          </Label>
+          <Input
             id="name"
             type="text"
             value={name}
@@ -107,15 +115,14 @@ function SignUpPage() {
             placeholder="Your name"
             required
             disabled={isLoading}
-            className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-60"
           />
         </div>
 
         <div>
-          <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]">
+          <Label htmlFor="email" className="mb-1.5">
             Email
-          </label>
-          <input
+          </Label>
+          <Input
             id="email"
             type="email"
             value={email}
@@ -123,15 +130,14 @@ function SignUpPage() {
             placeholder="you@example.com"
             required
             disabled={isLoading}
-            className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-60"
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]">
+          <Label htmlFor="password" className="mb-1.5">
             Password
-          </label>
-          <input
+          </Label>
+          <Input
             id="password"
             type="password"
             value={password}
@@ -139,15 +145,14 @@ function SignUpPage() {
             placeholder="At least 8 characters"
             required
             disabled={isLoading}
-            className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-60"
           />
         </div>
 
         <div>
-          <label htmlFor="confirmPassword" className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]">
+          <Label htmlFor="confirmPassword" className="mb-1.5">
             Confirm Password
-          </label>
-          <input
+          </Label>
+          <Input
             id="confirmPassword"
             type="password"
             value={confirmPassword}
@@ -155,7 +160,6 @@ function SignUpPage() {
             placeholder="Re-enter your password"
             required
             disabled={isLoading}
-            className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-60"
           />
         </div>
 
@@ -165,10 +169,10 @@ function SignUpPage() {
           </div>
         )}
 
-        <button
+        <Button
           type="submit"
           disabled={isLoading}
-          className="w-full rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)] disabled:pointer-events-none disabled:opacity-60"
+          className="w-full rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
         >
           {isLoading ? (
             <span className="inline-flex items-center gap-2">
@@ -181,7 +185,7 @@ function SignUpPage() {
           ) : (
             'Sign Up'
           )}
-        </button>
+        </Button>
 
         <div className="relative my-2">
           <div className="absolute inset-0 flex items-center">
@@ -193,8 +197,9 @@ function SignUpPage() {
         </div>
 
         <div className="flex flex-col gap-3">
-          <button
+          <Button
             type="button"
+            variant="outline"
             disabled={isLoading || socialLoading !== null}
             onClick={async () => {
               setSocialLoading('github')
@@ -209,7 +214,7 @@ function SignUpPage() {
                 setSocialLoading(null)
               }
             }}
-            className="flex w-full items-center justify-center gap-2.5 rounded-full border border-[var(--line)] bg-[var(--surface)] px-6 py-2.5 text-sm font-medium text-[var(--sea-ink)] transition hover:bg-[var(--sand)] disabled:pointer-events-none disabled:opacity-60"
+            className="w-full rounded-full border-[var(--line)] bg-[var(--surface)] hover:bg-[var(--sand)]"
           >
             {socialLoading === 'github' ? (
               <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
@@ -222,10 +227,11 @@ function SignUpPage() {
               </svg>
             )}
             Continue with GitHub
-          </button>
+          </Button>
 
-          <button
+          <Button
             type="button"
+            variant="outline"
             disabled={isLoading || socialLoading !== null}
             onClick={async () => {
               setSocialLoading('google')
@@ -240,7 +246,7 @@ function SignUpPage() {
                 setSocialLoading(null)
               }
             }}
-            className="flex w-full items-center justify-center gap-2.5 rounded-full border border-[var(--line)] bg-[var(--surface)] px-6 py-2.5 text-sm font-medium text-[var(--sea-ink)] transition hover:bg-[var(--sand)] disabled:pointer-events-none disabled:opacity-60"
+            className="w-full rounded-full border-[var(--line)] bg-[var(--surface)] hover:bg-[var(--sand)]"
           >
             {socialLoading === 'google' ? (
               <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
@@ -256,7 +262,7 @@ function SignUpPage() {
               </svg>
             )}
             Continue with Google
-          </button>
+          </Button>
         </div>
 
         <p className="text-center text-sm text-[var(--sea-ink-soft)]">
