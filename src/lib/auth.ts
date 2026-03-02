@@ -5,7 +5,7 @@ import { admin } from 'better-auth/plugins/admin'
 import { sendEmail } from '#/lib/email'
 import VerificationEmail from '#/emails/verification'
 import PasswordResetEmail from '#/emails/password-reset'
-import { SITE_TITLE } from '#/lib/site'
+import { SITE_TITLE, NEWSLETTER_AUTO_SUBSCRIBE } from '#/lib/site'
 
 import { db } from '#/db/index'
 import * as schema from '#/db/schema'
@@ -76,4 +76,20 @@ export const auth = betterAuth({
     },
   },
   plugins: [admin(), tanstackStartCookies()],
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          if (!NEWSLETTER_AUTO_SUBSCRIBE) return
+          // Import lazily to avoid a circular dependency at module load time
+          const { addContact } = await import('#/lib/newsletter')
+          try {
+            await addContact(user.email)
+          } catch {
+            // Auto-subscribe is best-effort — never block account creation
+          }
+        },
+      },
+    },
+  },
 })
