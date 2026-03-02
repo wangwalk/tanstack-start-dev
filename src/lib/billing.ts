@@ -8,7 +8,9 @@ import type { PlanKey, BillingInterval } from '#/config/billing'
 import { userFn } from '#/lib/server-fn'
 
 export const createCheckoutSession = userFn({ method: 'POST' })
-  .inputValidator((input: { plan: PlanKey; interval: BillingInterval }) => input)
+  .inputValidator(
+    (input: { plan: PlanKey; interval?: BillingInterval }) => input,
+  )
   .handler(async ({ data, context }) => {
     const userId = context.user.id
     const { plan, interval } = data
@@ -40,18 +42,27 @@ export const createCheckoutSession = userFn({ method: 'POST' })
         .where(eq(user.id, userId))
     }
 
-    const priceId = BILLING_PLANS[plan][interval].priceId
+    const planConfig = BILLING_PLANS[plan]
+
+    let priceId: string
+    if (planConfig.mode === 'payment') {
+      priceId = planConfig.priceId
+    } else {
+      if (!interval) throw new Error(`interval is required for plan: ${plan}`)
+      priceId = planConfig[interval].priceId
+    }
+
     if (!priceId) {
-      throw new Error(`No price configured for ${plan}/${interval}`)
+      throw new Error(`No price configured for ${plan}`)
     }
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
-      mode: 'subscription',
+      mode: planConfig.mode,
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${SITE_URL}/dashboard?checkout=success`,
       cancel_url: `${SITE_URL}/?checkout=cancelled`,
-      metadata: { userId, plan, interval },
+      metadata: { userId, plan, interval: interval ?? '' },
     })
 
     return { url: session.url }

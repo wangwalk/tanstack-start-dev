@@ -35,6 +35,7 @@ const YEARLY_DISCOUNT_PERCENT = Math.round(
 
 function getPlans(interval: BillingInterval) {
   const pro = BILLING_PLANS.pro
+  const lifetime = BILLING_PLANS.lifetime
   const isYearly = interval === 'yearly'
 
   return [
@@ -52,6 +53,7 @@ function getPlans(interval: BillingInterval) {
       cta: 'Get Started',
       highlighted: false,
       planKey: null as PlanKey | null,
+      interval: interval as BillingInterval | undefined,
       href: '/auth/sign-up',
     },
     {
@@ -70,25 +72,26 @@ function getPlans(interval: BillingInterval) {
       cta: 'Start Free Trial',
       highlighted: true,
       planKey: 'pro' as PlanKey,
+      interval: interval as BillingInterval | undefined,
       href: null as string | null,
     },
     {
-      name: 'Enterprise',
-      price: 'Custom',
-      period: '',
-      desc: 'For large organizations',
+      name: 'Lifetime',
+      price: lifetime.amount,
+      period: ' one-time',
+      desc: 'Pay once, own it forever',
       features: [
         'Everything in Pro',
-        'Unlimited storage',
-        'Dedicated support',
-        'SSO & SAML',
-        'SLA guarantee',
-        'Custom integrations',
+        'All future updates',
+        'Lifetime support',
+        'No recurring fees',
+        'Priority feature requests',
       ],
-      cta: 'Contact Sales',
+      cta: 'Get Lifetime Access',
       highlighted: false,
-      planKey: null as PlanKey | null,
-      href: '/contact',
+      planKey: 'lifetime' as PlanKey,
+      interval: undefined as BillingInterval | undefined,
+      href: null as string | null,
     },
   ]
 }
@@ -118,7 +121,7 @@ function PricingPage() {
     )
   }
 
-  async function handleUpgrade(planKey: PlanKey) {
+  async function handleUpgrade(planKey: PlanKey, planInterval?: BillingInterval) {
     if (!session?.user) {
       window.location.href = '/auth/sign-up'
       return
@@ -126,7 +129,7 @@ function PricingPage() {
     setCheckoutLoading(true)
     try {
       const result = await createCheckoutSession({
-        data: { plan: planKey, interval },
+        data: { plan: planKey, interval: planInterval },
       })
       if (result.url) {
         window.location.href = result.url
@@ -237,7 +240,7 @@ function PricingPage() {
                 <button
                   type="button"
                   disabled={checkoutLoading}
-                  onClick={() => handleUpgrade(plan.planKey!)}
+                  onClick={() => handleUpgrade(plan.planKey!, plan.interval)}
                   className={`block w-full rounded-full px-5 py-2.5 text-center text-sm font-semibold transition hover:-translate-y-0.5 disabled:opacity-50 ${
                     plan.highlighted
                       ? 'border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:bg-[var(--lagoon-deep)]'
