@@ -44,3 +44,10 @@ export const BILLING_PLANS = {
 
 export type PlanKey = keyof typeof BILLING_PLANS
 export type BillingInterval = 'monthly' | 'yearly'
+
+export const REGISTER_GIFT_CREDITS = 100
+
+export const PLAN_MONTHLY_CREDITS = {
+  pro: 500,
+  lifetime: 300,
+} as const

@@ -80,6 +80,14 @@ export const auth = betterAuth({
     user: {
       create: {
         after: async (user) => {
+          // Register gift credits — best-effort
+          const { addRegisterGiftCredits } = await import('#/lib/credits')
+          try {
+            await addRegisterGiftCredits(user.id)
+          } catch {
+            // Best-effort — never block account creation
+          }
+
           if (!NEWSLETTER_AUTO_SUBSCRIBE) return
           // Import lazily to avoid a circular dependency at module load time
           const { addContact } = await import('#/lib/newsletter')

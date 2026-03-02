@@ -95,6 +95,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         dbUser.id,
         pack.credits,
         `Purchased ${pack.name} (${pack.credits} credits)`,
+        'purchase',
       )
     }
     return
