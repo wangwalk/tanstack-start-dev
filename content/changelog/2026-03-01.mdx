@@ -1,0 +1,21 @@
+---
+title: Newsletter Subscriptions & Beehiiv Integration
+description: Users can now subscribe to your newsletter via Resend Audiences or Beehiiv, with optional auto-subscribe on sign-up.
+date: "2026-03-01"
+tags: [growth, email]
+---
+
+## Newsletter Subscriptions
+
+You can now collect newsletter subscribers directly from your app. Stockholm ships with two provider options out of the box:
+
+- **Resend Audiences** — manage subscribers in your existing Resend account
+- **Beehiiv** — sync subscribers to your Beehiiv publication
+
+### Auto-subscribe on sign-up
+
+Set `NEWSLETTER_AUTO_SUBSCRIBE=true` in your environment to automatically add new users to your mailing list when they create an account.
+
+### Subscribe endpoint
+
+A `/api/newsletter/subscribe` endpoint is available for custom subscribe forms. It validates the email, checks for duplicates, and forwards to your configured provider.

@@ -1,0 +1,24 @@
+---
+title: Pluggable Analytics
+description: Drop in PostHog, Umami, Plausible, GA4, or OpenPanel with a single environment variable — no code changes required.
+date: "2026-02-15"
+tags: [analytics, dx]
+---
+
+## Pluggable Analytics
+
+Stockholm now supports five analytics providers through a unified, zero-config integration:
+
+| Provider | Env var value |
+|----------|--------------|
+| PostHog | `posthog` |
+| Umami | `umami` |
+| Plausible | `plausible` |
+| Google Analytics 4 | `ga4` |
+| OpenPanel | `openpanel` |
+
+### Setup
+
+Set `VITE_ANALYTICS_PROVIDER` to your chosen provider and add the corresponding API key or site ID. The analytics script is injected automatically — no component wiring needed.
+
+All providers track page views on route change via TanStack Router's `onResolved` hook.

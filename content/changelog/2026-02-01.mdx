@@ -1,0 +1,27 @@
+---
+title: Cloudflare Turnstile CAPTCHA
+description: Protect your sign-up and contact forms from bots with Cloudflare Turnstile — a privacy-friendly alternative to reCAPTCHA.
+date: "2026-02-01"
+tags: [security, auth]
+---
+
+## Cloudflare Turnstile CAPTCHA
+
+Stockholm now includes first-class support for [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/), a frictionless, privacy-respecting CAPTCHA solution.
+
+### What's included
+
+- `<Turnstile />` React component wrapping the Turnstile widget
+- Server-side token verification via the Cloudflare Siteverify API
+- Pre-wired into the sign-up form — protect registration without any extra setup
+
+### Configuration
+
+Add your site key and secret key to your environment:
+
+```bash
+VITE_TURNSTILE_SITE_KEY=0x...
+TURNSTILE_SECRET_KEY=0x...
+```
+
+Turnstile works in invisible mode by default, so users won't see a challenge unless bot signals are detected.

@@ -23,7 +23,7 @@ This file provides guidance to Claude Code when working with code in this reposi
 **Linear team key: `NWA`**
 
 ### Before Starting Any Task
-1. Read the full issue with Linear MCP: `mcp__claude_ai_Linear__get_issue`
+1. Read the full issue using the `/linear-cli` skill (e.g. `linear-cli get NWA-150`)
 2. Output a short "Development Plan" (what files change, what approach) and wait for user approval
 3. Mark issue as **In Progress** before writing any code
 
