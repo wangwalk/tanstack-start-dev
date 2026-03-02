@@ -1,7 +1,14 @@
-export const SITE_TITLE = 'Stockholm'
-export const SITE_DESCRIPTION =
-  'The modern platform for building, deploying, and scaling your next great product.'
-export const SITE_URL = 'https://example.com'
+/**
+ * Compatibility re-exports from the central site config.
+ *
+ * Existing imports (`import { SITE_TITLE } from '#/lib/site'`) continue to
+ * work unchanged. New code should import directly from `#/config/site`.
+ */
+import { siteConfig } from '#/config/site'
 
-// Newsletter: set to true to auto-subscribe users when they create an account
+export const SITE_TITLE = siteConfig.name
+export const SITE_DESCRIPTION = siteConfig.description
+export const SITE_URL = siteConfig.url
+
+/** @deprecated — use `siteConfig.features.newsletter` instead */
 export const NEWSLETTER_AUTO_SUBSCRIBE = false
