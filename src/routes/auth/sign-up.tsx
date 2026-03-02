@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect } from '@tanstack/react-router'
 import { useState } from 'react'
 import { z } from 'zod'
 import { authClient } from '#/lib/auth-client'
@@ -21,6 +21,11 @@ const signUpSchema = z
   })
 
 export const Route = createFileRoute('/auth/sign-up')({
+  beforeLoad: async ({ context }) => {
+    if (context.session) {
+      throw redirect({ to: '/dashboard' })
+    }
+  },
   head: () => ({
     links: [{ rel: 'canonical', href: `${SITE_URL}/auth/sign-up` }],
     meta: [

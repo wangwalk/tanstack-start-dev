@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { Card, CardContent, CardHeader } from '#/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '#/components/ui/card'
 
 interface AuthLayoutProps {
   children: React.ReactNode
@@ -21,11 +21,15 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
               Stockholm
             </Link>
           </div>
-          <h1 className="display-title text-2xl font-bold text-[var(--sea-ink)] sm:text-3xl">
-            {title}
-          </h1>
+          <CardTitle asChild>
+            <h1 className="display-title text-2xl font-bold text-[var(--sea-ink)] sm:text-3xl">
+              {title}
+            </h1>
+          </CardTitle>
           {subtitle && (
-            <p className="text-sm text-[var(--sea-ink-soft)]">{subtitle}</p>
+            <CardDescription className="text-[var(--sea-ink-soft)]">
+              {subtitle}
+            </CardDescription>
           )}
         </CardHeader>
         <CardContent>

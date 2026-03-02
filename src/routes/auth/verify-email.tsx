@@ -24,7 +24,7 @@ export const Route = createFileRoute('/auth/verify-email')({
 
 function VerifyEmailPage() {
   const { error } = Route.useSearch()
-  const { data: session } = authClient.useSession()
+  const { session } = Route.useRouteContext()
   const [resendStatus, setResendStatus] = useState<'idle' | 'loading' | 'sent' | 'error'>('idle')
 
   async function handleResend() {
@@ -55,6 +55,7 @@ function VerifyEmailPage() {
           {session?.user ? (
             <>
               <Button
+                type="button"
                 onClick={handleResend}
                 disabled={resendStatus === 'loading' || resendStatus === 'sent'}
                 className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"

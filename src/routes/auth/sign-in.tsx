@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { z } from 'zod'
 import { authClient } from '#/lib/auth-client'
@@ -19,6 +19,11 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute('/auth/sign-in')({
   validateSearch: searchSchema,
+  beforeLoad: async ({ context }) => {
+    if (context.session) {
+      throw redirect({ to: '/dashboard' })
+    }
+  },
   head: () => ({
     links: [{ rel: 'canonical', href: `${SITE_URL}/auth/sign-in` }],
     meta: [

@@ -11,8 +11,7 @@ export const Route = createFileRoute('/dashboard/')({
 })
 
 function DashboardOverviewPage() {
-  const { data: session } = authClient.useSession()
-  const { subscription } = Route.useRouteContext()
+  const { session, subscription } = Route.useRouteContext()
   const [resendStatus, setResendStatus] = useState<
     'idle' | 'loading' | 'sent' | 'error'
   >('idle')
