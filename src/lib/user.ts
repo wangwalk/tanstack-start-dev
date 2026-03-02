@@ -1,17 +1,11 @@
-import { createServerFn } from '@tanstack/react-start'
-import { getRequest } from '@tanstack/react-start/server'
 import { eq, and } from 'drizzle-orm'
 import { db } from '#/db/index'
 import { user, account, session } from '#/db/schema'
-import { auth } from '#/lib/auth'
+import { userFn } from '#/lib/server-fn'
 
-export const updateUserName = createServerFn({ method: 'POST' })
+export const updateUserName = userFn({ method: 'POST' })
   .inputValidator((input: { name: string }) => input)
-  .handler(async ({ data }) => {
-    const request = getRequest()
-    const currentSession = await auth.api.getSession({ headers: request.headers })
-    if (!currentSession) throw new Error('Unauthorized')
-
+  .handler(async ({ data, context }) => {
     const trimmed = data.name.trim()
     if (!trimmed) {
       throw new Error('Name is required')
@@ -20,16 +14,12 @@ export const updateUserName = createServerFn({ method: 'POST' })
     await db
       .update(user)
       .set({ name: trimmed, updatedAt: new Date() })
-      .where(eq(user.id, currentSession.user.id))
+      .where(eq(user.id, context.user.id))
 
     return { success: true, name: trimmed }
   })
 
-export const getLinkedAccounts = createServerFn().handler(async () => {
-  const request = getRequest()
-  const currentSession = await auth.api.getSession({ headers: request.headers })
-  if (!currentSession) throw new Error('Unauthorized')
-
+export const getLinkedAccounts = userFn().handler(async ({ context }) => {
   const accounts = await db
     .select({
       providerId: account.providerId,
@@ -37,16 +27,12 @@ export const getLinkedAccounts = createServerFn().handler(async () => {
       createdAt: account.createdAt,
     })
     .from(account)
-    .where(eq(account.userId, currentSession.user.id))
+    .where(eq(account.userId, context.user.id))
 
   return accounts.filter((a) => a.providerId !== 'credential')
 })
 
-export const getActiveSessions = createServerFn().handler(async () => {
-  const request = getRequest()
-  const currentSession = await auth.api.getSession({ headers: request.headers })
-  if (!currentSession) throw new Error('Unauthorized')
-
+export const getActiveSessions = userFn().handler(async ({ context }) => {
   const sessions = await db
     .select({
       id: session.id,
@@ -56,24 +42,20 @@ export const getActiveSessions = createServerFn().handler(async () => {
       userAgent: session.userAgent,
     })
     .from(session)
-    .where(eq(session.userId, currentSession.user.id))
+    .where(eq(session.userId, context.user.id))
 
   return sessions.map((s) => ({
     ...s,
-    isCurrent: s.id === currentSession.session.id,
+    isCurrent: s.id === context.session.id,
   }))
 })
 
-export const revokeSession = createServerFn({ method: 'POST' })
+export const revokeSession = userFn({ method: 'POST' })
   .inputValidator((input: { sessionId: string }) => input)
-  .handler(async ({ data }) => {
-    const request = getRequest()
-    const currentSession = await auth.api.getSession({ headers: request.headers })
-    if (!currentSession) throw new Error('Unauthorized')
-
+  .handler(async ({ data, context }) => {
     const deleted = await db
       .delete(session)
-      .where(and(eq(session.id, data.sessionId), eq(session.userId, currentSession.user.id)))
+      .where(and(eq(session.id, data.sessionId), eq(session.userId, context.user.id)))
       .returning({ id: session.id })
 
     if (deleted.length === 0) throw new Error('Session not found')
@@ -81,17 +63,13 @@ export const revokeSession = createServerFn({ method: 'POST' })
     return { success: true }
   })
 
-export const updateUserAvatar = createServerFn({ method: 'POST' })
+export const updateUserAvatar = userFn({ method: 'POST' })
   .inputValidator((input: { avatarUrl: string }) => input)
-  .handler(async ({ data }) => {
-    const request = getRequest()
-    const currentSession = await auth.api.getSession({ headers: request.headers })
-    if (!currentSession) throw new Error('Unauthorized')
-
+  .handler(async ({ data, context }) => {
     await db
       .update(user)
       .set({ image: data.avatarUrl, updatedAt: new Date() })
-      .where(eq(user.id, currentSession.user.id))
+      .where(eq(user.id, context.user.id))
 
     return { success: true, avatarUrl: data.avatarUrl }
   })

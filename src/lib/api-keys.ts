@@ -1,19 +1,13 @@
-import { createServerFn } from '@tanstack/react-start'
-import { getRequest } from '@tanstack/react-start/server'
 import { eq, and } from 'drizzle-orm'
 import crypto from 'node:crypto'
 import { db } from '#/db/index'
 import { apiKey } from '#/db/schema'
-import { auth } from '#/lib/auth'
+import { userFn } from '#/lib/server-fn'
 
-export const createApiKey = createServerFn({ method: 'POST' })
+export const createApiKey = userFn({ method: 'POST' })
   .inputValidator((input: { name: string }) => input)
-  .handler(async ({ data }) => {
-    const request = getRequest()
-    const currentSession = await auth.api.getSession({ headers: request.headers })
-    if (!currentSession) throw new Error('Unauthorized')
-    const userId = currentSession.user.id
-
+  .handler(async ({ data, context }) => {
+    const userId = context.user.id
     const { name } = data
     const rawKey = `nwa_${crypto.randomBytes(36).toString('base64url')}`
     const keyPrefix = rawKey.slice(0, 12)
@@ -32,11 +26,7 @@ export const createApiKey = createServerFn({ method: 'POST' })
     return { id, name, keyPrefix, key: rawKey, createdAt: new Date().toISOString() }
   })
 
-export const listApiKeys = createServerFn().handler(async () => {
-  const request = getRequest()
-  const currentSession = await auth.api.getSession({ headers: request.headers })
-  if (!currentSession) throw new Error('Unauthorized')
-
+export const listApiKeys = userFn().handler(async ({ context }) => {
   const keys = await db
     .select({
       id: apiKey.id,
@@ -47,22 +37,18 @@ export const listApiKeys = createServerFn().handler(async () => {
       expiresAt: apiKey.expiresAt,
     })
     .from(apiKey)
-    .where(eq(apiKey.userId, currentSession.user.id))
+    .where(eq(apiKey.userId, context.user.id))
     .orderBy(apiKey.createdAt)
 
   return keys
 })
 
-export const revokeApiKey = createServerFn({ method: 'POST' })
+export const revokeApiKey = userFn({ method: 'POST' })
   .inputValidator((input: { keyId: string }) => input)
-  .handler(async ({ data }) => {
-    const request = getRequest()
-    const currentSession = await auth.api.getSession({ headers: request.headers })
-    if (!currentSession) throw new Error('Unauthorized')
-
+  .handler(async ({ data, context }) => {
     const deleted = await db
       .delete(apiKey)
-      .where(and(eq(apiKey.id, data.keyId), eq(apiKey.userId, currentSession.user.id)))
+      .where(and(eq(apiKey.id, data.keyId), eq(apiKey.userId, context.user.id)))
       .returning({ id: apiKey.id })
 
     if (deleted.length === 0) throw new Error('API key not found')

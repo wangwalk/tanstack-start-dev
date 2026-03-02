@@ -1,23 +1,15 @@
-import { createServerFn } from '@tanstack/react-start'
-import { getRequest } from '@tanstack/react-start/server'
 import { eq, ilike, and, count, desc } from 'drizzle-orm'
 import { db } from '#/db/index'
 import { user } from '#/db/schema'
-import { auth } from '#/lib/auth'
+import { adminFn } from '#/lib/server-fn'
 
 const PAGE_SIZE = 20
 
-export const listUsers = createServerFn({ method: 'GET' })
+export const listUsers = adminFn({ method: 'GET' })
   .inputValidator(
     (input: { page: number; search?: string; status?: string }) => input,
   )
   .handler(async ({ data }) => {
-    const request = getRequest()
-    const session = await auth.api.getSession({ headers: request.headers })
-    if (!session || session.user.role !== 'admin') {
-      throw new Error('Unauthorized')
-    }
-
     const { page, search, status } = data
     const offset = (page - 1) * PAGE_SIZE
 
@@ -61,15 +53,9 @@ export const listUsers = createServerFn({ method: 'GET' })
     }
   })
 
-export const getUserById = createServerFn({ method: 'GET' })
+export const getUserById = adminFn({ method: 'GET' })
   .inputValidator((input: { userId: string }) => input)
   .handler(async ({ data }) => {
-    const request = getRequest()
-    const session = await auth.api.getSession({ headers: request.headers })
-    if (!session || session.user.role !== 'admin') {
-      throw new Error('Unauthorized')
-    }
-
     const [row] = await db
       .select()
       .from(user)
@@ -80,16 +66,9 @@ export const getUserById = createServerFn({ method: 'GET' })
     return row
   })
 
-export const updateUserRole = createServerFn({ method: 'POST' })
+export const updateUserRole = adminFn({ method: 'POST' })
   .inputValidator((input: { userId: string; role: 'user' | 'admin' }) => input)
   .handler(async ({ data }) => {
-    // Defense-in-depth: verify caller is admin
-    const request = getRequest()
-    const session = await auth.api.getSession({ headers: request.headers })
-    if (!session || session.user.role !== 'admin') {
-      throw new Error('Unauthorized')
-    }
-
     await db
       .update(user)
       .set({ role: data.role, updatedAt: new Date() })
