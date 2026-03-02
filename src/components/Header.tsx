@@ -36,6 +36,13 @@ export default function Header() {
           >
             Blog
           </Link>
+          <Link
+            to="/changelog"
+            className="nav-link"
+            activeProps={{ className: 'nav-link is-active' }}
+          >
+            Changelog
+          </Link>
         </div>
 
         <div className="ml-auto flex items-center gap-1.5 sm:gap-2">

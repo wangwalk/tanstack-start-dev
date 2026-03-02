@@ -52,6 +52,28 @@ const legal = defineCollection({
   },
 })
 
+const changelog = defineCollection({
+  name: 'changelog',
+  directory: 'content/changelog',
+  include: '**/*.mdx',
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.string(),
+    tags: z.array(z.string()).optional(),
+  }),
+  transform: async (document, context) => {
+    return {
+      ...document,
+      slug: document._meta.path,
+      date: new Date(document.date).toISOString(),
+      mdx: await compileMDX(context, document, {
+        remarkPlugins: [remarkGfm],
+      }),
+    }
+  },
+})
+
 export default defineConfig({
-  collections: [blog, legal],
+  collections: [blog, legal, changelog],
 })
