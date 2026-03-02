@@ -100,7 +100,7 @@ function VerifyEmailPage() {
           asChild
           className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
         >
-          <Link to="/dashboard">Go to Dashboard</Link>
+          <Link to="/dashboard" search={{ checkout: undefined }}>Go to Dashboard</Link>
         </Button>
       </div>
     </AuthLayout>

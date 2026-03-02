@@ -61,7 +61,7 @@ export const createCheckoutSession = userFn({ method: 'POST' })
       mode: planConfig.mode,
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${SITE_URL}/dashboard?checkout=success`,
-      cancel_url: `${SITE_URL}/?checkout=cancelled`,
+      cancel_url: `${SITE_URL}/pricing?checkout=cancelled`,
       metadata: { userId, plan, interval: interval ?? '' },
     })
 

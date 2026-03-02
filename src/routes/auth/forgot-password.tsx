@@ -15,7 +15,7 @@ const forgotPasswordSchema = z.object({
 export const Route = createFileRoute('/auth/forgot-password')({
   beforeLoad: async ({ context }) => {
     if (context.session) {
-      throw redirect({ to: '/dashboard' })
+      throw redirect({ to: '/dashboard', search: { checkout: undefined } })
     }
   },
   head: () => ({
