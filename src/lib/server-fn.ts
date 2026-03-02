@@ -1,12 +1,12 @@
 import { createMiddleware, createServerFn } from '@tanstack/react-start'
-import { getRequest } from '@tanstack/react-start/server'
+import { getRequestHeaders } from '@tanstack/react-start/server'
 import { auth } from '#/lib/auth'
 
 // Resolves session from cookies, injects { user, session } into context
 export const authMiddleware = createMiddleware({ type: 'function' }).server(
   async ({ next }) => {
-    const request = getRequest()
-    const s = await auth.api.getSession({ headers: request.headers })
+    const headers = getRequestHeaders()
+    const s = await auth.api.getSession({ headers })
     if (!s) throw new Error('Unauthorized')
     return next({ context: { user: s.user, session: s.session } })
   },

@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { ArrowLeft } from 'lucide-react'
-import { getUserById, updateUserRole, banUser, unbanUser } from '#/lib/admin'
+import { getUserById } from '#/lib/admin'
+import { authClient } from '#/lib/auth-client'
 import { cn } from '#/lib/utils'
 
 export const Route = createFileRoute('/admin/users/$userId')({
@@ -28,7 +29,7 @@ function AdminUserDetailPage() {
   async function handleRoleSave() {
     setSaving(true)
     try {
-      await updateUserRole({ data: { userId: userDetail.id, role } })
+      await authClient.admin.setRole({ userId: userDetail.id, role })
       setSaved(true)
       setTimeout(() => setSaved(false), 2000)
     } finally {
@@ -39,8 +40,9 @@ function AdminUserDetailPage() {
   async function handleBan() {
     setBanning(true)
     try {
-      await banUser({
-        data: { userId: userDetail.id, banReason: banReason || undefined },
+      await authClient.admin.banUser({
+        userId: userDetail.id,
+        banReason: banReason || undefined,
       })
       setBanSaved(true)
       setTimeout(() => setBanSaved(false), 2000)
@@ -52,7 +54,7 @@ function AdminUserDetailPage() {
   async function handleUnban() {
     setBanning(true)
     try {
-      await unbanUser({ data: { userId: userDetail.id } })
+      await authClient.admin.unbanUser({ userId: userDetail.id })
       setBanSaved(true)
       setTimeout(() => setBanSaved(false), 2000)
     } finally {
