@@ -12,8 +12,7 @@ export const Route = createFileRoute('/auth/banned')({
 
 function BannedPage() {
   const { data: session } = authClient.useSession()
-  const banReason = (session?.user as { banReason?: string } | undefined)
-    ?.banReason
+  const banReason = session?.user.banReason
 
   async function handleSignOut() {
     await authClient.signOut()

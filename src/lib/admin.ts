@@ -58,7 +58,20 @@ export const getUserById = adminFn({ method: 'GET' })
   .inputValidator((input: { userId: string }) => input)
   .handler(async ({ data }) => {
     const [row] = await db
-      .select()
+      .select({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        emailVerified: user.emailVerified,
+        image: user.image,
+        createdAt: user.createdAt,
+        role: user.role,
+        subscriptionStatus: user.subscriptionStatus,
+        subscriptionPlan: user.subscriptionPlan,
+        banned: user.banned,
+        banReason: user.banReason,
+        banExpires: user.banExpires,
+      })
       .from(user)
       .where(eq(user.id, data.userId))
       .limit(1)

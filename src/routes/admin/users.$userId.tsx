@@ -1,9 +1,16 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import { ArrowLeft } from 'lucide-react'
 import { getUserById } from '#/lib/admin'
 import { authClient } from '#/lib/auth-client'
 import { cn } from '#/lib/utils'
+
+const BAN_DURATION_OPTIONS = [
+  { label: 'Permanent', value: 0 },
+  { label: '1 day', value: 60 * 60 * 24 },
+  { label: '7 days', value: 60 * 60 * 24 * 7 },
+  { label: '30 days', value: 60 * 60 * 24 * 30 },
+] as const
 
 export const Route = createFileRoute('/admin/users/$userId')({
   beforeLoad: async ({ params }) => {
@@ -15,6 +22,8 @@ export const Route = createFileRoute('/admin/users/$userId')({
 
 function AdminUserDetailPage() {
   const { userDetail } = Route.useRouteContext()
+  const router = useRouter()
+
   const [role, setRole] = useState<'user' | 'admin'>(
     (userDetail.role as 'user' | 'admin') ?? 'user',
   )
@@ -22,8 +31,8 @@ function AdminUserDetailPage() {
   const [saved, setSaved] = useState(false)
 
   const [banReason, setBanReason] = useState('')
+  const [banDuration, setBanDuration] = useState<number>(0)
   const [banning, setBanning] = useState(false)
-  const [banSaved, setBanSaved] = useState(false)
   const isBanned = userDetail.banned === true
 
   async function handleRoleSave() {
@@ -32,6 +41,7 @@ function AdminUserDetailPage() {
       await authClient.admin.setRole({ userId: userDetail.id, role })
       setSaved(true)
       setTimeout(() => setSaved(false), 2000)
+      await router.invalidate()
     } finally {
       setSaving(false)
     }
@@ -43,9 +53,9 @@ function AdminUserDetailPage() {
       await authClient.admin.banUser({
         userId: userDetail.id,
         banReason: banReason || undefined,
+        banExpiresIn: banDuration > 0 ? banDuration : undefined,
       })
-      setBanSaved(true)
-      setTimeout(() => setBanSaved(false), 2000)
+      await router.invalidate()
     } finally {
       setBanning(false)
     }
@@ -55,8 +65,7 @@ function AdminUserDetailPage() {
     setBanning(true)
     try {
       await authClient.admin.unbanUser({ userId: userDetail.id })
-      setBanSaved(true)
-      setTimeout(() => setBanSaved(false), 2000)
+      await router.invalidate()
     } finally {
       setBanning(false)
     }
@@ -182,7 +191,7 @@ function AdminUserDetailPage() {
                 'disabled:pointer-events-none disabled:opacity-60',
               )}
             >
-              {banning ? 'Unbanning...' : banSaved ? 'Unbanned!' : 'Unban user'}
+              {banning ? 'Unbanning...' : 'Unban user'}
             </button>
           </div>
         ) : (
@@ -194,6 +203,17 @@ function AdminUserDetailPage() {
               onChange={(e) => setBanReason(e.target.value)}
               className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-400/20"
             />
+            <select
+              value={banDuration}
+              onChange={(e) => setBanDuration(Number(e.target.value))}
+              className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--sea-ink)] focus:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-400/20"
+            >
+              {BAN_DURATION_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
             <button
               type="button"
               disabled={banning}
@@ -203,7 +223,7 @@ function AdminUserDetailPage() {
                 'disabled:pointer-events-none disabled:opacity-60',
               )}
             >
-              {banning ? 'Banning...' : banSaved ? 'Banned!' : 'Ban user'}
+              {banning ? 'Banning...' : 'Ban user'}
             </button>
             <p className="text-xs text-[var(--sea-ink-soft)]">
               Banning immediately revokes all active sessions.

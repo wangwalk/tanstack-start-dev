@@ -12,9 +12,13 @@ import * as schema from '#/db/schema'
 
 export const auth = betterAuth({
   session: {
+    // Cache session in a short-lived signed cookie to avoid a DB lookup on
+    // every SSR render. Keep maxAge short so that admin actions (ban, role
+    // change) propagate quickly — users may remain unaffected for up to this
+    // many seconds after a change is made.
     cookieCache: {
       enabled: true,
-      maxAge: 5 * 60,
+      maxAge: 60,
     },
   },
   database: drizzleAdapter(db, {
