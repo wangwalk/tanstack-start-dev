@@ -21,7 +21,7 @@ export const Route = createFileRoute('/auth/sign-in')({
   validateSearch: searchSchema,
   beforeLoad: async ({ context }) => {
     if (context.session) {
-      throw redirect({ to: '/dashboard' })
+      throw redirect({ to: '/dashboard', search: { checkout: undefined } })
     }
   },
   head: () => ({

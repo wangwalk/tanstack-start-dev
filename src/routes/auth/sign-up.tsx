@@ -23,7 +23,7 @@ const signUpSchema = z
 export const Route = createFileRoute('/auth/sign-up')({
   beforeLoad: async ({ context }) => {
     if (context.session) {
-      throw redirect({ to: '/dashboard' })
+      throw redirect({ to: '/dashboard', search: { checkout: undefined } })
     }
   },
   head: () => ({

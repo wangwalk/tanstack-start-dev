@@ -1,5 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
+import { createFileRoute, useNavigate, useRouter } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { authClient } from '#/lib/auth-client'
 import { createBillingPortalSession } from '#/lib/billing'
@@ -8,14 +8,28 @@ import { Button } from '#/components/ui/button'
 import { Badge } from '#/components/ui/badge'
 
 export const Route = createFileRoute('/dashboard/')({
+  validateSearch: (search) => ({
+    checkout: search.checkout as string | undefined,
+  }),
   component: DashboardOverviewPage,
 })
 
 function DashboardOverviewPage() {
   const { session, subscription } = Route.useRouteContext()
+  const { checkout } = Route.useSearch()
+  const navigate = useNavigate()
+  const router = useRouter()
   const [resendStatus, setResendStatus] = useState<
     'idle' | 'loading' | 'sent' | 'error'
   >('idle')
+
+  useEffect(() => {
+    if (checkout === 'success') {
+      toast.success("You're now on Pro — enjoy!")
+      void router.invalidate()
+      void navigate({ to: '/dashboard', search: { checkout: undefined }, replace: true })
+    }
+  }, [checkout, navigate, router])
 
   const showBanner = session?.user && !session.user.emailVerified
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { toast } from 'sonner'
 import { SITE_TITLE, SITE_URL } from '#/lib/site'
 import { authClient } from '#/lib/auth-client'
 import { createCheckoutSession, getUserSubscription } from '#/lib/billing'
@@ -7,6 +8,9 @@ import { BILLING_PLANS } from '#/config/billing'
 import type { PlanKey, BillingInterval } from '#/config/billing'
 
 export const Route = createFileRoute('/pricing')({
+  validateSearch: (search) => ({
+    checkout: search.checkout as string | undefined,
+  }),
   head: () => ({
     links: [{ rel: 'canonical', href: `${SITE_URL}/pricing` }],
     meta: [
@@ -98,6 +102,8 @@ function getPlans(interval: BillingInterval) {
 
 function PricingPage() {
   const { data: session } = authClient.useSession()
+  const { checkout } = Route.useSearch()
+  const navigate = useNavigate()
   const [interval, setInterval] = useState<BillingInterval>('monthly')
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const [subscription, setSubscription] = useState<{
@@ -110,6 +116,13 @@ function PricingPage() {
       getUserSubscription().then(setSubscription)
     }
   }, [session?.user?.id])
+
+  useEffect(() => {
+    if (checkout === 'cancelled') {
+      toast('Checkout cancelled')
+      void navigate({ to: '/pricing', search: { checkout: undefined }, replace: true })
+    }
+  }, [checkout, navigate])
 
   const plans = getPlans(interval)
 
