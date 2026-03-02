@@ -1,4 +1,4 @@
-import { eq, desc, lt, and, isNull, or, gt, lte } from 'drizzle-orm'
+import { eq, desc, lt, and, isNull, or, gt, lte, asc, sql } from 'drizzle-orm'
 import type { ExtractTablesWithRelations } from 'drizzle-orm'
 import type { PgTransaction } from 'drizzle-orm/pg-core'
 import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js'
@@ -22,11 +22,9 @@ type Tx = PgTransaction<
   ExtractTablesWithRelations<typeof schema>
 >
 
-type CreditSource =
-  | 'purchase'
-  | 'subscription_monthly'
-  | 'lifetime_monthly'
-  | 'register_gift'
+// Only purchase/register_gift go through addCredits.
+// Monthly distribution has its own idempotent path via distributeMonthlyCredits.
+type AddCreditSource = 'purchase' | 'register_gift'
 
 function formatPeriodKey(date: Date): string {
   const year = date.getUTCFullYear()
@@ -36,10 +34,8 @@ function formatPeriodKey(date: Date): string {
 
 function getMonthEndExpiry(from?: Date): Date {
   const d = from ?? new Date()
-  // Last moment of the current UTC month
-  const end = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1))
-  end.setUTCMilliseconds(end.getUTCMilliseconds() - 1)
-  return end
+  // Last millisecond of the current UTC month
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1) - 1)
 }
 
 export const getCreditBalance = userFn().handler(async ({ context }) => {
@@ -82,7 +78,7 @@ export const consumeCredits = userFn({ method: 'POST' })
     if (amount <= 0) throw new Error('Amount must be positive')
 
     const result = await db.transaction(async (tx: Tx) => {
-      // 1. Lock the balance row
+      // 1. Lock the balance row to prevent concurrent writes
       const [row] = await tx
         .select()
         .from(creditBalance)
@@ -92,7 +88,7 @@ export const consumeCredits = userFn({ method: 'POST' })
 
       const now = new Date()
 
-      // 2. Expire any allocations past their expiry
+      // 2. Expire allocations past their expiry — lock rows before zeroing them
       const expired = await tx
         .select()
         .from(creditAllocation)
@@ -103,6 +99,7 @@ export const consumeCredits = userFn({ method: 'POST' })
             lte(creditAllocation.expiresAt, now),
           ),
         )
+        .for('update')
 
       let expiredSum = 0
       for (const alloc of expired) {
@@ -115,7 +112,7 @@ export const consumeCredits = userFn({ method: 'POST' })
           id: generateId(),
           userId,
           amount: -alloc.remaining,
-          type: 'consume',
+          type: 'expire',
           description: 'Credits expired',
           source: null,
           expiresAt: null,
@@ -123,22 +120,20 @@ export const consumeCredits = userFn({ method: 'POST' })
         })
       }
 
-      // 3. Re-read balance after expiry
+      // 3. Compute effective balance after expiry, update if needed
       const currentBalance = (row?.balance ?? 0) - expiredSum
-      if (expiredSum > 0) {
-        if (row) {
-          await tx
-            .update(creditBalance)
-            .set({ balance: currentBalance, updatedAt: now })
-            .where(eq(creditBalance.userId, userId))
-        }
+      if (expiredSum > 0 && row) {
+        await tx
+          .update(creditBalance)
+          .set({ balance: currentBalance, updatedAt: now })
+          .where(eq(creditBalance.userId, userId))
       }
 
       if (currentBalance < amount) {
         throw new Error('Insufficient credits')
       }
 
-      // 4. FIFO: consume from allocations ordered by soonest-expiring first
+      // 4. FIFO: soonest-expiring first; NULL (never-expiring) last
       const allocations = await tx
         .select()
         .from(creditAllocation)
@@ -152,10 +147,13 @@ export const consumeCredits = userFn({ method: 'POST' })
             ),
           ),
         )
-        .orderBy(creditAllocation.expiresAt, creditAllocation.createdAt)
+        .orderBy(
+          asc(sql`${creditAllocation.expiresAt} NULLS LAST`),
+          asc(creditAllocation.createdAt),
+        )
         .for('update')
 
-      // 5. Deduct from allocations
+      // 5. Deduct from allocations in order
       let remaining = amount
       for (const alloc of allocations) {
         if (remaining <= 0) break
@@ -169,7 +167,7 @@ export const consumeCredits = userFn({ method: 'POST' })
 
       const newBalance = currentBalance - amount
 
-      // 6. Insert consume transaction
+      // 6. Record the consumption
       await tx.insert(creditTransaction).values({
         id: generateId(),
         userId,
@@ -181,20 +179,14 @@ export const consumeCredits = userFn({ method: 'POST' })
         createdAt: now,
       })
 
-      // 7. Update balance
-      if (row) {
-        await tx
-          .update(creditBalance)
-          .set({ balance: newBalance, updatedAt: now })
-          .where(eq(creditBalance.userId, userId))
-      } else {
-        await tx.insert(creditBalance).values({
-          id: generateId(),
-          userId,
-          balance: newBalance,
-          updatedAt: now,
-        })
+      // 7. Update balance — row must exist at this point (guaranteed by FOR UPDATE above)
+      if (!row) {
+        throw new Error('Balance row missing — cannot write after consume')
       }
+      await tx
+        .update(creditBalance)
+        .set({ balance: newBalance, updatedAt: now })
+        .where(eq(creditBalance.userId, userId))
 
       return { balance: newBalance }
     })
@@ -210,10 +202,16 @@ export const getCreditTransactions = userFn()
     const userId = context.user.id
     const limit = data.limit ?? 20
 
-    const conditions = data.cursor
+    // Validate cursor before passing to DB
+    const cursorDate = data.cursor ? new Date(data.cursor) : undefined
+    if (cursorDate && isNaN(cursorDate.getTime())) {
+      throw new Error('Invalid cursor')
+    }
+
+    const conditions = cursorDate
       ? and(
           eq(creditTransaction.userId, userId),
-          lt(creditTransaction.createdAt, new Date(data.cursor)),
+          lt(creditTransaction.createdAt, cursorDate),
         )
       : eq(creditTransaction.userId, userId)
 
@@ -232,17 +230,29 @@ export const getCreditTransactions = userFn()
     return { items, nextCursor }
   })
 
-// Internal helper — called by Stripe webhook, auth hook, and cron
+// Internal helper — called by Stripe webhook and auth hook only.
+// For monthly quota distribution use distributeMonthlyCredits instead.
 export async function addCredits(
   userId: string,
   amount: number,
   description: string,
-  source: CreditSource,
+  source: AddCreditSource,
   expiresAt?: Date,
 ): Promise<void> {
   const now = new Date()
 
   await db.transaction(async (tx: Tx) => {
+    // Lock balance row first to prevent concurrent write races
+    const [row] = await tx
+      .select()
+      .from(creditBalance)
+      .where(eq(creditBalance.userId, userId))
+      .limit(1)
+      .for('update')
+
+    const currentBalance = row?.balance ?? 0
+    const newBalance = currentBalance + amount
+
     // Insert allocation
     await tx.insert(creditAllocation).values({
       id: generateId(),
@@ -256,15 +266,6 @@ export async function addCredits(
     })
 
     // Update balance
-    const [row] = await tx
-      .select()
-      .from(creditBalance)
-      .where(eq(creditBalance.userId, userId))
-      .limit(1)
-
-    const currentBalance = row?.balance ?? 0
-    const newBalance = currentBalance + amount
-
     if (row) {
       await tx
         .update(creditBalance)
@@ -279,7 +280,7 @@ export async function addCredits(
       })
     }
 
-    // Insert transaction record
+    // Record transaction
     await tx.insert(creditTransaction).values({
       id: generateId(),
       userId,
@@ -313,43 +314,34 @@ export async function distributeMonthlyCredits(
   const expiresAt = getMonthEndExpiry(now)
 
   const result = await db.transaction(async (tx: Tx) => {
-    // Idempotency check: has this period already been distributed?
-    const [existing] = await tx
-      .select()
-      .from(creditAllocation)
-      .where(
-        and(
-          eq(creditAllocation.userId, userId),
-          eq(creditAllocation.source, source),
-          eq(creditAllocation.periodKey, periodKey),
-        ),
-      )
-      .limit(1)
+    // Atomic idempotency: insert and let the partial unique index reject duplicates.
+    // ON CONFLICT DO NOTHING means concurrent retries are safe with no TOCTOU gap.
+    const [inserted] = await tx
+      .insert(creditAllocation)
+      .values({
+        id: generateId(),
+        userId,
+        amount,
+        remaining: amount,
+        source,
+        periodKey,
+        expiresAt,
+        createdAt: now,
+      })
+      .onConflictDoNothing()
+      .returning({ id: creditAllocation.id })
 
-    if (existing) {
+    if (!inserted) {
       return { distributed: false }
     }
 
-    const createdAt = now
-
-    // Insert allocation with periodKey for idempotency
-    await tx.insert(creditAllocation).values({
-      id: generateId(),
-      userId,
-      amount,
-      remaining: amount,
-      source,
-      periodKey,
-      expiresAt,
-      createdAt,
-    })
-
-    // Update balance
+    // Lock balance row before updating to prevent concurrent write races
     const [row] = await tx
       .select()
       .from(creditBalance)
       .where(eq(creditBalance.userId, userId))
       .limit(1)
+      .for('update')
 
     const currentBalance = row?.balance ?? 0
     const newBalance = currentBalance + amount
@@ -357,18 +349,17 @@ export async function distributeMonthlyCredits(
     if (row) {
       await tx
         .update(creditBalance)
-        .set({ balance: newBalance, updatedAt: createdAt })
+        .set({ balance: newBalance, updatedAt: now })
         .where(eq(creditBalance.userId, userId))
     } else {
       await tx.insert(creditBalance).values({
         id: generateId(),
         userId,
         balance: newBalance,
-        updatedAt: createdAt,
+        updatedAt: now,
       })
     }
 
-    // Insert transaction record
     await tx.insert(creditTransaction).values({
       id: generateId(),
       userId,
@@ -377,7 +368,7 @@ export async function distributeMonthlyCredits(
       description: '月度配额',
       source,
       expiresAt,
-      createdAt,
+      createdAt: now,
     })
 
     return { distributed: true }

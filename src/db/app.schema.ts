@@ -1,7 +1,8 @@
 // Application-specific tables go here.
 // Auth tables (user, session, account, verification, apiKey) live in auth.schema.ts.
 
-import { index, integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { index, integer, pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
+import { sql } from 'drizzle-orm'
 import { user } from './auth.schema'
 
 export const creditBalance = pgTable('credit_balance', {
@@ -48,5 +49,10 @@ export const creditAllocation = pgTable(
       t.source,
       t.periodKey,
     ),
+    // Partial unique index: enforces one allocation per (user, source, period)
+    // for monthly sources. NULL period_key rows (purchase, register_gift) are excluded.
+    uniqueIndex('credit_allocation_period_unique_idx')
+      .on(t.userId, t.source, t.periodKey)
+      .where(sql`${t.periodKey} IS NOT NULL`),
   ],
 )
