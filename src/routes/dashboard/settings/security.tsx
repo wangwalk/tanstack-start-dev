@@ -25,8 +25,8 @@ function SecurityPage() {
   return (
     <div className="space-y-6">
       <ChangePasswordSection />
-      {session?.user?.id && <ConnectedAccountsSection userId={session.user.id} />}
-      {session?.user?.id && <ActiveSessionsSection userId={session.user.id} />}
+      {session?.user?.id && <ConnectedAccountsSection />}
+      {session?.user?.id && <ActiveSessionsSection />}
     </div>
   )
 }
@@ -153,16 +153,16 @@ function ChangePasswordSection() {
   )
 }
 
-function ConnectedAccountsSection({ userId }: { userId: string }) {
+function ConnectedAccountsSection() {
   const [accounts, setAccounts] = useState<Array<{ providerId: string; accountId: string; createdAt: Date }>>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getLinkedAccounts({ data: { userId } })
+    getLinkedAccounts()
       .then(setAccounts)
       .catch(() => {})
       .finally(() => setLoading(false))
-  }, [userId])
+  }, [])
 
   const providerLabel: Record<string, string> = {
     github: 'GitHub',
@@ -226,7 +226,7 @@ function ProviderIcon({ provider }: { provider: string }) {
   return <div className="h-5 w-5 rounded-full bg-[var(--line)]" />
 }
 
-function ActiveSessionsSection({ userId }: { userId: string }) {
+function ActiveSessionsSection() {
   const [sessions, setSessions] = useState<
     Array<{
       id: string
@@ -241,11 +241,11 @@ function ActiveSessionsSection({ userId }: { userId: string }) {
   const [revokingId, setRevokingId] = useState<string | null>(null)
 
   useEffect(() => {
-    getActiveSessions({ data: { userId } })
+    getActiveSessions()
       .then(setSessions)
       .catch(() => {})
       .finally(() => setLoading(false))
-  }, [userId])
+  }, [])
 
   async function handleRevoke(sessionId: string) {
     setRevokingId(sessionId)

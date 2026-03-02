@@ -11,9 +11,7 @@ export const Route = createFileRoute('/dashboard')({
       })
     }
 
-    const subscription = await getUserSubscription({
-      data: { userId: context.session.user.id },
-    })
+    const subscription = await getUserSubscription()
 
     return { subscription }
   },

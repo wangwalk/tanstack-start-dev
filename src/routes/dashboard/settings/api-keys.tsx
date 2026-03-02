@@ -33,22 +33,20 @@ function ApiKeysPage() {
   const [revoking, setRevoking] = useState<string | null>(null)
   const [confirmRevoke, setConfirmRevoke] = useState<string | null>(null)
 
-  const userId = session?.user?.id
-
   useEffect(() => {
-    if (!userId) return
-    listApiKeys({ data: { userId } }).then((result) => {
+    if (!session?.user?.id) return
+    listApiKeys().then((result) => {
       setKeys(result as ApiKeyItem[])
       setLoading(false)
     })
-  }, [userId])
+  }, [session?.user?.id])
 
   async function handleCreate() {
-    if (!userId || !newKeyName.trim()) return
+    if (!newKeyName.trim()) return
     setCreating(true)
     try {
       const result = await createApiKey({
-        data: { userId, name: newKeyName.trim() },
+        data: { name: newKeyName.trim() },
       })
       setNewlyCreatedKey(result.key)
       setKeys((prev) => [
@@ -69,10 +67,9 @@ function ApiKeysPage() {
   }
 
   async function handleRevoke(keyId: string) {
-    if (!userId) return
     setRevoking(keyId)
     try {
-      await revokeApiKey({ data: { userId, keyId } })
+      await revokeApiKey({ data: { keyId } })
       setKeys((prev) => prev.filter((k) => k.id !== keyId))
       setConfirmRevoke(null)
     } finally {

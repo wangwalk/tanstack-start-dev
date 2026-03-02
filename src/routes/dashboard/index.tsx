@@ -33,9 +33,7 @@ function DashboardOverviewPage() {
   async function handleManageBilling() {
     if (!session?.user?.id) return
     try {
-      const result = await createBillingPortalSession({
-        data: { userId: session.user.id },
-      })
+      const result = await createBillingPortalSession()
       if (result.url) {
         window.location.href = result.url
       }

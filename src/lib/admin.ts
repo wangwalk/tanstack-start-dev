@@ -12,6 +12,12 @@ export const listUsers = createServerFn({ method: 'GET' })
     (input: { page: number; search?: string; status?: string }) => input,
   )
   .handler(async ({ data }) => {
+    const request = getRequest()
+    const session = await auth.api.getSession({ headers: request.headers })
+    if (!session || session.user.role !== 'admin') {
+      throw new Error('Unauthorized')
+    }
+
     const { page, search, status } = data
     const offset = (page - 1) * PAGE_SIZE
 
@@ -58,6 +64,12 @@ export const listUsers = createServerFn({ method: 'GET' })
 export const getUserById = createServerFn({ method: 'GET' })
   .inputValidator((input: { userId: string }) => input)
   .handler(async ({ data }) => {
+    const request = getRequest()
+    const session = await auth.api.getSession({ headers: request.headers })
+    if (!session || session.user.role !== 'admin') {
+      throw new Error('Unauthorized')
+    }
+
     const [row] = await db
       .select()
       .from(user)
