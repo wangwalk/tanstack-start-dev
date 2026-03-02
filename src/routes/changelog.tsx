@@ -76,7 +76,7 @@ function ChangelogPage() {
                   {entry.description}
                 </p>
                 <div className="prose prose-slate prose-headings:text-[var(--sea-ink)] prose-p:text-[var(--sea-ink-soft)] prose-li:text-[var(--sea-ink-soft)] prose-strong:text-[var(--sea-ink)] prose-a:text-[var(--lagoon-deep)] prose-th:text-[var(--sea-ink)] prose-td:text-[var(--sea-ink-soft)] max-w-none text-sm">
-                  <MDXContent code={entry.mdx.code} />
+                  <MDXContent code={entry.mdx} />
                 </div>
               </div>
             </article>
