@@ -1,7 +1,7 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
-import { admin } from 'better-auth/plugins'
+import { admin } from 'better-auth/plugins/admin'
 import { sendEmail } from '#/lib/email'
 import VerificationEmail from '#/emails/verification'
 import PasswordResetEmail from '#/emails/password-reset'
@@ -65,5 +65,5 @@ export const auth = betterAuth({
       }
     },
   },
-  plugins: [tanstackStartCookies(), admin()],
+  plugins: [admin(), tanstackStartCookies()],
 })
