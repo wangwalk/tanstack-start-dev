@@ -10,7 +10,7 @@ export const user = pgTable('user', {
   updatedAt: timestamp('updated_at').notNull(),
   stripeCustomerId: text('stripe_customer_id').unique(),
   subscriptionStatus: text('subscription_status'),
-  subscriptionPlan: text('subscription_plan'),
+  subscriptionPlan: text('subscription_plan').default('free'),
   role: text('role').notNull().default('user'),
   banned: boolean('banned'),
   banReason: text('ban_reason'),

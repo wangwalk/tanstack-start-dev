@@ -1,6 +1,7 @@
 export const BILLING_PLANS = {
   pro: {
     name: 'Pro',
+    mode: 'subscription' as const,
     monthly: {
       priceId: process.env.STRIPE_PRICE_PRO_MONTHLY!,
       amount: '$29',
@@ -9,6 +10,12 @@ export const BILLING_PLANS = {
       priceId: process.env.STRIPE_PRICE_PRO_YEARLY!,
       amount: '$290',
     },
+  },
+  lifetime: {
+    name: 'Lifetime',
+    mode: 'payment' as const,
+    priceId: process.env.STRIPE_PRICE_LIFETIME!,
+    amount: '$299',
   },
 } as const
 

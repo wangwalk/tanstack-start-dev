@@ -15,6 +15,7 @@ function BillingPage() {
   const [error, setError] = useState<string | null>(null)
 
   const isActive = subscription.subscriptionStatus === 'active'
+  const isLifetime = subscription.subscriptionPlan === 'lifetime'
   const planName = subscription.subscriptionPlan
     ? BILLING_PLANS[subscription.subscriptionPlan as keyof typeof BILLING_PLANS]?.name ??
       subscription.subscriptionPlan
@@ -49,7 +50,11 @@ function BillingPage() {
                 <span className="inline-flex items-center rounded-full border border-[rgba(79,184,178,0.3)] bg-[rgba(79,184,178,0.15)] px-3 py-1 text-sm font-semibold text-[var(--lagoon-deep)]">
                   {planName}
                 </span>
-                <span className="text-sm text-[var(--sea-ink-soft)]">Active</span>
+                {isLifetime ? (
+                  <span className="text-sm text-[var(--sea-ink-soft)]">Lifetime access</span>
+                ) : (
+                  <span className="text-sm text-[var(--sea-ink-soft)]">Active</span>
+                )}
               </>
             ) : (
               <>
@@ -66,7 +71,9 @@ function BillingPage() {
             )}
           </div>
 
-          {isActive ? (
+          {isLifetime ? (
+            <span className="text-sm text-[var(--sea-ink-soft)]">No renewal needed</span>
+          ) : isActive ? (
             <button
               type="button"
               onClick={handleManageBilling}
@@ -110,14 +117,16 @@ function BillingPage() {
             <p className="text-sm text-[var(--sea-ink-soft)]">
               View and download your invoices from the Stripe billing portal.
             </p>
-            <button
-              type="button"
-              onClick={handleManageBilling}
-              disabled={portalLoading}
-              className="rounded-full border border-[var(--line)] px-5 py-2 text-sm font-medium text-[var(--sea-ink)] transition hover:bg-[var(--link-bg-hover)] disabled:pointer-events-none disabled:opacity-60"
-            >
-              View invoices
-            </button>
+            {!isLifetime && (
+              <button
+                type="button"
+                onClick={handleManageBilling}
+                disabled={portalLoading}
+                className="rounded-full border border-[var(--line)] px-5 py-2 text-sm font-medium text-[var(--sea-ink)] transition hover:bg-[var(--link-bg-hover)] disabled:pointer-events-none disabled:opacity-60"
+              >
+                View invoices
+              </button>
+            )}
           </div>
         ) : (
           <p className="text-sm text-[var(--sea-ink-soft)]">

@@ -1,0 +1,1 @@
+ALTER TABLE "user" ALTER COLUMN "subscription_plan" SET DEFAULT 'free';

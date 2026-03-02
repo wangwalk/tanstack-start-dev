@@ -91,7 +91,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
   const stripe = getStripe()
   let periodEnd: number | undefined
-  if (session.subscription) {
+
+  // Only retrieve subscription details for subscription-mode checkouts
+  if (session.mode === 'subscription' && session.subscription) {
     const sub = await stripe.subscriptions.retrieve(
       typeof session.subscription === 'string'
         ? session.subscription
@@ -127,6 +129,9 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
       ? subscription.customer
       : subscription.customer.id
 
+  const dbUser = await findUserByCustomerId(customerId)
+  if (!dbUser || dbUser.subscriptionPlan === 'lifetime') return
+
   await db
     .update(user)
     .set({
@@ -141,11 +146,14 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
       ? subscription.customer
       : subscription.customer.id
 
+  const dbUser = await findUserByCustomerId(customerId)
+  if (!dbUser || dbUser.subscriptionPlan === 'lifetime') return
+
   await db
     .update(user)
     .set({
       subscriptionStatus: 'canceled',
-      subscriptionPlan: null,
+      subscriptionPlan: 'free',
     })
     .where(eq(user.stripeCustomerId, customerId))
 }
