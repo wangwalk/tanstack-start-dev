@@ -19,6 +19,33 @@ const config = defineConfig({
     tanstackStart(),
     viteReact(),
   ],
+  build: {
+    rollupOptions: {
+      // During the client build, Rollup walks the full static import graph before
+      // TanStack Start's server-function transform strips server-only code.
+      // This means server-only packages (postgres → net/tls/perf_hooks, etc.) and
+      // Cloudflare Workers runtime modules end up in the module graph even though
+      // they'll be tree-shaken from the final client bundle.
+      //
+      // Marking them as external prevents Rollup from failing on unresolved imports
+      // during graph analysis. These modules are safe to externalize because:
+      //   • cloudflare:* — provided by the Workers runtime (never runs in browser)
+      //   • node:* / Node.js built-ins — tree-shaken from client, or provided by
+      //     nodejs_compat in the Workers bundle
+      external: (id) => {
+        if (id.startsWith('cloudflare:') || id.startsWith('node:')) return true
+        const nodeBuiltins = new Set([
+          'assert', 'buffer', 'child_process', 'cluster', 'console', 'crypto',
+          'dgram', 'dns', 'domain', 'events', 'fs', 'http', 'http2', 'https',
+          'inspector', 'module', 'net', 'os', 'path', 'perf_hooks', 'process',
+          'punycode', 'querystring', 'readline', 'repl', 'stream',
+          'string_decoder', 'sys', 'timers', 'tls', 'tty', 'url', 'util',
+          'v8', 'vm', 'worker_threads', 'zlib',
+        ])
+        return nodeBuiltins.has(id)
+      },
+    },
+  },
 })
 
 export default config
