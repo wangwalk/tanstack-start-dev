@@ -11,18 +11,29 @@
       "binding": "AVATAR_BUCKET",
       "bucket_name": "damascus-avatars"
     }
+  ],
+
+  // Hyperdrive for PostgreSQL connection pooling on Cloudflare Workers
+  // Create via: wrangler hyperdrive create damascus-hyperdrive --connection-string="postgres://..."
+  // Docs: https://developers.cloudflare.com/hyperdrive/
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "<your-hyperdrive-id>"
+    }
   ]
 
   // Secrets (set via: wrangler secret put <NAME>):
+  //   DATABASE_URL             — PostgreSQL connection string (used in local dev; Hyperdrive used in production)
   //   RESEND_API_KEY           — from resend.com dashboard
   //   RESEND_FROM              — verified sender, e.g. "App Name <noreply@yourdomain.com>"
-  //   DATABASE_URL             — Neon connection string
   //   STRIPE_SECRET_KEY        — from Stripe Dashboard > Developers > API keys
   //   STRIPE_PUBLISHABLE_KEY   — from Stripe Dashboard > Developers > API keys
   //   STRIPE_PRICE_PRO_MONTHLY — Price ID for Pro monthly plan (price_xxx)
   //   STRIPE_PRICE_PRO_YEARLY  — Price ID for Pro yearly plan (price_xxx)
-  //   GITHUB_CLIENT_ID        — from GitHub Developer Settings > OAuth Apps
-  //   GITHUB_CLIENT_SECRET    — from GitHub Developer Settings > OAuth Apps
-  //   GOOGLE_CLIENT_ID        — from Google Cloud Console > Credentials
-  //   GOOGLE_CLIENT_SECRET    — from Google Cloud Console > Credentials
+  //   STRIPE_WEBHOOK_SECRET    — from Stripe Dashboard > Developers > Webhooks
+  //   GITHUB_CLIENT_ID         — from GitHub Developer Settings > OAuth Apps
+  //   GITHUB_CLIENT_SECRET     — from GitHub Developer Settings > OAuth Apps
+  //   GOOGLE_CLIENT_ID         — from Google Cloud Console > Credentials
+  //   GOOGLE_CLIENT_SECRET     — from Google Cloud Console > Credentials
 }
