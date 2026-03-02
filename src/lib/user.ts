@@ -5,26 +5,6 @@ import { db } from '#/db/index'
 import { user, account, session } from '#/db/schema'
 import { auth } from '#/lib/auth'
 
-export const getUserSubscription = createServerFn().handler(async () => {
-  const request = getRequest()
-  const currentSession = await auth.api.getSession({ headers: request.headers })
-  if (!currentSession) throw new Error('Unauthorized')
-
-  const [row] = await db
-    .select({
-      subscriptionStatus: user.subscriptionStatus,
-      subscriptionPlan: user.subscriptionPlan,
-    })
-    .from(user)
-    .where(eq(user.id, currentSession.user.id))
-    .limit(1)
-
-  return {
-    subscriptionStatus: row?.subscriptionStatus ?? null,
-    subscriptionPlan: row?.subscriptionPlan ?? null,
-  }
-})
-
 export const updateUserName = createServerFn({ method: 'POST' })
   .inputValidator((input: { name: string }) => input)
   .handler(async ({ data }) => {
@@ -91,9 +71,12 @@ export const revokeSession = createServerFn({ method: 'POST' })
     const currentSession = await auth.api.getSession({ headers: request.headers })
     if (!currentSession) throw new Error('Unauthorized')
 
-    await db
+    const deleted = await db
       .delete(session)
       .where(and(eq(session.id, data.sessionId), eq(session.userId, currentSession.user.id)))
+      .returning({ id: session.id })
+
+    if (deleted.length === 0) throw new Error('Session not found')
 
     return { success: true }
   })

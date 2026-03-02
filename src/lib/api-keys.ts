@@ -60,9 +60,12 @@ export const revokeApiKey = createServerFn({ method: 'POST' })
     const currentSession = await auth.api.getSession({ headers: request.headers })
     if (!currentSession) throw new Error('Unauthorized')
 
-    await db
+    const deleted = await db
       .delete(apiKey)
       .where(and(eq(apiKey.id, data.keyId), eq(apiKey.userId, currentSession.user.id)))
+      .returning({ id: apiKey.id })
+
+    if (deleted.length === 0) throw new Error('API key not found')
 
     return { success: true }
   })
