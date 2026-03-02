@@ -1,5 +1,6 @@
 import {
   HeadContent,
+  Outlet,
   Scripts,
   createRootRouteWithContext,
   redirect,
@@ -14,10 +15,12 @@ import TanStackQueryProvider from '../integrations/tanstack-query/root-provider'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
+import { Analytics } from '#/components/analytics'
 import { Toaster } from '#/components/ui/sonner'
 import appCss from '../styles.css?url'
-import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from '#/lib/site'
+import { getAnalyticsConfig } from '#/lib/analytics'
 import { getSession } from '#/lib/auth-guard'
+import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from '#/lib/site'
 
 import type { QueryClient } from '@tanstack/react-query'
 
@@ -33,14 +36,13 @@ const THEME_INIT_SCRIPT = `(function(){try{var stored=window.localStorage.getIte
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   beforeLoad: async ({ location }) => {
     const session = await getSession()
-    if (
-      session?.user.banned &&
-      location.pathname !== '/auth/banned'
-    ) {
+    if (session?.user.banned && location.pathname !== '/auth/banned') {
       throw redirect({ to: '/auth/banned' })
     }
     return { session }
   },
+  loader: () => getAnalyticsConfig(),
+  staleTime: Infinity,
   head: () => ({
     meta: [
       { charSet: 'utf-8' },
@@ -61,8 +63,19 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       { rel: 'apple-touch-icon', href: '/logo192.png' },
     ],
   }),
+  component: RootLayout,
   shellComponent: RootDocument,
 })
+
+function RootLayout() {
+  const analytics = Route.useLoaderData()
+  return (
+    <>
+      <Analytics config={analytics} />
+      <Outlet />
+    </>
+  )
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
