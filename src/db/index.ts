@@ -17,7 +17,13 @@ if (hyperdrive !== undefined && typeof hyperdrive.connectionString !== 'string')
   throw new Error('HYPERDRIVE binding is present but missing connectionString — check wrangler.jsonc')
 }
 
-const connectionString = hyperdrive?.connectionString ?? process.env.DATABASE_URL!
+const connectionString = hyperdrive?.connectionString ?? process.env.DATABASE_URL
+if (!connectionString) {
+  throw new Error(
+    'No database connection: HYPERDRIVE binding not configured and DATABASE_URL env var is missing. ' +
+    'Set DATABASE_URL in .env.local for local dev, or configure the HYPERDRIVE binding in wrangler.jsonc for production.',
+  )
+}
 
 // Singleton per isolate — postgres.js manages the connection pool internally.
 // max: 1 is correct for Cloudflare Workers: each isolate handles one request at a time,

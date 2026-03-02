@@ -9,6 +9,17 @@ import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { cloudflare } from '@cloudflare/vite-plugin'
 
+// Bare-name Node.js built-in modules (without the node: prefix).
+// The node: prefix is handled separately via id.startsWith('node:').
+const NODE_BUILTINS = new Set([
+  'assert', 'buffer', 'child_process', 'cluster', 'console', 'crypto',
+  'dgram', 'dns', 'domain', 'events', 'fs', 'http', 'http2', 'https',
+  'inspector', 'module', 'net', 'os', 'path', 'perf_hooks', 'process',
+  'punycode', 'querystring', 'readline', 'repl', 'stream',
+  'string_decoder', 'sys', 'timers', 'tls', 'tty', 'url', 'util',
+  'v8', 'vm', 'worker_threads', 'zlib',
+])
+
 const config = defineConfig({
   plugins: [
     devtools(),
@@ -34,15 +45,7 @@ const config = defineConfig({
       //     nodejs_compat in the Workers bundle
       external: (id) => {
         if (id.startsWith('cloudflare:') || id.startsWith('node:')) return true
-        const nodeBuiltins = new Set([
-          'assert', 'buffer', 'child_process', 'cluster', 'console', 'crypto',
-          'dgram', 'dns', 'domain', 'events', 'fs', 'http', 'http2', 'https',
-          'inspector', 'module', 'net', 'os', 'path', 'perf_hooks', 'process',
-          'punycode', 'querystring', 'readline', 'repl', 'stream',
-          'string_decoder', 'sys', 'timers', 'tls', 'tty', 'url', 'util',
-          'v8', 'vm', 'worker_threads', 'zlib',
-        ])
-        return nodeBuiltins.has(id)
+        return NODE_BUILTINS.has(id)
       },
     },
   },
