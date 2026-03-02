@@ -3,6 +3,8 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { authClient } from '#/lib/auth-client'
 import AuthLayout from '#/components/AuthLayout'
+import TurnstileWidget from '#/components/TurnstileWidget'
+import { getTurnstileSiteKey, validateTurnstileToken } from '#/lib/turnstile'
 import { SITE_TITLE, SITE_URL } from '#/lib/site'
 import { Button } from '#/components/ui/button'
 import { Input } from '#/components/ui/input'
@@ -26,6 +28,7 @@ export const Route = createFileRoute('/auth/sign-up')({
       throw redirect({ to: '/dashboard', search: { checkout: undefined } })
     }
   },
+  loader: async () => getTurnstileSiteKey(),
   head: () => ({
     links: [{ rel: 'canonical', href: `${SITE_URL}/auth/sign-up` }],
     meta: [
@@ -37,10 +40,12 @@ export const Route = createFileRoute('/auth/sign-up')({
 })
 
 function SignUpPage() {
+  const { siteKey } = Route.useLoaderData()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [socialLoading, setSocialLoading] = useState<string | null>(null)
@@ -56,8 +61,22 @@ function SignUpPage() {
       return
     }
 
+    if (siteKey && !turnstileToken) {
+      setError('Please complete the captcha challenge.')
+      return
+    }
+
     setIsLoading(true)
     try {
+      if (turnstileToken) {
+        const { success: tokenValid } = await validateTurnstileToken({ data: { token: turnstileToken } })
+        if (!tokenValid) {
+          setError('Captcha verification failed. Please try again.')
+          setTurnstileToken(null)
+          return
+        }
+      }
+
       const { error: authError } = await authClient.signUp.email({
         name,
         email,
@@ -162,6 +181,12 @@ function SignUpPage() {
             disabled={isLoading}
           />
         </div>
+
+        <TurnstileWidget
+          siteKey={siteKey}
+          onSuccess={setTurnstileToken}
+          onExpire={() => setTurnstileToken(null)}
+        />
 
         {error && (
           <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800/40 dark:bg-red-950/30 dark:text-red-400">

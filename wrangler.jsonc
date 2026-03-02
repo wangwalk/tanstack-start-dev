@@ -37,4 +37,6 @@
   //   GITHUB_CLIENT_SECRET     — from GitHub Developer Settings > OAuth Apps
   //   GOOGLE_CLIENT_ID         — from Google Cloud Console > Credentials
   //   GOOGLE_CLIENT_SECRET     — from Google Cloud Console > Credentials
+  //   TURNSTILE_SITE_KEY       — Cloudflare Turnstile site key (public, from Turnstile dashboard)
+  //   TURNSTILE_SECRET_KEY     — Cloudflare Turnstile secret key (from Turnstile dashboard)
 }
