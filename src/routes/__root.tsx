@@ -21,6 +21,7 @@ import appCss from '../styles.css?url'
 import { getAnalyticsConfig } from '#/lib/analytics'
 import { getSession } from '#/lib/auth-guard'
 import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from '#/lib/site'
+import { getLocale } from '#/paraglide/runtime.js'
 
 import type { QueryClient } from '@tanstack/react-query'
 
@@ -82,7 +83,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   const isDashboard = pathname.startsWith('/dashboard') || pathname.startsWith('/admin')
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={getLocale()} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />

@@ -8,6 +8,7 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { cloudflare } from '@cloudflare/vite-plugin'
+import { paraglideVitePlugin } from '@inlang/paraglide-js'
 
 // Bare-name Node.js built-in modules (without the node: prefix).
 // The node: prefix is handled separately via id.startsWith('node:').
@@ -27,8 +28,18 @@ const config = defineConfig({
     contentCollections(),
     tsconfigPaths({ projects: ['./tsconfig.json'] }),
     tailwindcss(),
-    tanstackStart(),
+    tanstackStart({
+      server: { entry: './src/server.ts' },
+    }),
     viteReact(),
+    paraglideVitePlugin({
+      project: './project.inlang',
+      outdir: './src/paraglide',
+      strategy: ['url', 'cookie', 'baseLocale'],
+      isServer: 'import.meta.env.SSR',
+      disableAsyncLocalStorage: true,
+      emitTsDeclarations: true,
+    }),
   ],
   build: {
     rollupOptions: {

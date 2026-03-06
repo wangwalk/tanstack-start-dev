@@ -4,6 +4,7 @@ import { LayoutDashboard, Settings, ShieldCheck, Menu, X, LogOut, Zap, Send, Sta
 import type { LucideIcon } from 'lucide-react'
 import { authClient } from '#/lib/auth-client'
 import ThemeToggle from '#/components/ThemeToggle'
+import LanguageSwitcher from '#/components/LanguageSwitcher'
 import { cn } from '#/lib/utils'
 import { Button } from '#/components/ui/button'
 import { siteConfig } from '#/config/site'
@@ -184,6 +185,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </Button>
 
           <div className="ml-auto flex items-center gap-2">
+            <LanguageSwitcher />
             <ThemeToggle />
           </div>
         </header>

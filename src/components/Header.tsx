@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import BetterAuthHeader from '../integrations/better-auth/header-user.tsx'
 import ThemeToggle from './ThemeToggle'
+import LanguageSwitcher from './LanguageSwitcher'
 import { siteConfig } from '#/config/site'
 
 const NAV_LINKS = [
@@ -72,6 +73,7 @@ export default function Header() {
           )}
 
           <BetterAuthHeader />
+          <LanguageSwitcher />
           <ThemeToggle />
 
           {/* Mobile hamburger */}
