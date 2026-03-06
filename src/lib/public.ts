@@ -367,3 +367,46 @@ export const getPublicTags = createServerFn().handler(async () => {
     .from(tag)
     .orderBy(asc(tag.name))
 })
+
+// ---------------------------------------------------------------------------
+// Landing page stats
+// ---------------------------------------------------------------------------
+
+export const getDirectoryStats = createServerFn().handler(async () => {
+  const [toolResult, categoryResult, tagResult] = await Promise.all([
+    db.select({ total: count() }).from(tool).where(eq(tool.status, 'approved')),
+    db.select({ total: count() }).from(category),
+    db.select({ total: count() }).from(tag),
+  ])
+  return {
+    toolCount: toolResult[0]?.total ?? 0,
+    categoryCount: categoryResult[0]?.total ?? 0,
+    tagCount: tagResult[0]?.total ?? 0,
+  }
+})
+
+// ---------------------------------------------------------------------------
+// Sitemap bulk queries (no pagination — only slug + updatedAt needed)
+// ---------------------------------------------------------------------------
+
+export const getAllApprovedToolsForSitemap = createServerFn().handler(async () => {
+  return db
+    .select({ slug: tool.slug, updatedAt: tool.updatedAt })
+    .from(tool)
+    .where(eq(tool.status, 'approved'))
+    .orderBy(desc(tool.updatedAt))
+})
+
+export const getAllCategoriesForSitemap = createServerFn().handler(async () => {
+  return db
+    .select({ slug: category.slug })
+    .from(category)
+    .orderBy(asc(category.sortOrder), asc(category.name))
+})
+
+export const getAllTagsForSitemap = createServerFn().handler(async () => {
+  return db
+    .select({ slug: tag.slug })
+    .from(tag)
+    .orderBy(asc(tag.name))
+})

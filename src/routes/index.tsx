@@ -1,11 +1,20 @@
-import { useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from '#/lib/site'
-import { authClient } from '#/lib/auth-client'
-import { createCheckoutSession } from '#/lib/billing'
-import type { PlanKey, BillingInterval } from '#/config/billing'
+import { getFeaturedTools, getNewTools, getCategoriesWithCount, getDirectoryStats } from '#/lib/public'
+import { ToolCard } from '#/components/tools/ToolCard'
+import NewsletterForm from '#/components/NewsletterForm'
+import { websiteSchema } from '#/components/seo/JsonLd'
 
 export const Route = createFileRoute('/')({
+  loader: async () => {
+    const [stats, featured, newest, categories] = await Promise.all([
+      getDirectoryStats(),
+      getFeaturedTools(),
+      getNewTools({ data: { limit: 6 } }),
+      getCategoriesWithCount(),
+    ])
+    return { stats, featured, newest, categories: categories.slice(0, 8) }
+  },
   head: () => ({
     links: [{ rel: 'canonical', href: SITE_URL }],
     meta: [
@@ -15,200 +24,80 @@ export const Route = createFileRoute('/')({
       { property: 'og:title', content: SITE_TITLE },
       { property: 'og:description', content: SITE_DESCRIPTION },
     ],
+    scripts: [
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify(websiteSchema(SITE_URL, SITE_TITLE)),
+      },
+    ],
   }),
   component: LandingPage,
 })
 
-const features = [
+const FAQ = [
   {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-6 w-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-      </svg>
-    ),
-    title: 'Lightning Fast',
-    desc: 'Optimized for speed with edge-first architecture. Sub-second response times, globally.',
+    q: '收录的工具都经过审核吗？',
+    a: '是的。所有提交的工具都由我们的团队手动审核，确保质量和真实性后才会上线。',
   },
   {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-6 w-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-      </svg>
-    ),
-    title: 'Secure by Default',
-    desc: 'Enterprise-grade security with end-to-end encryption. SOC 2 compliant out of the box.',
+    q: '如何提交我的工具？',
+    a: '点击"提交工具"，填写工具信息后免费提交。付费的 Standard 或 Featured 套餐可获得更快审核和更高曝光。',
   },
   {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-6 w-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605" />
-      </svg>
-    ),
-    title: 'Real-time Analytics',
-    desc: 'Track every metric that matters with live dashboards and customizable reports.',
+    q: '付费收录和免费收录有什么区别？',
+    a: 'Standard（$39）包含 dofollow 反链、Verified badge、截图展示和分类页优先排序。Featured（$99）在此基础上还有首页精选展示、自定义 CTA 按钮和 Newsletter 推荐。',
   },
   {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-6 w-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M14.25 6.087c0-.355.186-.676.401-.959.221-.29.349-.634.349-1.003 0-1.036-1.007-1.875-2.25-1.875s-2.25.84-2.25 1.875c0 .369.128.713.349 1.003.215.283.401.604.401.959v0a.64.64 0 01-.657.643 48.491 48.491 0 01-4.163-.3c.186 1.613.293 3.25.315 4.907a.656.656 0 01-.658.663v0c-.355 0-.676-.186-.959-.401a1.647 1.647 0 00-1.003-.349c-1.036 0-1.875 1.007-1.875 2.25s.84 2.25 1.875 2.25c.369 0 .713-.128 1.003-.349.283-.215.604-.401.959-.401v0c.31 0 .555.26.532.57a48.039 48.039 0 01-.642 5.056c1.518.19 3.058.309 4.616.354a.64.64 0 00.657-.643v0c0-.355-.186-.676-.401-.959a1.647 1.647 0 01-.349-1.003c0-1.035 1.008-1.875 2.25-1.875 1.243 0 2.25.84 2.25 1.875 0 .369-.128.713-.349 1.003-.215.283-.401.604-.401.959v0c0 .333.277.599.61.58a48.1 48.1 0 005.427-.63 48.05 48.05 0 00.582-4.717.532.532 0 00-.533-.57v0c-.355 0-.676.186-.959.401-.29.221-.634.349-1.003.349-1.035 0-1.875-1.007-1.875-2.25s.84-2.25 1.875-2.25c.37 0 .713.128 1.003.349.283.215.604.401.959.401v0a.656.656 0 00.658-.663 48.422 48.422 0 00-.37-5.36c-1.886.342-3.81.574-5.766.689a.578.578 0 01-.61-.58v0z" />
-      </svg>
-    ),
-    title: 'Seamless Integrations',
-    desc: 'Connect with 100+ tools your team already uses. REST API and webhooks included.',
+    q: '付费收录会过期吗？',
+    a: '不会。付费收录为一次性永久有效，无需续费。',
   },
   {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-6 w-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-      </svg>
-    ),
-    title: 'Team Collaboration',
-    desc: 'Built for teams of any size. Role-based access, shared workspaces, and audit logs.',
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-6 w-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" />
-      </svg>
-    ),
-    title: 'Cloud Native',
-    desc: 'Deploy anywhere with auto-scaling infrastructure. Zero downtime deployments.',
-  },
-]
-
-const plans: Array<{
-  name: string
-  price: string
-  period: string
-  desc: string
-  features: string[]
-  cta: string
-  highlighted: boolean
-  planKey: PlanKey | null
-  href: string | null
-}> = [
-  {
-    name: 'Free',
-    price: '$0',
-    period: '/mo',
-    desc: 'Perfect for getting started',
-    features: ['Up to 3 projects', '1 GB storage', 'Community support', 'Basic analytics'],
-    cta: 'Get Started',
-    highlighted: false,
-    planKey: null,
-    href: '/auth/sign-in',
-  },
-  {
-    name: 'Pro',
-    price: '$29',
-    period: '/mo',
-    desc: 'For growing teams',
-    features: ['Unlimited projects', '100 GB storage', 'Priority support', 'Advanced analytics', 'Custom domains', 'Team collaboration'],
-    cta: 'Start Free Trial',
-    highlighted: true,
-    planKey: 'pro',
-    href: null,
-  },
-  {
-    name: 'Enterprise',
-    price: 'Custom',
-    period: '',
-    desc: 'For large organizations',
-    features: ['Everything in Pro', 'Unlimited storage', 'Dedicated support', 'SSO & SAML', 'SLA guarantee', 'Custom integrations'],
-    cta: 'Contact Sales',
-    highlighted: false,
-    planKey: null,
-    href: '/contact',
+    q: '如何搜索特定类型的工具？',
+    a: '可以通过分类浏览、标签筛选，或直接使用搜索功能找到你需要的工具。',
   },
 ]
 
 function LandingPage() {
-  const { data: session } = authClient.useSession()
-  const [checkoutLoading, setCheckoutLoading] = useState(false)
-
-  async function handleUpgrade(planKey: PlanKey, interval: BillingInterval = 'monthly') {
-    if (!session?.user) {
-      window.location.href = '/auth/sign-in'
-      return
-    }
-    setCheckoutLoading(true)
-    try {
-      const result = await createCheckoutSession({
-        data: { plan: planKey, interval },
-      })
-      if (result.url) {
-        window.location.href = result.url
-      }
-    } finally {
-      setCheckoutLoading(false)
-    }
-  }
+  const { stats, featured, newest, categories } = Route.useLoaderData()
 
   return (
-    <main className="page-wrap px-4 pb-8 pt-14">
+    <main className="page-wrap px-4 pb-16 pt-14">
       {/* Hero */}
       <section className="island-shell rise-in relative overflow-hidden rounded-[2rem] px-6 py-12 sm:px-10 sm:py-16 md:py-20">
         <div className="pointer-events-none absolute -left-20 -top-24 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(79,184,178,0.32),transparent_66%)]" />
         <div className="pointer-events-none absolute -bottom-20 -right-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(47,106,74,0.18),transparent_66%)]" />
-        <p className="island-kicker mb-3">Modern Platform</p>
-        <h1 className="display-title mb-5 max-w-3xl text-4xl leading-[1.08] font-bold tracking-tight text-[var(--sea-ink)] sm:text-5xl md:text-6xl">
-          Build, deploy, and scale — without the headache.
+        <p className="island-kicker mb-3">AI Tool Directory</p>
+        <h1 className="display-title mb-5 max-w-3xl text-4xl font-bold leading-[1.08] tracking-tight text-[var(--sea-ink)] sm:text-5xl md:text-6xl">
+          发现最适合你的 AI 工具
         </h1>
         <p className="mb-8 max-w-2xl text-base leading-relaxed text-[var(--sea-ink-soft)] sm:text-lg">
-          Stockholm gives your team the tools to ship faster, monitor smarter, and grow without limits.
-          From prototype to production in minutes.
+          精选收录数百款经过审核的 AI 工具，按分类、定价、使用场景分类整理。
+          找到你需要的，一站搞定。
         </p>
         <div className="flex flex-wrap gap-3">
-          <a
-            href="/auth/sign-in"
+          <Link
+            to="/tools"
             className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-6 py-2.5 text-sm font-semibold text-white no-underline shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
           >
-            Get Started Free
-          </a>
-          <a
-            href="/pricing"
+            浏览所有工具
+          </Link>
+          <Link
+            to="/tools/submit"
             className="rounded-full border border-[rgba(23,58,64,0.2)] bg-white/50 px-6 py-2.5 text-sm font-semibold text-[var(--sea-ink)] no-underline transition hover:-translate-y-0.5 hover:border-[rgba(23,58,64,0.35)] dark:bg-white/10"
           >
-            View Pricing
-          </a>
+            提交你的工具
+          </Link>
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="mt-16 scroll-mt-24">
-        <div className="mb-8 text-center">
-          <p className="island-kicker mb-2">Features</p>
-          <h2 className="display-title text-3xl font-bold tracking-tight text-[var(--sea-ink)] sm:text-4xl">
-            Everything you need to ship
-          </h2>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((f, i) => (
-            <article
-              key={f.title}
-              className="island-shell feature-card rise-in rounded-2xl p-6"
-              style={{ animationDelay: `${i * 80 + 80}ms` }}
-            >
-              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(79,184,178,0.12)] text-[var(--lagoon-deep)]">
-                {f.icon}
-              </div>
-              <h3 className="mb-2 text-base font-semibold text-[var(--sea-ink)]">
-                {f.title}
-              </h3>
-              <p className="m-0 text-sm leading-relaxed text-[var(--sea-ink-soft)]">{f.desc}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      {/* Social Proof */}
-      <section className="mt-16">
-        <div className="island-shell rise-in rounded-[2rem] px-6 py-10 sm:px-10">
-          <div className="grid gap-8 text-center sm:grid-cols-3">
+      {/* Stats */}
+      <section className="mt-8">
+        <div className="island-shell rise-in rounded-[2rem] px-6 py-8 sm:px-10">
+          <div className="grid grid-cols-3 gap-4 text-center">
             {[
-              ['10,000+', 'Teams worldwide'],
-              ['99.9%', 'Uptime guarantee'],
-              ['4.9/5', 'Average rating'],
+              [stats.toolCount.toLocaleString() + '+', '收录工具'],
+              [stats.categoryCount.toString(), '工具分类'],
+              [stats.tagCount.toString(), '标签'],
             ].map(([value, label]) => (
               <div key={label}>
                 <p className="display-title m-0 text-3xl font-bold text-[var(--lagoon-deep)] sm:text-4xl">
@@ -221,87 +110,164 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing Preview */}
-      <section className="mt-16">
-        <div className="mb-8 text-center">
-          <p className="island-kicker mb-2">Pricing</p>
-          <h2 className="display-title text-3xl font-bold tracking-tight text-[var(--sea-ink)] sm:text-4xl">
-            Simple, transparent pricing
-          </h2>
-          <p className="mx-auto mt-3 max-w-lg text-[var(--sea-ink-soft)]">
-            Start for free, upgrade when you're ready. No hidden fees.
-          </p>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-3">
-          {plans.map((plan, i) => (
-            <article
-              key={plan.name}
-              className={`island-shell feature-card rise-in rounded-2xl p-6 ${plan.highlighted ? 'ring-2 ring-[var(--lagoon)]' : ''}`}
-              style={{ animationDelay: `${i * 100 + 80}ms` }}
+      {/* Featured tools */}
+      {featured.length > 0 && (
+        <section className="mt-14">
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <p className="island-kicker mb-1">精选推荐</p>
+              <h2 className="display-title text-2xl font-bold tracking-tight text-[var(--sea-ink)]">
+                Featured Tools
+              </h2>
+            </div>
+            <Link
+              to="/tools"
+              className="text-sm font-medium text-[var(--lagoon)] no-underline hover:underline"
             >
-              <p className="island-kicker mb-1">{plan.name}</p>
-              <p className="m-0 mb-1">
-                <span className="display-title text-3xl font-bold text-[var(--sea-ink)]">{plan.price}</span>
-                <span className="text-sm text-[var(--sea-ink-soft)]">{plan.period}</span>
-              </p>
-              <p className="mb-4 text-sm text-[var(--sea-ink-soft)]">{plan.desc}</p>
-              <ul className="mb-6 space-y-2 pl-0">
-                {plan.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-sm text-[var(--sea-ink-soft)]">
-                    <svg viewBox="0 0 20 20" fill="currentColor" className="mt-0.5 h-4 w-4 shrink-0 text-[var(--lagoon)]">
-                      <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
-                    </svg>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              {plan.planKey ? (
-                <button
-                  type="button"
-                  disabled={checkoutLoading}
-                  onClick={() => handleUpgrade(plan.planKey!)}
-                  className={`block w-full rounded-full px-5 py-2.5 text-center text-sm font-semibold transition hover:-translate-y-0.5 disabled:opacity-50 ${
-                    plan.highlighted
-                      ? 'border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:bg-[var(--lagoon-deep)]'
-                      : 'border border-[var(--line)] bg-[var(--surface)] text-[var(--sea-ink)] hover:border-[var(--lagoon)]'
-                  }`}
+              查看全部 →
+            </Link>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {featured.slice(0, 6).map((tool) => (
+              <ToolCard key={tool.id} tool={tool} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Categories */}
+      {categories.length > 0 && (
+        <section className="mt-14">
+          <div className="mb-6">
+            <p className="island-kicker mb-1">分类浏览</p>
+            <h2 className="display-title text-2xl font-bold tracking-tight text-[var(--sea-ink)]">
+              按场景找工具
+            </h2>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {categories.map((cat, i) => (
+              <Link
+                key={cat.id}
+                to="/tools/category/$slug"
+                params={{ slug: cat.slug }}
+                className="island-shell rise-in flex items-center gap-3 rounded-xl p-4 no-underline transition hover:-translate-y-0.5 hover:ring-1 hover:ring-[var(--lagoon)]"
+                style={{ animationDelay: `${i * 40}ms` }}
+              >
+                <span className="text-2xl">{cat.icon ?? '🔧'}</span>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-[var(--sea-ink)]">{cat.name}</p>
+                  <p className="text-xs text-[var(--sea-ink-soft)]">{cat.toolCount} 工具</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <div className="mt-4 text-center">
+            <Link
+              to="/tools"
+              className="text-sm font-medium text-[var(--lagoon)] no-underline hover:underline"
+            >
+              查看全部分类 →
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {/* Newest tools */}
+      {newest.length > 0 && (
+        <section className="mt-14">
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <p className="island-kicker mb-1">最新收录</p>
+              <h2 className="display-title text-2xl font-bold tracking-tight text-[var(--sea-ink)]">
+                New Arrivals
+              </h2>
+            </div>
+            <Link
+              to="/tools"
+              className="text-sm font-medium text-[var(--lagoon)] no-underline hover:underline"
+            >
+              查看全部 →
+            </Link>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {newest.map((tool) => (
+              <ToolCard key={tool.id} tool={tool} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* FAQ */}
+      <section className="mx-auto mt-16 max-w-2xl">
+        <div className="mb-8 text-center">
+          <p className="island-kicker mb-2">FAQ</p>
+          <h2 className="display-title text-2xl font-bold tracking-tight text-[var(--sea-ink)]">
+            常见问题
+          </h2>
+        </div>
+        <div className="space-y-3">
+          {FAQ.map((item) => (
+            <details key={item.q} className="island-shell group rounded-xl px-5 py-4">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-[var(--sea-ink)]">
+                {item.q}
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="h-4 w-4 shrink-0 text-[var(--sea-ink-soft)] transition group-open:rotate-180"
                 >
-                  {checkoutLoading ? 'Redirecting...' : plan.cta}
-                </button>
-              ) : (
-                <a
-                  href={plan.href!}
-                  className={`block rounded-full px-5 py-2.5 text-center text-sm font-semibold no-underline transition hover:-translate-y-0.5 ${
-                    plan.highlighted
-                      ? 'border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:bg-[var(--lagoon-deep)]'
-                      : 'border border-[var(--line)] bg-[var(--surface)] text-[var(--sea-ink)] hover:border-[var(--lagoon)]'
-                  }`}
-                >
-                  {plan.cta}
-                </a>
-              )}
-            </article>
+                  <path
+                    fillRule="evenodd"
+                    d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </summary>
+              <p className="mt-3 text-sm leading-relaxed text-[var(--sea-ink-soft)]">{item.a}</p>
+            </details>
           ))}
         </div>
       </section>
 
+      {/* Newsletter */}
+      <section className="mx-auto mt-16 max-w-xl text-center">
+        <div className="island-shell rise-in relative overflow-hidden rounded-[2rem] px-6 py-10">
+          <div className="pointer-events-none absolute -left-16 -top-16 h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(79,184,178,0.2),transparent_66%)]" />
+          <p className="island-kicker mb-2">Newsletter</p>
+          <h2 className="display-title mb-2 text-xl font-bold tracking-tight text-[var(--sea-ink)]">
+            每周精选 AI 工具推送
+          </h2>
+          <p className="mb-6 text-sm text-[var(--sea-ink-soft)]">
+            订阅后每周收到 5 款精选工具推荐，不错过任何好工具。
+          </p>
+          <NewsletterForm />
+        </div>
+      </section>
+
       {/* Bottom CTA */}
-      <section className="mt-16">
+      <section className="mt-12">
         <div className="island-shell rise-in relative overflow-hidden rounded-[2rem] px-6 py-12 text-center sm:px-10 sm:py-16">
           <div className="pointer-events-none absolute -left-16 -top-16 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(79,184,178,0.24),transparent_66%)]" />
           <div className="pointer-events-none absolute -bottom-16 -right-16 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(47,106,74,0.14),transparent_66%)]" />
           <h2 className="display-title mb-4 text-3xl font-bold tracking-tight text-[var(--sea-ink)] sm:text-4xl">
-            Ready to get started?
+            有好工具想推荐？
           </h2>
           <p className="mx-auto mb-8 max-w-lg text-[var(--sea-ink-soft)]">
-            Join thousands of teams already building with Stockholm. Free to start, no credit card required.
+            免费提交，审核通过即可上线。付费 Featured 可获得首页展示和 Newsletter 推荐。
           </p>
-          <a
-            href="/auth/sign-in"
-            className="inline-block rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-8 py-3 text-sm font-semibold text-white no-underline shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
-          >
-            Get Started Free
-          </a>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link
+              to="/tools/submit"
+              className="inline-block rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-8 py-3 text-sm font-semibold text-white no-underline shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+            >
+              免费提交工具
+            </Link>
+            <Link
+              to="/listing-pricing"
+              className="inline-block rounded-full border border-[var(--line)] bg-[var(--surface)] px-8 py-3 text-sm font-semibold text-[var(--sea-ink)] no-underline transition hover:-translate-y-0.5 hover:border-[var(--lagoon)]"
+            >
+              查看付费套餐
+            </Link>
+          </div>
         </div>
       </section>
     </main>
