@@ -11,9 +11,10 @@ This file provides guidance to Claude Code when working with code in this reposi
 - `pnpm deploy` — Build and deploy to Cloudflare Workers (`wrangler deploy`)
 - `pnpm test` — Run tests with Vitest
 
-### Database (Drizzle ORM)
-- `pnpm db:generate` — Generate migration files from schema changes
-- `pnpm db:migrate` — Apply pending migrations
+### Database (Drizzle ORM + Cloudflare D1)
+- `pnpm db:generate` — Generate migration SQL files from schema changes (via `drizzle-kit generate`)
+- `pnpm db:migrate:local` — Apply pending migrations to the local D1 simulator (`wrangler d1 migrations apply --local`)
+- `pnpm db:migrate:remote` — Apply pending migrations to the remote D1 database (`wrangler d1 migrations apply --remote`)
 - `pnpm db:push` — Sync schema directly to DB (dev only, no migration file)
 - `pnpm db:pull` — Introspect existing DB and update schema
 - `pnpm db:studio` — Open Drizzle Studio for visual DB inspection
@@ -83,7 +84,7 @@ Types: `feat` | `fix` | `refactor` | `chore` | `docs` | `test`
 - **Routing**: TanStack Router — file-based, auto-generated route tree
 - **Build**: Vite with `@cloudflare/vite-plugin` — runs in Cloudflare Workers runtime during dev
 - **Deployment**: Cloudflare Workers via `wrangler deploy`
-- **Database**: PostgreSQL + Drizzle ORM (currently Neon; migrating to generic postgres + Hyperdrive — NWA-142)
+- **Database**: Cloudflare D1 (SQLite) + Drizzle ORM — local dev uses the D1 simulator via `@cloudflare/vite-plugin`
 - **Auth**: Better Auth with `tanstackStartCookies()` plugin
 - **Payments**: Stripe (subscriptions + one-time payments)
 - **Email**: Resend + React Email templates
@@ -128,8 +129,10 @@ src/
 ├── config/
 │   └── billing.ts        # Plan definitions (Free / Pro / Lifetime)
 ├── db/
-│   ├── index.ts          # Drizzle DB instance
-│   └── schema.ts         # All table definitions
+│   ├── index.ts          # Drizzle DB instance (D1 driver)
+│   ├── schema.ts          # Re-exports all tables
+│   ├── auth.schema.ts     # Better Auth tables (user, session, account, verification, apiKey)
+│   └── app.schema.ts      # Application-specific tables (credits, etc.)
 ├── emails/               # React Email templates
 ├── integrations/
 │   ├── better-auth/      # Auth UI helpers
@@ -235,20 +238,31 @@ export const APIRoute = createAPIFileRoute('/api/thing')({
 
 ### Database
 
-All schema definitions live in `src/db/schema.ts`. Follow the existing pattern:
+Schema definitions live in `src/db/auth.schema.ts` (Better Auth tables) and `src/db/app.schema.ts` (application tables). Both are re-exported from `src/db/schema.ts`.
+
+D1 uses SQLite — use `sqliteTable`, `integer` for booleans/timestamps, and `text` for strings:
 
 ```ts
-export const myTable = pgTable('my_table', {
+import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+
+export const myTable = sqliteTable('my_table', {
   id: text('id').primaryKey(),
   userId: text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
-  createdAt: timestamp('created_at').notNull(),
+  isActive: integer('is_active', { mode: 'boolean' }).notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
 })
 ```
 
 After any schema change:
 1. `pnpm db:generate` — creates migration SQL in `drizzle/`
-2. `pnpm db:migrate` — applies it
-3. Commit both the schema change and the generated migration file together
+2. `pnpm db:migrate:local` — applies it to the local D1 simulator
+3. `pnpm db:migrate:remote` — applies it to the remote D1 database (production)
+4. Commit both the schema change and the generated migration file together
+
+**D1/SQLite notes:**
+- No `SELECT ... FOR UPDATE` — D1 is single-writer, transactions are serialized
+- No `NULLS LAST` — use `CASE WHEN col IS NULL THEN 1 ELSE 0 END` instead
+- Booleans stored as integers (`0`/`1`), timestamps stored as millisecond integers
 
 ### Path Aliases
 
@@ -268,8 +282,11 @@ After any schema change:
 Copy `.env.example` to `.env.local` for local development. Required vars:
 
 ```bash
-# Database
-DATABASE_URL=postgresql://...
+# Cloudflare D1 — only needed for drizzle-kit remote operations (generate/push/pull)
+# Local dev uses the D1 simulator automatically via @cloudflare/vite-plugin
+CLOUDFLARE_ACCOUNT_ID=...
+CLOUDFLARE_D1_DATABASE_ID=...
+CLOUDFLARE_API_TOKEN=...
 
 # Better Auth
 BETTER_AUTH_URL=http://localhost:3000
@@ -277,7 +294,7 @@ BETTER_AUTH_SECRET=...
 
 # Email (Resend)
 RESEND_API_KEY=re_...
-RESEND_FROM="Stockholm <noreply@yourdomain.com>"
+RESEND_FROM="App Name <noreply@yourdomain.com>"
 
 # OAuth
 GITHUB_CLIENT_ID=...
