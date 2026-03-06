@@ -2,10 +2,10 @@
  * Public server functions for the tool directory.
  * No auth required — these power public-facing pages.
  */
-import { and, asc, count, desc, eq, inArray, like, or, SQL } from 'drizzle-orm'
+import { and, asc, count, desc, eq, inArray, like, or, sql, SQL } from 'drizzle-orm'
 import { createServerFn } from '@tanstack/react-start'
 import { db } from '#/db/index'
-import { category, tag, tool, toolCategory, toolTag } from '#/db/schema'
+import { category, tag, tool, toolCategory, toolTag, userToolSave } from '#/db/schema'
 
 const PUBLIC_PAGE_SIZE = 24
 
@@ -14,14 +14,36 @@ type PublicTagRef = { id: string; name: string; slug: string }
 export type PublicToolCard = typeof tool.$inferSelect & {
   categories: PublicCategoryRef[]
   tags: PublicTagRef[]
+  saveCount: number
+  isSaved: boolean
 }
 
-async function enrichToolsForCards(tools: Array<typeof tool.$inferSelect>): Promise<PublicToolCard[]> {
+function createSaveCountSubquery() {
+  return db
+    .select({
+      toolId: userToolSave.toolId,
+      saveCount: count(),
+    })
+    .from(userToolSave)
+    .groupBy(userToolSave.toolId)
+    .as('tool_save_count')
+}
+
+function getToolOrderBy(sort: string | undefined, saveCountOrder?: SQL<unknown>) {
+  if (sort === 'name') return [asc(tool.name)]
+  if (sort === 'saved' && saveCountOrder) return [desc(saveCountOrder), desc(tool.approvedAt)]
+  return [desc(tool.approvedAt)]
+}
+
+export async function enrichToolsForCards(
+  tools: Array<typeof tool.$inferSelect>,
+  viewerUserId?: string,
+): Promise<PublicToolCard[]> {
   if (tools.length === 0) return []
 
   const toolIds = tools.map((entry) => entry.id)
 
-  const [categoryRows, tagRows] = await Promise.all([
+  const [categoryRows, tagRows, saveCountRows, savedRows] = await Promise.all([
     db
       .select({
         toolId: toolCategory.toolId,
@@ -40,6 +62,17 @@ async function enrichToolsForCards(tools: Array<typeof tool.$inferSelect>): Prom
       .innerJoin(tag, eq(toolTag.tagId, tag.id))
       .where(inArray(toolTag.toolId, toolIds))
       .orderBy(asc(tag.name)),
+    db
+      .select({ toolId: userToolSave.toolId, total: count() })
+      .from(userToolSave)
+      .where(inArray(userToolSave.toolId, toolIds))
+      .groupBy(userToolSave.toolId),
+    viewerUserId
+      ? db
+          .select({ toolId: userToolSave.toolId })
+          .from(userToolSave)
+          .where(and(eq(userToolSave.userId, viewerUserId), inArray(userToolSave.toolId, toolIds)))
+      : Promise.resolve([] as Array<{ toolId: string }>),
   ])
 
   const categoryMap = new Map<string, PublicCategoryRef[]>()
@@ -56,10 +89,15 @@ async function enrichToolsForCards(tools: Array<typeof tool.$inferSelect>): Prom
     tagMap.set(row.toolId, entries)
   }
 
+  const saveCountMap = new Map(saveCountRows.map((row) => [row.toolId, row.total]))
+  const savedToolIds = new Set(savedRows.map((row) => row.toolId))
+
   return tools.map((entry) => ({
     ...entry,
     categories: categoryMap.get(entry.id) ?? [],
     tags: tagMap.get(entry.id) ?? [],
+    saveCount: saveCountMap.get(entry.id) ?? 0,
+    isSaved: savedToolIds.has(entry.id),
   }))
 }
 
@@ -67,19 +105,21 @@ async function enrichToolsForCards(tools: Array<typeof tool.$inferSelect>): Prom
 // Homepage
 // ---------------------------------------------------------------------------
 
-export const getFeaturedTools = createServerFn().handler(async () => {
-  const rows = await db
-    .select()
-    .from(tool)
-    .where(and(eq(tool.status, 'approved'), eq(tool.isFeatured, true)))
-    .orderBy(desc(tool.approvedAt))
-    .limit(8)
+export const getFeaturedTools = createServerFn()
+  .inputValidator((input: { viewerUserId?: string } | undefined) => input)
+  .handler(async ({ data }) => {
+    const rows = await db
+      .select()
+      .from(tool)
+      .where(and(eq(tool.status, 'approved'), eq(tool.isFeatured, true)))
+      .orderBy(desc(tool.approvedAt))
+      .limit(8)
 
-  return enrichToolsForCards(rows)
-})
+    return enrichToolsForCards(rows, data?.viewerUserId)
+  })
 
 export const getNewTools = createServerFn()
-  .inputValidator((input: { limit?: number }) => input)
+  .inputValidator((input: { limit?: number; viewerUserId?: string }) => input)
   .handler(async ({ data }) => {
     const rows = await db
       .select()
@@ -88,7 +128,7 @@ export const getNewTools = createServerFn()
       .orderBy(desc(tool.approvedAt))
       .limit(data.limit ?? 12)
 
-    return enrichToolsForCards(rows)
+    return enrichToolsForCards(rows, data.viewerUserId)
   })
 
 export const getCategoriesWithCount = createServerFn().handler(async () => {
@@ -132,11 +172,13 @@ export const getCategoryBySlug = createServerFn()
 
 export const getToolsByCategory = createServerFn()
   .inputValidator(
-    (input: { slug: string; pricingType?: string; sort?: string; page?: number }) => input,
+    (input: { slug: string; pricingType?: string; sort?: string; page?: number; viewerUserId?: string }) => input,
   )
   .handler(async ({ data }) => {
     const page = data.page ?? 1
     const offset = (page - 1) * PUBLIC_PAGE_SIZE
+    const saveCountSubquery = createSaveCountSubquery()
+    const saveCountOrder = sql<number>`coalesce(${saveCountSubquery.saveCount}, 0)`
 
     const [cat] = await db
       .select({ id: category.id })
@@ -150,15 +192,16 @@ export const getToolsByCategory = createServerFn()
       conditions.push(eq(tool.pricingType, data.pricingType))
     }
 
-    const orderBy = data.sort === 'name' ? asc(tool.name) : desc(tool.approvedAt)
+    const orderBy = getToolOrderBy(data.sort, saveCountOrder)
 
     const [rows, [{ total }]] = await Promise.all([
       db
         .select({ tool: tool })
         .from(tool)
         .innerJoin(toolCategory, eq(toolCategory.toolId, tool.id))
+        .leftJoin(saveCountSubquery, eq(saveCountSubquery.toolId, tool.id))
         .where(and(...conditions))
-        .orderBy(orderBy)
+        .orderBy(...orderBy)
         .limit(PUBLIC_PAGE_SIZE)
         .offset(offset),
       db
@@ -168,7 +211,7 @@ export const getToolsByCategory = createServerFn()
         .where(and(...conditions)),
     ])
 
-    const tools = await enrichToolsForCards(rows.map((r) => r.tool))
+    const tools = await enrichToolsForCards(rows.map((r) => r.tool), data.viewerUserId)
 
     return {
       tools,
@@ -183,7 +226,7 @@ export const getToolsByCategory = createServerFn()
 // ---------------------------------------------------------------------------
 
 export const getToolBySlug = createServerFn()
-  .inputValidator((input: { slug: string }) => input)
+  .inputValidator((input: { slug: string; viewerUserId?: string }) => input)
   .handler(async ({ data }) => {
     const [row] = await db
       .select()
@@ -192,7 +235,7 @@ export const getToolBySlug = createServerFn()
       .limit(1)
     if (!row) return null
 
-    const [categories, tags] = await Promise.all([
+    const [categories, tags, saveCountRow, savedRow] = await Promise.all([
       db
         .select({ id: category.id, name: category.name, slug: category.slug })
         .from(category)
@@ -203,14 +246,33 @@ export const getToolBySlug = createServerFn()
         .from(tag)
         .innerJoin(toolTag, eq(toolTag.tagId, tag.id))
         .where(eq(toolTag.toolId, row.id)),
+      db
+        .select({ total: count() })
+        .from(userToolSave)
+        .where(eq(userToolSave.toolId, row.id))
+        .then((rows) => rows[0]),
+      data.viewerUserId
+        ? db
+            .select({ toolId: userToolSave.toolId })
+            .from(userToolSave)
+            .where(and(eq(userToolSave.userId, data.viewerUserId), eq(userToolSave.toolId, row.id)))
+            .limit(1)
+            .then((rows) => rows[0] ?? null)
+        : Promise.resolve(null),
     ])
 
-    return { ...row, categories, tags }
+    return {
+      ...row,
+      categories,
+      tags,
+      saveCount: saveCountRow?.total ?? 0,
+      isSaved: Boolean(savedRow),
+    }
   })
 
 export const getRelatedTools = createServerFn()
   .inputValidator(
-    (input: { toolId: string; categoryIds: string[]; limit?: number }) => input,
+    (input: { toolId: string; categoryIds: string[]; limit?: number; viewerUserId?: string }) => input,
   )
   .handler(async ({ data }) => {
     if (data.categoryIds.length === 0) return []
@@ -234,7 +296,7 @@ export const getRelatedTools = createServerFn()
       .filter((entry) => entry.id !== data.toolId)
       .slice(0, limit)
 
-    return enrichToolsForCards(tools)
+    return enrichToolsForCards(tools, data.viewerUserId)
   })
 
 // ---------------------------------------------------------------------------
@@ -266,11 +328,13 @@ export const getTagBySlug = createServerFn()
 
 export const getToolsByTag = createServerFn()
   .inputValidator(
-    (input: { slug: string; pricingType?: string; sort?: string; page?: number }) => input,
+    (input: { slug: string; pricingType?: string; sort?: string; page?: number; viewerUserId?: string }) => input,
   )
   .handler(async ({ data }) => {
     const page = data.page ?? 1
     const offset = (page - 1) * PUBLIC_PAGE_SIZE
+    const saveCountSubquery = createSaveCountSubquery()
+    const saveCountOrder = sql<number>`coalesce(${saveCountSubquery.saveCount}, 0)`
 
     const [t] = await db
       .select({ id: tag.id })
@@ -284,15 +348,16 @@ export const getToolsByTag = createServerFn()
       conditions.push(eq(tool.pricingType, data.pricingType))
     }
 
-    const orderBy = data.sort === 'name' ? asc(tool.name) : desc(tool.approvedAt)
+    const orderBy = getToolOrderBy(data.sort, saveCountOrder)
 
     const [rows, [{ total }]] = await Promise.all([
       db
         .select({ tool: tool })
         .from(tool)
         .innerJoin(toolTag, eq(toolTag.toolId, tool.id))
+        .leftJoin(saveCountSubquery, eq(saveCountSubquery.toolId, tool.id))
         .where(and(...conditions))
-        .orderBy(orderBy)
+        .orderBy(...orderBy)
         .limit(PUBLIC_PAGE_SIZE)
         .offset(offset),
       db
@@ -302,7 +367,7 @@ export const getToolsByTag = createServerFn()
         .where(and(...conditions)),
     ])
 
-    const tools = await enrichToolsForCards(rows.map((r) => r.tool))
+    const tools = await enrichToolsForCards(rows.map((r) => r.tool), data.viewerUserId)
 
     return {
       tools,
@@ -325,11 +390,14 @@ export const searchTools = createServerFn()
       pricingType?: string
       sort?: string
       page?: number
+      viewerUserId?: string
     }) => input,
   )
   .handler(async ({ data }) => {
     const page = data.page ?? 1
     const offset = (page - 1) * PUBLIC_PAGE_SIZE
+    const saveCountSubquery = createSaveCountSubquery()
+    const saveCountOrder = sql<number>`coalesce(${saveCountSubquery.saveCount}, 0)`
 
     const baseConditions: SQL[] = [eq(tool.status, 'approved')]
 
@@ -341,7 +409,7 @@ export const searchTools = createServerFn()
       baseConditions.push(eq(tool.pricingType, data.pricingType))
     }
 
-    const orderBy = data.sort === 'name' ? asc(tool.name) : desc(tool.approvedAt)
+    const orderBy = getToolOrderBy(data.sort, saveCountOrder)
 
     if (data.categorySlug) {
       const [cat] = await db
@@ -358,8 +426,9 @@ export const searchTools = createServerFn()
           .selectDistinct({ tool: tool })
           .from(tool)
           .innerJoin(toolCategory, eq(toolCategory.toolId, tool.id))
+          .leftJoin(saveCountSubquery, eq(saveCountSubquery.toolId, tool.id))
           .where(and(...conditions))
-          .orderBy(orderBy)
+          .orderBy(...orderBy)
           .limit(PUBLIC_PAGE_SIZE)
           .offset(offset),
         db
@@ -368,7 +437,7 @@ export const searchTools = createServerFn()
           .innerJoin(toolCategory, eq(toolCategory.toolId, tool.id))
           .where(and(...conditions)),
       ])
-      const tools = await enrichToolsForCards(rows.map((r) => r.tool))
+      const tools = await enrichToolsForCards(rows.map((r) => r.tool), data.viewerUserId)
       return { tools, total, page, totalPages: Math.ceil(total / PUBLIC_PAGE_SIZE) }
     }
 
@@ -387,8 +456,9 @@ export const searchTools = createServerFn()
           .selectDistinct({ tool: tool })
           .from(tool)
           .innerJoin(toolTag, eq(toolTag.toolId, tool.id))
+          .leftJoin(saveCountSubquery, eq(saveCountSubquery.toolId, tool.id))
           .where(and(...conditions))
-          .orderBy(orderBy)
+          .orderBy(...orderBy)
           .limit(PUBLIC_PAGE_SIZE)
           .offset(offset),
         db
@@ -398,22 +468,23 @@ export const searchTools = createServerFn()
           .where(and(...conditions))
           .limit(1),
       ])
-      const tools = await enrichToolsForCards(rows.map((r) => r.tool))
+      const tools = await enrichToolsForCards(rows.map((r) => r.tool), data.viewerUserId)
       return { tools, total, page, totalPages: Math.ceil(total / PUBLIC_PAGE_SIZE) }
     }
 
     const [rows, [{ total }]] = await Promise.all([
       db
-        .select()
+        .select({ tool })
         .from(tool)
+        .leftJoin(saveCountSubquery, eq(saveCountSubquery.toolId, tool.id))
         .where(and(...baseConditions))
-        .orderBy(orderBy)
+        .orderBy(...orderBy)
         .limit(PUBLIC_PAGE_SIZE)
         .offset(offset),
       db.select({ total: count() }).from(tool).where(and(...baseConditions)),
     ])
 
-    const tools = await enrichToolsForCards(rows)
+    const tools = await enrichToolsForCards(rows.map((row) => row.tool), data.viewerUserId)
     return { tools, total, page, totalPages: Math.ceil(total / PUBLIC_PAGE_SIZE) }
   })
 

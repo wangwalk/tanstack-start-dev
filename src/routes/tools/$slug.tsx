@@ -1,12 +1,14 @@
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { getToolBySlug, getRelatedTools } from '#/lib/public'
+import { SaveToolButton } from '#/components/tools/SaveToolButton'
 import { ToolCard } from '#/components/tools/ToolCard'
 import { SITE_TITLE, SITE_URL } from '#/lib/site'
 import { softwareApplicationSchema, breadcrumbSchema } from '#/components/seo/JsonLd'
 
 export const Route = createFileRoute('/tools/$slug')({
-  loader: async ({ params }) => {
-    const tool = await getToolBySlug({ data: { slug: params.slug } })
+  loader: async ({ params, context }) => {
+    const viewerUserId = context.session?.user.id
+    const tool = await getToolBySlug({ data: { slug: params.slug, viewerUserId } })
     if (!tool) throw notFound()
 
     const related = await getRelatedTools({
@@ -14,6 +16,7 @@ export const Route = createFileRoute('/tools/$slug')({
         toolId: tool.id,
         categoryIds: tool.categories.map((c) => c.id),
         limit: 6,
+        viewerUserId,
       },
     })
     return { tool, related }
@@ -132,14 +135,22 @@ function ToolDetailPage() {
               {tool.description && (
                 <p className="mt-2 text-[var(--sea-ink-soft)]">{tool.description}</p>
               )}
-              <a
-                href={tool.url}
-                target="_blank"
-                rel="noopener noreferrer nofollow"
-                className="mt-4 inline-block rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-6 py-2.5 text-sm font-semibold text-white no-underline shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
-              >
-                访问官网 →
-              </a>
+              <div className="mt-4 flex flex-wrap items-center gap-3">
+                <a
+                  href={tool.url}
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                  className="inline-block rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-6 py-2.5 text-sm font-semibold text-white no-underline shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+                >
+                  访问官网 →
+                </a>
+                <SaveToolButton
+                  toolId={tool.id}
+                  initialIsSaved={tool.isSaved}
+                  initialSaveCount={tool.saveCount}
+                  variant="detail"
+                />
+              </div>
             </div>
           </div>
 
@@ -177,6 +188,10 @@ function ToolDetailPage() {
                 <dd className="mt-0.5 font-medium text-[var(--sea-ink)]">
                   {pricingLabel[tool.pricingType] ?? tool.pricingType}
                 </dd>
+              </div>
+              <div>
+                <dt className="text-[var(--sea-ink-soft)]">收藏数</dt>
+                <dd className="mt-0.5 font-medium text-[var(--sea-ink)]">{tool.saveCount}</dd>
               </div>
               {tool.categories.length > 0 && (
                 <div>

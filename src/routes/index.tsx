@@ -12,11 +12,12 @@ import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from '#/lib/site'
 import { m } from '#/paraglide/messages.js'
 
 export const Route = createFileRoute('/')({
-  loader: async () => {
+  loader: async ({ context }) => {
+    const viewerUserId = context.session?.user.id
     const [stats, featured, newest, categories, tags] = await Promise.all([
       getDirectoryStats(),
-      getFeaturedTools(),
-      getNewTools({ data: { limit: 6 } }),
+      getFeaturedTools({ data: { viewerUserId } }),
+      getNewTools({ data: { limit: 6, viewerUserId } }),
       getCategoriesWithCount(),
       getTagsWithCount(),
     ])

@@ -11,10 +11,11 @@ export const Route = createFileRoute('/tools/')({
       { name: 'description', content: '发现最好的 AI 工具 — 按分类浏览、精选推荐、最新上架。' },
     ],
   }),
-  loader: async () => {
+  loader: async ({ context }) => {
+    const viewerUserId = context.session?.user.id
     const [featured, newTools, categories] = await Promise.all([
-      getFeaturedTools(),
-      getNewTools({ data: { limit: 12 } }),
+      getFeaturedTools({ data: { viewerUserId } }),
+      getNewTools({ data: { limit: 12, viewerUserId } }),
       getCategoriesWithCount(),
     ])
     return { featured, newTools, categories }
