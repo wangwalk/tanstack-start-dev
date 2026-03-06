@@ -60,7 +60,7 @@ export const createCheckoutSession = userFn({ method: 'POST' })
       customer: customerId,
       mode: planConfig.mode,
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${SITE_URL}/dashboard?checkout=success`,
+      success_url: `${SITE_URL}/payment?session_id={CHECKOUT_SESSION_ID}&type=subscription`,
       cancel_url: `${SITE_URL}/pricing?checkout=cancelled`,
       metadata: { userId, plan, interval: interval ?? '' },
     })
@@ -104,12 +104,26 @@ export const createCreditCheckoutSession = userFn({ method: 'POST' })
       customer: customerId,
       mode: 'payment',
       line_items: [{ price: pack.priceId, quantity: 1 }],
-      success_url: `${SITE_URL}/dashboard/settings/credits?checkout=success`,
+      success_url: `${SITE_URL}/payment?session_id={CHECKOUT_SESSION_ID}&type=credit`,
       cancel_url: `${SITE_URL}/dashboard/settings/credits`,
       metadata: { userId, type: 'credit_purchase', pack: data.pack },
     })
 
     return { url: session.url }
+  })
+
+export const getCheckoutSessionStatus = userFn()
+  .inputValidator((input: { sessionId: string }) => input)
+  .handler(async ({ data, context }) => {
+    const stripe = getStripe()
+    const session = await stripe.checkout.sessions.retrieve(data.sessionId)
+    if (session.metadata?.userId !== context.user.id) {
+      throw new Error('Forbidden')
+    }
+    return {
+      paymentStatus: session.payment_status,
+      metadata: session.metadata,
+    }
   })
 
 export const getUserSubscription = userFn().handler(async ({ context }) => {

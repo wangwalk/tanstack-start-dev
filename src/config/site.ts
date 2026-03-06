@@ -68,6 +68,9 @@ export const siteConfig = {
     currency: 'USD',
   },
 
+  /** Support contact email shown in error/timeout states. */
+  supportEmail: 'support@example.com',
+
   /**
    * Social profile URLs.
    * Leave a value as an empty string `''` to hide that icon.
