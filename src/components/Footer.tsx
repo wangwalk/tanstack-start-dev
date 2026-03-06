@@ -4,7 +4,13 @@ import { LOCALE_LABELS } from '#/components/LanguageSwitcher'
 import { siteConfig } from '#/config/site'
 import { deLocalizeHref, getLocale, locales, localizeHref } from '#/paraglide/runtime.js'
 
-const primaryLinks = [
+type PrimaryLink = {
+  label: string
+  to: '/tools' | '/tools/categories' | '/tools/submit' | '/blog' | '/about' | '/contact' | '/privacy' | '/terms'
+  enabled?: boolean
+}
+
+const primaryLinks: PrimaryLink[] = [
   { label: 'Browse Tools', to: '/tools' as const },
   { label: 'Categories', to: '/tools/categories' as const },
   { label: 'Submit', to: '/tools/submit' as const },
@@ -13,7 +19,7 @@ const primaryLinks = [
   { label: 'Contact', to: '/contact' as const },
   { label: 'Privacy', to: '/privacy' as const },
   { label: 'Terms', to: '/terms' as const },
-].filter((link) => link.enabled !== false)
+].filter((link) => link.enabled ?? true)
 
 export default function Footer() {
   const year = new Date().getFullYear()
