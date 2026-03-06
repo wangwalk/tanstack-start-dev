@@ -2,35 +2,93 @@
  * Public server functions for the tool directory.
  * No auth required — these power public-facing pages.
  */
-import { and, asc, count, desc, eq, like, or, SQL } from 'drizzle-orm'
+import { and, asc, count, desc, eq, inArray, like, or, SQL } from 'drizzle-orm'
 import { createServerFn } from '@tanstack/react-start'
 import { db } from '#/db/index'
 import { category, tag, tool, toolCategory, toolTag } from '#/db/schema'
 
 const PUBLIC_PAGE_SIZE = 24
 
+type PublicCategoryRef = { id: string; name: string; slug: string }
+type PublicTagRef = { id: string; name: string; slug: string }
+export type PublicToolCard = typeof tool.$inferSelect & {
+  categories: PublicCategoryRef[]
+  tags: PublicTagRef[]
+}
+
+async function enrichToolsForCards(tools: Array<typeof tool.$inferSelect>): Promise<PublicToolCard[]> {
+  if (tools.length === 0) return []
+
+  const toolIds = tools.map((entry) => entry.id)
+
+  const [categoryRows, tagRows] = await Promise.all([
+    db
+      .select({
+        toolId: toolCategory.toolId,
+        category: { id: category.id, name: category.name, slug: category.slug },
+      })
+      .from(toolCategory)
+      .innerJoin(category, eq(toolCategory.categoryId, category.id))
+      .where(inArray(toolCategory.toolId, toolIds))
+      .orderBy(asc(category.sortOrder), asc(category.name)),
+    db
+      .select({
+        toolId: toolTag.toolId,
+        tag: { id: tag.id, name: tag.name, slug: tag.slug },
+      })
+      .from(toolTag)
+      .innerJoin(tag, eq(toolTag.tagId, tag.id))
+      .where(inArray(toolTag.toolId, toolIds))
+      .orderBy(asc(tag.name)),
+  ])
+
+  const categoryMap = new Map<string, PublicCategoryRef[]>()
+  for (const row of categoryRows) {
+    const entries = categoryMap.get(row.toolId) ?? []
+    entries.push(row.category)
+    categoryMap.set(row.toolId, entries)
+  }
+
+  const tagMap = new Map<string, PublicTagRef[]>()
+  for (const row of tagRows) {
+    const entries = tagMap.get(row.toolId) ?? []
+    entries.push(row.tag)
+    tagMap.set(row.toolId, entries)
+  }
+
+  return tools.map((entry) => ({
+    ...entry,
+    categories: categoryMap.get(entry.id) ?? [],
+    tags: tagMap.get(entry.id) ?? [],
+  }))
+}
+
 // ---------------------------------------------------------------------------
 // Homepage
 // ---------------------------------------------------------------------------
 
 export const getFeaturedTools = createServerFn().handler(async () => {
-  return db
+  const rows = await db
     .select()
     .from(tool)
     .where(and(eq(tool.status, 'approved'), eq(tool.isFeatured, true)))
     .orderBy(desc(tool.approvedAt))
     .limit(8)
+
+  return enrichToolsForCards(rows)
 })
 
 export const getNewTools = createServerFn()
   .inputValidator((input: { limit?: number }) => input)
   .handler(async ({ data }) => {
-    return db
+    const rows = await db
       .select()
       .from(tool)
       .where(eq(tool.status, 'approved'))
       .orderBy(desc(tool.approvedAt))
       .limit(data.limit ?? 12)
+
+    return enrichToolsForCards(rows)
   })
 
 export const getCategoriesWithCount = createServerFn().handler(async () => {
@@ -110,8 +168,10 @@ export const getToolsByCategory = createServerFn()
         .where(and(...conditions)),
     ])
 
+    const tools = await enrichToolsForCards(rows.map((r) => r.tool))
+
     return {
-      tools: rows.map((r) => r.tool),
+      tools,
       total,
       page,
       totalPages: Math.ceil(total / PUBLIC_PAGE_SIZE),
@@ -169,10 +229,12 @@ export const getRelatedTools = createServerFn()
       .orderBy(desc(tool.approvedAt))
       .limit(limit + 1)
 
-    return rows
+    const tools = rows
       .map((r) => r.tool)
-      .filter((t) => t.id !== data.toolId)
+      .filter((entry) => entry.id !== data.toolId)
       .slice(0, limit)
+
+    return enrichToolsForCards(tools)
   })
 
 // ---------------------------------------------------------------------------
@@ -240,8 +302,10 @@ export const getToolsByTag = createServerFn()
         .where(and(...conditions)),
     ])
 
+    const tools = await enrichToolsForCards(rows.map((r) => r.tool))
+
     return {
-      tools: rows.map((r) => r.tool),
+      tools,
       total,
       page,
       totalPages: Math.ceil(total / PUBLIC_PAGE_SIZE),
@@ -304,7 +368,8 @@ export const searchTools = createServerFn()
           .innerJoin(toolCategory, eq(toolCategory.toolId, tool.id))
           .where(and(...conditions)),
       ])
-      return { tools: rows.map((r) => r.tool), total, page, totalPages: Math.ceil(total / PUBLIC_PAGE_SIZE) }
+      const tools = await enrichToolsForCards(rows.map((r) => r.tool))
+      return { tools, total, page, totalPages: Math.ceil(total / PUBLIC_PAGE_SIZE) }
     }
 
     if (data.tagSlug) {
@@ -333,7 +398,8 @@ export const searchTools = createServerFn()
           .where(and(...conditions))
           .limit(1),
       ])
-      return { tools: rows.map((r) => r.tool), total, page, totalPages: Math.ceil(total / PUBLIC_PAGE_SIZE) }
+      const tools = await enrichToolsForCards(rows.map((r) => r.tool))
+      return { tools, total, page, totalPages: Math.ceil(total / PUBLIC_PAGE_SIZE) }
     }
 
     const [rows, [{ total }]] = await Promise.all([
@@ -347,7 +413,8 @@ export const searchTools = createServerFn()
       db.select({ total: count() }).from(tool).where(and(...baseConditions)),
     ])
 
-    return { tools: rows, total, page, totalPages: Math.ceil(total / PUBLIC_PAGE_SIZE) }
+    const tools = await enrichToolsForCards(rows)
+    return { tools, total, page, totalPages: Math.ceil(total / PUBLIC_PAGE_SIZE) }
   })
 
 // ---------------------------------------------------------------------------
