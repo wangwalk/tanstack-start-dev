@@ -14,7 +14,7 @@ export const Route = createFileRoute('/')({
       getNewTools({ data: { limit: 6 } }),
       getCategoriesWithCount(),
     ])
-    return { stats, featured, newest, categories: categories.slice(0, 8) }
+    return { stats, featured, newest, categories }
   },
   head: () => ({
     links: [{ rel: 'canonical', href: SITE_URL }],
@@ -45,6 +45,7 @@ const FAQ = [
 
 function LandingPage() {
   const { stats, featured, newest, categories } = Route.useLoaderData()
+  const topCategories = categories.filter((cat) => !cat.parentId && cat.toolCount > 0)
 
   return (
     <main className="page-wrap px-4 pb-16 pt-14">
@@ -121,27 +122,43 @@ function LandingPage() {
       )}
 
       {/* Categories */}
-      {categories.length > 0 && (
+      {topCategories.length > 0 && (
         <section className="mt-14">
-          <div className="mb-6">
+          <div className="mb-6 flex items-center justify-between gap-4">
             <p className="island-kicker mb-1">{m.home_categories_kicker()}</p>
-            <h2 className="display-title text-2xl font-bold tracking-tight text-[var(--sea-ink)]">
-              {m.home_categories_title()}
-            </h2>
+            <Link
+              to="/tools/categories"
+              className="text-sm font-medium text-[var(--lagoon)] no-underline hover:underline"
+            >
+              查看分类索引
+            </Link>
           </div>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {categories.map((cat, i) => (
+          <h2 className="display-title text-2xl font-bold tracking-tight text-[var(--sea-ink)]">
+            {m.home_categories_title()}
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--sea-ink-soft)]">
+            从完整的顶级分类出发，快速找到适合的 AI 工具方向。
+          </p>
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            {topCategories.map((cat, i) => (
               <Link
                 key={cat.id}
                 to="/tools/category/$slug"
                 params={{ slug: cat.slug }}
-                className="island-shell rise-in flex items-center gap-3 rounded-xl p-4 no-underline transition hover:-translate-y-0.5 hover:ring-1 hover:ring-[var(--lagoon)]"
-                style={{ animationDelay: `${i * 40}ms` }}
+                className="island-shell rise-in group flex min-h-28 flex-col justify-between rounded-[1.4rem] p-4 no-underline transition hover:-translate-y-0.5 hover:ring-1 hover:ring-[var(--lagoon)]"
+                style={{ animationDelay: `${i * 35}ms` }}
               >
-                <span className="text-2xl">{cat.icon ?? '🔧'}</span>
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-[var(--sea-ink)]">{cat.name}</p>
-                  <p className="text-xs text-[var(--sea-ink-soft)]">
+                <div className="flex items-start justify-between gap-3">
+                  <span className="text-2xl">{cat.icon ?? '🔧'}</span>
+                  <span className="rounded-full border border-[var(--line)] bg-[var(--surface)] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--sea-ink-soft)]">
+                    {cat.toolCount} tools
+                  </span>
+                </div>
+                <div className="mt-6">
+                  <p className="text-sm font-semibold text-[var(--sea-ink)] group-hover:text-[var(--lagoon-deep)]">
+                    {cat.name}
+                  </p>
+                  <p className="mt-1 text-xs leading-relaxed text-[var(--sea-ink-soft)]">
                     {m.home_categories_tool_count({ count: cat.toolCount })}
                   </p>
                 </div>
@@ -150,7 +167,7 @@ function LandingPage() {
           </div>
           <div className="mt-4 text-center">
             <Link
-              to="/tools"
+              to="/tools/categories"
               className="text-sm font-medium text-[var(--lagoon)] no-underline hover:underline"
             >
               {m.home_categories_view_all()}
