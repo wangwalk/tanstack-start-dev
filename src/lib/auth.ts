@@ -88,6 +88,13 @@ export const auth = betterAuth({
             // Best-effort — never block account creation
           }
 
+          try {
+            const { notify } = await import('#/lib/notifications')
+            await notify({ type: 'user_registered', user: user.email })
+          } catch {
+            // Best-effort — never block account creation
+          }
+
           if (!NEWSLETTER_AUTO_SUBSCRIBE) return
           // Import lazily to avoid a circular dependency at module load time
           const { addContact } = await import('#/lib/newsletter')
