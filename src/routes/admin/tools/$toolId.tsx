@@ -66,7 +66,13 @@ function EditToolPage() {
         categories={categories}
         tags={tags}
         saving={saving}
-        defaultValues={tool}
+        defaultValues={{
+          ...tool,
+          description: tool.description ?? undefined,
+          content: tool.content ?? undefined,
+          logoUrl: tool.logoUrl ?? undefined,
+          screenshotUrl: tool.screenshotUrl ?? undefined,
+        }}
         onSubmit={(values) => handleSubmit({ ...values, toolId: tool.id })}
       />
 
