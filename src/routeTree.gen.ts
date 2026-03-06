@@ -33,6 +33,9 @@ import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-passw
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
 import { Route as AuthBannedRouteImport } from './routes/auth/banned'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as AdminToolsIndexRouteImport } from './routes/admin/tools/index'
+import { Route as AdminTagsIndexRouteImport } from './routes/admin/tags/index'
+import { Route as AdminCategoriesIndexRouteImport } from './routes/admin/categories/index'
 import { Route as DashboardSettingsSecurityRouteImport } from './routes/dashboard/settings/security'
 import { Route as DashboardSettingsProfileRouteImport } from './routes/dashboard/settings/profile'
 import { Route as DashboardSettingsNotificationsRouteImport } from './routes/dashboard/settings/notifications'
@@ -45,6 +48,8 @@ import { Route as ApiAvatarUploadRouteImport } from './routes/api/avatar/upload'
 import { Route as ApiAvatarSplatRouteImport } from './routes/api/avatar/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AdminUsersUserIdRouteImport } from './routes/admin/users.$userId'
+import { Route as AdminToolsNewRouteImport } from './routes/admin/tools/new'
+import { Route as AdminToolsToolIdRouteImport } from './routes/admin/tools/$toolId'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -166,6 +171,21 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminToolsIndexRoute = AdminToolsIndexRouteImport.update({
+  id: '/tools/',
+  path: '/tools/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTagsIndexRoute = AdminTagsIndexRouteImport.update({
+  id: '/tags/',
+  path: '/tags/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCategoriesIndexRoute = AdminCategoriesIndexRouteImport.update({
+  id: '/categories/',
+  path: '/categories/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const DashboardSettingsSecurityRoute =
   DashboardSettingsSecurityRouteImport.update({
     id: '/security',
@@ -233,6 +253,16 @@ const AdminUsersUserIdRoute = AdminUsersUserIdRouteImport.update({
   path: '/$userId',
   getParentRoute: () => AdminUsersRoute,
 } as any)
+const AdminToolsNewRoute = AdminToolsNewRouteImport.update({
+  id: '/tools/new',
+  path: '/tools/new',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminToolsToolIdRoute = AdminToolsToolIdRouteImport.update({
+  id: '/tools/$toolId',
+  path: '/tools/$toolId',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -259,6 +289,8 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/admin/tools/$toolId': typeof AdminToolsToolIdRoute
+  '/admin/tools/new': typeof AdminToolsNewRoute
   '/admin/users/$userId': typeof AdminUsersUserIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/avatar/$': typeof ApiAvatarSplatRoute
@@ -271,6 +303,9 @@ export interface FileRoutesByFullPath {
   '/dashboard/settings/notifications': typeof DashboardSettingsNotificationsRoute
   '/dashboard/settings/profile': typeof DashboardSettingsProfileRoute
   '/dashboard/settings/security': typeof DashboardSettingsSecurityRoute
+  '/admin/categories/': typeof AdminCategoriesIndexRoute
+  '/admin/tags/': typeof AdminTagsIndexRoute
+  '/admin/tools/': typeof AdminToolsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -295,6 +330,8 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/blog': typeof BlogIndexRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/admin/tools/$toolId': typeof AdminToolsToolIdRoute
+  '/admin/tools/new': typeof AdminToolsNewRoute
   '/admin/users/$userId': typeof AdminUsersUserIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/avatar/$': typeof ApiAvatarSplatRoute
@@ -307,6 +344,9 @@ export interface FileRoutesByTo {
   '/dashboard/settings/notifications': typeof DashboardSettingsNotificationsRoute
   '/dashboard/settings/profile': typeof DashboardSettingsProfileRoute
   '/dashboard/settings/security': typeof DashboardSettingsSecurityRoute
+  '/admin/categories': typeof AdminCategoriesIndexRoute
+  '/admin/tags': typeof AdminTagsIndexRoute
+  '/admin/tools': typeof AdminToolsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -334,6 +374,8 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/admin/tools/$toolId': typeof AdminToolsToolIdRoute
+  '/admin/tools/new': typeof AdminToolsNewRoute
   '/admin/users/$userId': typeof AdminUsersUserIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/avatar/$': typeof ApiAvatarSplatRoute
@@ -346,6 +388,9 @@ export interface FileRoutesById {
   '/dashboard/settings/notifications': typeof DashboardSettingsNotificationsRoute
   '/dashboard/settings/profile': typeof DashboardSettingsProfileRoute
   '/dashboard/settings/security': typeof DashboardSettingsSecurityRoute
+  '/admin/categories/': typeof AdminCategoriesIndexRoute
+  '/admin/tags/': typeof AdminTagsIndexRoute
+  '/admin/tools/': typeof AdminToolsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -374,6 +419,8 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/blog/'
     | '/dashboard/'
+    | '/admin/tools/$toolId'
+    | '/admin/tools/new'
     | '/admin/users/$userId'
     | '/api/auth/$'
     | '/api/avatar/$'
@@ -386,6 +433,9 @@ export interface FileRouteTypes {
     | '/dashboard/settings/notifications'
     | '/dashboard/settings/profile'
     | '/dashboard/settings/security'
+    | '/admin/categories/'
+    | '/admin/tags/'
+    | '/admin/tools/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -410,6 +460,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/blog'
     | '/dashboard'
+    | '/admin/tools/$toolId'
+    | '/admin/tools/new'
     | '/admin/users/$userId'
     | '/api/auth/$'
     | '/api/avatar/$'
@@ -422,6 +474,9 @@ export interface FileRouteTypes {
     | '/dashboard/settings/notifications'
     | '/dashboard/settings/profile'
     | '/dashboard/settings/security'
+    | '/admin/categories'
+    | '/admin/tags'
+    | '/admin/tools'
   id:
     | '__root__'
     | '/'
@@ -448,6 +503,8 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/blog/'
     | '/dashboard/'
+    | '/admin/tools/$toolId'
+    | '/admin/tools/new'
     | '/admin/users/$userId'
     | '/api/auth/$'
     | '/api/avatar/$'
@@ -460,6 +517,9 @@ export interface FileRouteTypes {
     | '/dashboard/settings/notifications'
     | '/dashboard/settings/profile'
     | '/dashboard/settings/security'
+    | '/admin/categories/'
+    | '/admin/tags/'
+    | '/admin/tools/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -660,6 +720,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/tools/': {
+      id: '/admin/tools/'
+      path: '/tools'
+      fullPath: '/admin/tools/'
+      preLoaderRoute: typeof AdminToolsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/tags/': {
+      id: '/admin/tags/'
+      path: '/tags'
+      fullPath: '/admin/tags/'
+      preLoaderRoute: typeof AdminTagsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/categories/': {
+      id: '/admin/categories/'
+      path: '/categories'
+      fullPath: '/admin/categories/'
+      preLoaderRoute: typeof AdminCategoriesIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/dashboard/settings/security': {
       id: '/dashboard/settings/security'
       path: '/security'
@@ -744,6 +825,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersUserIdRouteImport
       parentRoute: typeof AdminUsersRoute
     }
+    '/admin/tools/new': {
+      id: '/admin/tools/new'
+      path: '/tools/new'
+      fullPath: '/admin/tools/new'
+      preLoaderRoute: typeof AdminToolsNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/tools/$toolId': {
+      id: '/admin/tools/$toolId'
+      path: '/tools/$toolId'
+      fullPath: '/admin/tools/$toolId'
+      preLoaderRoute: typeof AdminToolsToolIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
@@ -762,11 +857,21 @@ const AdminUsersRouteWithChildren = AdminUsersRoute._addFileChildren(
 interface AdminRouteChildren {
   AdminUsersRoute: typeof AdminUsersRouteWithChildren
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminToolsToolIdRoute: typeof AdminToolsToolIdRoute
+  AdminToolsNewRoute: typeof AdminToolsNewRoute
+  AdminCategoriesIndexRoute: typeof AdminCategoriesIndexRoute
+  AdminTagsIndexRoute: typeof AdminTagsIndexRoute
+  AdminToolsIndexRoute: typeof AdminToolsIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminUsersRoute: AdminUsersRouteWithChildren,
   AdminIndexRoute: AdminIndexRoute,
+  AdminToolsToolIdRoute: AdminToolsToolIdRoute,
+  AdminToolsNewRoute: AdminToolsNewRoute,
+  AdminCategoriesIndexRoute: AdminCategoriesIndexRoute,
+  AdminTagsIndexRoute: AdminTagsIndexRoute,
+  AdminToolsIndexRoute: AdminToolsIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
