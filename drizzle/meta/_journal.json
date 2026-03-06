@@ -15,6 +15,13 @@
       "when": 1772784905546,
       "tag": "0001_chilly_hellcat",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1772787850963,
+      "tag": "0002_aromatic_mach_iv",
+      "breakpoints": true
     }
   ]
 }

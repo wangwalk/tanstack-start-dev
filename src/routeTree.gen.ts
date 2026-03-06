@@ -16,6 +16,7 @@ import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as ListingPricingRouteImport } from './routes/listing-pricing'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ChangelogRouteImport } from './routes/changelog'
@@ -31,6 +32,7 @@ import { Route as ToolsSubmitRouteImport } from './routes/tools/submit'
 import { Route as ToolsSearchRouteImport } from './routes/tools/search'
 import { Route as ToolsSlugRouteImport } from './routes/tools/$slug'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
+import { Route as CheckoutListingSuccessRouteImport } from './routes/checkout/listing-success'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthVerifyEmailRouteImport } from './routes/auth/verify-email'
 import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
@@ -40,6 +42,7 @@ import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-pas
 import { Route as AuthBannedRouteImport } from './routes/auth/banned'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as DashboardSubmissionsIndexRouteImport } from './routes/dashboard/submissions/index'
+import { Route as DashboardListingsIndexRouteImport } from './routes/dashboard/listings/index'
 import { Route as AdminToolsIndexRouteImport } from './routes/admin/tools/index'
 import { Route as AdminTagsIndexRouteImport } from './routes/admin/tags/index'
 import { Route as AdminReviewIndexRouteImport } from './routes/admin/review/index'
@@ -95,6 +98,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ListingPricingRoute = ListingPricingRouteImport.update({
+  id: '/listing-pricing',
+  path: '/listing-pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -172,6 +180,11 @@ const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => DashboardRoute,
 } as any)
+const CheckoutListingSuccessRoute = CheckoutListingSuccessRouteImport.update({
+  id: '/checkout/listing-success',
+  path: '/checkout/listing-success',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/blog/$slug',
   path: '/blog/$slug',
@@ -218,6 +231,11 @@ const DashboardSubmissionsIndexRoute =
     path: '/submissions/',
     getParentRoute: () => DashboardRoute,
   } as any)
+const DashboardListingsIndexRoute = DashboardListingsIndexRouteImport.update({
+  id: '/listings/',
+  path: '/listings/',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const AdminToolsIndexRoute = AdminToolsIndexRouteImport.update({
   id: '/tools/',
   path: '/tools/',
@@ -338,6 +356,7 @@ export interface FileRoutesByFullPath {
   '/changelog': typeof ChangelogRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/listing-pricing': typeof ListingPricingRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -353,6 +372,7 @@ export interface FileRoutesByFullPath {
   '/auth/sign-up': typeof AuthSignUpRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/checkout/listing-success': typeof CheckoutListingSuccessRoute
   '/dashboard/settings': typeof DashboardSettingsRouteWithChildren
   '/tools/$slug': typeof ToolsSlugRoute
   '/tools/search': typeof ToolsSearchRoute
@@ -383,6 +403,7 @@ export interface FileRoutesByFullPath {
   '/admin/review/': typeof AdminReviewIndexRoute
   '/admin/tags/': typeof AdminTagsIndexRoute
   '/admin/tools/': typeof AdminToolsIndexRoute
+  '/dashboard/listings/': typeof DashboardListingsIndexRoute
   '/dashboard/submissions/': typeof DashboardSubmissionsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -390,6 +411,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/changelog': typeof ChangelogRoute
   '/contact': typeof ContactRoute
+  '/listing-pricing': typeof ListingPricingRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -404,6 +426,7 @@ export interface FileRoutesByTo {
   '/auth/sign-up': typeof AuthSignUpRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/checkout/listing-success': typeof CheckoutListingSuccessRoute
   '/dashboard/settings': typeof DashboardSettingsRouteWithChildren
   '/tools/$slug': typeof ToolsSlugRoute
   '/tools/search': typeof ToolsSearchRoute
@@ -434,6 +457,7 @@ export interface FileRoutesByTo {
   '/admin/review': typeof AdminReviewIndexRoute
   '/admin/tags': typeof AdminTagsIndexRoute
   '/admin/tools': typeof AdminToolsIndexRoute
+  '/dashboard/listings': typeof DashboardListingsIndexRoute
   '/dashboard/submissions': typeof DashboardSubmissionsIndexRoute
 }
 export interface FileRoutesById {
@@ -444,6 +468,7 @@ export interface FileRoutesById {
   '/changelog': typeof ChangelogRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/listing-pricing': typeof ListingPricingRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -459,6 +484,7 @@ export interface FileRoutesById {
   '/auth/sign-up': typeof AuthSignUpRoute
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/checkout/listing-success': typeof CheckoutListingSuccessRoute
   '/dashboard/settings': typeof DashboardSettingsRouteWithChildren
   '/tools/$slug': typeof ToolsSlugRoute
   '/tools/search': typeof ToolsSearchRoute
@@ -489,6 +515,7 @@ export interface FileRoutesById {
   '/admin/review/': typeof AdminReviewIndexRoute
   '/admin/tags/': typeof AdminTagsIndexRoute
   '/admin/tools/': typeof AdminToolsIndexRoute
+  '/dashboard/listings/': typeof DashboardListingsIndexRoute
   '/dashboard/submissions/': typeof DashboardSubmissionsIndexRoute
 }
 export interface FileRouteTypes {
@@ -500,6 +527,7 @@ export interface FileRouteTypes {
     | '/changelog'
     | '/contact'
     | '/dashboard'
+    | '/listing-pricing'
     | '/pricing'
     | '/privacy'
     | '/robots.txt'
@@ -515,6 +543,7 @@ export interface FileRouteTypes {
     | '/auth/sign-up'
     | '/auth/verify-email'
     | '/blog/$slug'
+    | '/checkout/listing-success'
     | '/dashboard/settings'
     | '/tools/$slug'
     | '/tools/search'
@@ -545,6 +574,7 @@ export interface FileRouteTypes {
     | '/admin/review/'
     | '/admin/tags/'
     | '/admin/tools/'
+    | '/dashboard/listings/'
     | '/dashboard/submissions/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -552,6 +582,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/changelog'
     | '/contact'
+    | '/listing-pricing'
     | '/pricing'
     | '/privacy'
     | '/robots.txt'
@@ -566,6 +597,7 @@ export interface FileRouteTypes {
     | '/auth/sign-up'
     | '/auth/verify-email'
     | '/blog/$slug'
+    | '/checkout/listing-success'
     | '/dashboard/settings'
     | '/tools/$slug'
     | '/tools/search'
@@ -596,6 +628,7 @@ export interface FileRouteTypes {
     | '/admin/review'
     | '/admin/tags'
     | '/admin/tools'
+    | '/dashboard/listings'
     | '/dashboard/submissions'
   id:
     | '__root__'
@@ -605,6 +638,7 @@ export interface FileRouteTypes {
     | '/changelog'
     | '/contact'
     | '/dashboard'
+    | '/listing-pricing'
     | '/pricing'
     | '/privacy'
     | '/robots.txt'
@@ -620,6 +654,7 @@ export interface FileRouteTypes {
     | '/auth/sign-up'
     | '/auth/verify-email'
     | '/blog/$slug'
+    | '/checkout/listing-success'
     | '/dashboard/settings'
     | '/tools/$slug'
     | '/tools/search'
@@ -650,6 +685,7 @@ export interface FileRouteTypes {
     | '/admin/review/'
     | '/admin/tags/'
     | '/admin/tools/'
+    | '/dashboard/listings/'
     | '/dashboard/submissions/'
   fileRoutesById: FileRoutesById
 }
@@ -660,6 +696,7 @@ export interface RootRouteChildren {
   ChangelogRoute: typeof ChangelogRoute
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRouteWithChildren
+  ListingPricingRoute: typeof ListingPricingRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
@@ -674,6 +711,7 @@ export interface RootRouteChildren {
   AuthSignUpRoute: typeof AuthSignUpRoute
   AuthVerifyEmailRoute: typeof AuthVerifyEmailRoute
   BlogSlugRoute: typeof BlogSlugRoute
+  CheckoutListingSuccessRoute: typeof CheckoutListingSuccessRoute
   BlogIndexRoute: typeof BlogIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiAvatarSplatRoute: typeof ApiAvatarSplatRoute
@@ -731,6 +769,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/listing-pricing': {
+      id: '/listing-pricing'
+      path: '/listing-pricing'
+      fullPath: '/listing-pricing'
+      preLoaderRoute: typeof ListingPricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -838,6 +883,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSettingsRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/checkout/listing-success': {
+      id: '/checkout/listing-success'
+      path: '/checkout/listing-success'
+      fullPath: '/checkout/listing-success'
+      preLoaderRoute: typeof CheckoutListingSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/$slug': {
       id: '/blog/$slug'
       path: '/blog/$slug'
@@ -899,6 +951,13 @@ declare module '@tanstack/react-router' {
       path: '/submissions'
       fullPath: '/dashboard/submissions/'
       preLoaderRoute: typeof DashboardSubmissionsIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/listings/': {
+      id: '/dashboard/listings/'
+      path: '/listings'
+      fullPath: '/dashboard/listings/'
+      preLoaderRoute: typeof DashboardListingsIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/admin/tools/': {
@@ -1111,12 +1170,14 @@ const DashboardSettingsRouteWithChildren =
 interface DashboardRouteChildren {
   DashboardSettingsRoute: typeof DashboardSettingsRouteWithChildren
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardListingsIndexRoute: typeof DashboardListingsIndexRoute
   DashboardSubmissionsIndexRoute: typeof DashboardSubmissionsIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardSettingsRoute: DashboardSettingsRouteWithChildren,
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardListingsIndexRoute: DashboardListingsIndexRoute,
   DashboardSubmissionsIndexRoute: DashboardSubmissionsIndexRoute,
 }
 
@@ -1165,6 +1226,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChangelogRoute: ChangelogRoute,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRouteWithChildren,
+  ListingPricingRoute: ListingPricingRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
@@ -1179,6 +1241,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthSignUpRoute: AuthSignUpRoute,
   AuthVerifyEmailRoute: AuthVerifyEmailRoute,
   BlogSlugRoute: BlogSlugRoute,
+  CheckoutListingSuccessRoute: CheckoutListingSuccessRoute,
   BlogIndexRoute: BlogIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAvatarSplatRoute: ApiAvatarSplatRoute,
