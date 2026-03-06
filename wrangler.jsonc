@@ -19,8 +19,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "damascus-db",
-      "database_id": "<your-d1-database-id>",
+      "database_name": "tanstack-start-dev-db",
+      "database_id": "8723d4fd-f98e-4fbc-809d-febccdf61aa7",
       "migrations_dir": "drizzle"
     }
   ]

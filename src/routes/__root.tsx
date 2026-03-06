@@ -65,8 +65,26 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     ],
   }),
   component: RootLayout,
+  notFoundComponent: NotFound,
   shellComponent: RootDocument,
 })
+
+function NotFound() {
+  return (
+    <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
+      <h1 className="text-6xl font-bold">404</h1>
+      <p className="mt-4 text-lg text-muted-foreground">
+        Page not found
+      </p>
+      <a
+        href="/"
+        className="mt-6 inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+      >
+        Back to home
+      </a>
+    </div>
+  )
+}
 
 function RootLayout() {
   const analytics = Route.useLoaderData()

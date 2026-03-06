@@ -69,8 +69,18 @@ Types: `feat` | `fix` | `refactor` | `chore` | `docs` | `test`
    ```
 2. Create a GitHub PR via `gh pr create`
 3. Wait for all CI checks to pass — use `gh pr checks <number>` to verify
-4. Only after checks pass: merge via `gh pr merge <number> --merge` (or ask user to merge)
-5. Delete the feature branch: `git branch -d <branch-name>`
+4. Once CI passes, launch a `code-reviewer` subagent to perform a code review before merging.
+   The subagent must check for:
+   - TanStack Start conventions (file-based routing, `beforeLoad` guards, `createServerFn` usage)
+   - Security: server functions never trust client-provided `userId`; always resolve from session
+   - TypeScript strictness: no `any`, `import type` for type-only imports
+   - Cloudflare Workers compatibility: no Node.js-only APIs
+   - No over-engineering: no unnecessary abstractions, helpers, or fallback handling
+   - Path aliases: `#/*` preferred over `@/*`
+   After the subagent reports findings, address any blocking issues before proceeding.
+5. **NEVER merge without user approval.** After CI passes and CR is clean, inform the user and wait for explicit merge confirmation.
+6. Only after user confirms: merge via `gh pr merge <number> --merge`
+7. Delete the feature branch: `git branch -d <branch-name>`
 6. Update Linear issue status to **Done**
 7. Add a Linear comment with:
    - **What** was implemented
