@@ -1,4 +1,4 @@
-import { eq, ilike, and, count, desc } from 'drizzle-orm'
+import { eq, like, and, count, desc } from 'drizzle-orm'
 import { db } from '#/db/index'
 import { user } from '#/db/schema'
 import { adminFn } from '#/lib/server-fn'
@@ -15,7 +15,7 @@ export const listUsers = adminFn({ method: 'GET' })
 
     const conditions = []
     if (search) {
-      conditions.push(ilike(user.email, `%${search}%`))
+      conditions.push(like(user.email, `%${search}%`))
     }
     if (status && status !== 'all') {
       conditions.push(eq(user.subscriptionStatus, status))

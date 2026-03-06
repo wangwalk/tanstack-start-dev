@@ -13,18 +13,18 @@
     }
   ],
 
-  // Hyperdrive for PostgreSQL connection pooling on Cloudflare Workers
-  // Create via: wrangler hyperdrive create damascus-hyperdrive --connection-string="postgres://..."
-  // Docs: https://developers.cloudflare.com/hyperdrive/
-  "hyperdrive": [
+  // D1 SQLite database
+  // Create via: wrangler d1 create damascus-db
+  // Docs: https://developers.cloudflare.com/d1/
+  "d1_databases": [
     {
-      "binding": "HYPERDRIVE",
-      "id": "<your-hyperdrive-id>"
+      "binding": "DB",
+      "database_name": "damascus-db",
+      "database_id": "<your-d1-database-id>"
     }
   ]
 
   // Secrets (set via: wrangler secret put <NAME>):
-  //   DATABASE_URL             — PostgreSQL connection string (used in local dev; Hyperdrive used in production)
   //   RESEND_API_KEY           — from resend.com dashboard
   //   RESEND_FROM              — verified sender, e.g. "App Name <noreply@yourdomain.com>"
   //   STRIPE_SECRET_KEY        — from Stripe Dashboard > Developers > API keys
