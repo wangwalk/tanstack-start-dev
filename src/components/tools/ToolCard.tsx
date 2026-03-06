@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import type { PublicToolCard } from '#/lib/public'
+import { SaveToolButton } from '#/components/tools/SaveToolButton'
 
 const pricingBadgeClass: Record<string, string> = {
   free: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
@@ -124,7 +125,12 @@ export function ToolCard({ tool }: ToolCardProps) {
       </div>
 
       <div className="mt-auto flex items-center justify-between gap-3 border-t border-[var(--line)] pt-3">
-        <div className="flex min-w-0 flex-wrap gap-2">
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
+          <SaveToolButton
+            toolId={tool.id}
+            initialIsSaved={tool.isSaved}
+            initialSaveCount={tool.saveCount}
+          />
           {categories.slice(0, 2).map((category) => (
             <Link
               key={category.id}

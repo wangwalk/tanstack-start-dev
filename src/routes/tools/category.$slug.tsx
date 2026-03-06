@@ -15,7 +15,8 @@ const searchSchema = z.object({
 export const Route = createFileRoute('/tools/category/$slug')({
   validateSearch: searchSchema,
   loaderDeps: ({ search }) => search,
-  loader: async ({ params, deps }) => {
+  loader: async ({ params, deps, context }) => {
+    const viewerUserId = context.session?.user.id
     const [cat, result] = await Promise.all([
       getCategoryBySlug({ data: { slug: params.slug } }),
       getToolsByCategory({
@@ -24,6 +25,7 @@ export const Route = createFileRoute('/tools/category/$slug')({
           pricingType: deps.pricingType,
           sort: deps.sort,
           page: deps.page,
+          viewerUserId,
         },
       }),
     ])

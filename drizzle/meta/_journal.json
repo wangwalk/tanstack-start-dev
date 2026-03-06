@@ -22,6 +22,13 @@
       "when": 1772787850963,
       "tag": "0002_aromatic_mach_iv",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1772815258841,
+      "tag": "0003_thankful_infant_terrible",
+      "breakpoints": true
     }
   ]
 }

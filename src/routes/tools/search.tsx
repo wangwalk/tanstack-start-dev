@@ -20,7 +20,7 @@ export const Route = createFileRoute('/tools/search')({
   head: () => ({
     meta: [{ title: `搜索工具 | ${SITE_TITLE}` }],
   }),
-  loader: async ({ deps }) => {
+  loader: async ({ deps, context }) => {
     const [result, categories] = await Promise.all([
       searchTools({
         data: {
@@ -30,6 +30,7 @@ export const Route = createFileRoute('/tools/search')({
           pricingType: deps.pricingType,
           sort: deps.sort,
           page: deps.page,
+          viewerUserId: context.session?.user.id,
         },
       }),
       getPublicCategories(),

@@ -81,3 +81,21 @@ export const toolTag = sqliteTable(
   },
   (t) => [primaryKey({ columns: [t.toolId, t.tagId] })],
 )
+
+export const userToolSave = sqliteTable(
+  'user_tool_saves',
+  {
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    toolId: text('tool_id')
+      .notNull()
+      .references(() => tool.id, { onDelete: 'cascade' }),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.toolId] }),
+    index('user_tool_saves_user_idx').on(t.userId),
+    index('user_tool_saves_tool_idx').on(t.toolId),
+  ],
+)

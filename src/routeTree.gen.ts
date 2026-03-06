@@ -34,6 +34,7 @@ import { Route as ToolsSearchRouteImport } from './routes/tools/search'
 import { Route as ToolsCategoriesRouteImport } from './routes/tools/categories'
 import { Route as ToolsSlugRouteImport } from './routes/tools/$slug'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
+import { Route as DashboardSavesRouteImport } from './routes/dashboard/saves'
 import { Route as CheckoutListingSuccessRouteImport } from './routes/checkout/listing-success'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthVerifyEmailRouteImport } from './routes/auth/verify-email'
@@ -190,6 +191,11 @@ const ToolsSlugRoute = ToolsSlugRouteImport.update({
 const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSavesRoute = DashboardSavesRouteImport.update({
+  id: '/saves',
+  path: '/saves',
   getParentRoute: () => DashboardRoute,
 } as any)
 const CheckoutListingSuccessRoute = CheckoutListingSuccessRouteImport.update({
@@ -386,6 +392,7 @@ export interface FileRoutesByFullPath {
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/checkout/listing-success': typeof CheckoutListingSuccessRoute
+  '/dashboard/saves': typeof DashboardSavesRoute
   '/dashboard/settings': typeof DashboardSettingsRouteWithChildren
   '/tools/$slug': typeof ToolsSlugRoute
   '/tools/categories': typeof ToolsCategoriesRoute
@@ -442,6 +449,7 @@ export interface FileRoutesByTo {
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/checkout/listing-success': typeof CheckoutListingSuccessRoute
+  '/dashboard/saves': typeof DashboardSavesRoute
   '/dashboard/settings': typeof DashboardSettingsRouteWithChildren
   '/tools/$slug': typeof ToolsSlugRoute
   '/tools/categories': typeof ToolsCategoriesRoute
@@ -502,6 +510,7 @@ export interface FileRoutesById {
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/checkout/listing-success': typeof CheckoutListingSuccessRoute
+  '/dashboard/saves': typeof DashboardSavesRoute
   '/dashboard/settings': typeof DashboardSettingsRouteWithChildren
   '/tools/$slug': typeof ToolsSlugRoute
   '/tools/categories': typeof ToolsCategoriesRoute
@@ -563,6 +572,7 @@ export interface FileRouteTypes {
     | '/auth/verify-email'
     | '/blog/$slug'
     | '/checkout/listing-success'
+    | '/dashboard/saves'
     | '/dashboard/settings'
     | '/tools/$slug'
     | '/tools/categories'
@@ -619,6 +629,7 @@ export interface FileRouteTypes {
     | '/auth/verify-email'
     | '/blog/$slug'
     | '/checkout/listing-success'
+    | '/dashboard/saves'
     | '/dashboard/settings'
     | '/tools/$slug'
     | '/tools/categories'
@@ -678,6 +689,7 @@ export interface FileRouteTypes {
     | '/auth/verify-email'
     | '/blog/$slug'
     | '/checkout/listing-success'
+    | '/dashboard/saves'
     | '/dashboard/settings'
     | '/tools/$slug'
     | '/tools/categories'
@@ -920,6 +932,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/dashboard/settings'
       preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/saves': {
+      id: '/dashboard/saves'
+      path: '/saves'
+      fullPath: '/dashboard/saves'
+      preLoaderRoute: typeof DashboardSavesRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/checkout/listing-success': {
@@ -1207,6 +1226,7 @@ const DashboardSettingsRouteWithChildren =
   DashboardSettingsRoute._addFileChildren(DashboardSettingsRouteChildren)
 
 interface DashboardRouteChildren {
+  DashboardSavesRoute: typeof DashboardSavesRoute
   DashboardSettingsRoute: typeof DashboardSettingsRouteWithChildren
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardListingsIndexRoute: typeof DashboardListingsIndexRoute
@@ -1214,6 +1234,7 @@ interface DashboardRouteChildren {
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardSavesRoute: DashboardSavesRoute,
   DashboardSettingsRoute: DashboardSettingsRouteWithChildren,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardListingsIndexRoute: DashboardListingsIndexRoute,
