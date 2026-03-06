@@ -4,6 +4,7 @@ import { getCategoryBySlug, getToolsByCategory } from '#/lib/public'
 import { ToolCard } from '#/components/tools/ToolCard'
 import { Pagination } from '#/components/tools/Pagination'
 import { SITE_TITLE, SITE_URL } from '#/lib/site'
+import { breadcrumbSchema, collectionPageSchema } from '#/components/seo/JsonLd'
 
 const searchSchema = z.object({
   pricingType: z.string().optional(),
@@ -31,13 +32,34 @@ export const Route = createFileRoute('/tools/category/$slug')({
   },
   head: ({ loaderData }) => {
     if (!loaderData) return {}
+    const { cat, tools } = loaderData
+    const url = `${SITE_URL}/tools/category/${cat.slug}`
+    const description = cat.description ?? `发现最好的 ${cat.name} AI 工具，精选推荐。`
     return {
-      links: [{ rel: 'canonical', href: `${SITE_URL}/tools/category/${loaderData.cat.slug}` }],
+      links: [{ rel: 'canonical', href: url }],
       meta: [
-        { title: `${loaderData.cat.name} AI 工具推荐 | ${SITE_TITLE}` },
+        { title: `${cat.name} AI 工具推荐 | ${SITE_TITLE}` },
+        { name: 'description', content: description },
+      ],
+      scripts: [
         {
-          name: 'description',
-          content: loaderData.cat.description ?? `发现最好的 ${loaderData.cat.name} AI 工具，精选推荐。`,
+          type: 'application/ld+json',
+          children: JSON.stringify(
+            collectionPageSchema({ name: cat.name, description, url, tools, siteUrl: SITE_URL }),
+          ),
+        },
+        {
+          type: 'application/ld+json',
+          children: JSON.stringify(
+            breadcrumbSchema(
+              [
+                { name: 'Home', href: '/' },
+                { name: 'Tools', href: '/tools' },
+                { name: cat.name, href: `/tools/category/${cat.slug}` },
+              ],
+              SITE_URL,
+            ),
+          ),
         },
       ],
     }

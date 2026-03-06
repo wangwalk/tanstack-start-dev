@@ -4,6 +4,7 @@ import { getTagBySlug, getToolsByTag } from '#/lib/public'
 import { ToolCard } from '#/components/tools/ToolCard'
 import { Pagination } from '#/components/tools/Pagination'
 import { SITE_TITLE, SITE_URL } from '#/lib/site'
+import { breadcrumbSchema, collectionPageSchema } from '#/components/seo/JsonLd'
 
 const searchSchema = z.object({
   pricingType: z.string().optional(),
@@ -31,11 +32,35 @@ export const Route = createFileRoute('/tools/tag/$slug')({
   },
   head: ({ loaderData }) => {
     if (!loaderData) return {}
+    const { tag, tools } = loaderData
+    const url = `${SITE_URL}/tools/tag/${tag.slug}`
+    const description = `浏览标签 #${tag.name} 下的 AI 工具。`
     return {
-      links: [{ rel: 'canonical', href: `${SITE_URL}/tools/tag/${loaderData.tag.slug}` }],
+      links: [{ rel: 'canonical', href: url }],
       meta: [
-        { title: `#${loaderData.tag.name} AI 工具 | ${SITE_TITLE}` },
-        { name: 'description', content: `浏览标签 #${loaderData.tag.name} 下的 AI 工具。` },
+        { title: `#${tag.name} AI 工具 | ${SITE_TITLE}` },
+        { name: 'description', content: description },
+      ],
+      scripts: [
+        {
+          type: 'application/ld+json',
+          children: JSON.stringify(
+            collectionPageSchema({ name: `#${tag.name}`, description, url, tools, siteUrl: SITE_URL }),
+          ),
+        },
+        {
+          type: 'application/ld+json',
+          children: JSON.stringify(
+            breadcrumbSchema(
+              [
+                { name: 'Home', href: '/' },
+                { name: 'Tools', href: '/tools' },
+                { name: `#${tag.name}`, href: `/tools/tag/${tag.slug}` },
+              ],
+              SITE_URL,
+            ),
+          ),
+        },
       ],
     }
   },

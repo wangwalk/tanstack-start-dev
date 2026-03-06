@@ -1,12 +1,23 @@
+import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import BetterAuthHeader from '../integrations/better-auth/header-user.tsx'
 import ThemeToggle from './ThemeToggle'
 import { siteConfig } from '#/config/site'
 
+const NAV_LINKS = [
+  { href: '/tools', label: 'Browse Tools', isRoute: true },
+  { href: '/tools/submit', label: 'Submit', isRoute: true },
+  { href: '/listing-pricing', label: 'List Your Tool', isRoute: true },
+  ...(siteConfig.features.blog ? [{ href: '/blog', label: 'Blog', isRoute: true }] : []),
+]
+
 export default function Header() {
+  const [mobileOpen, setMobileOpen] = useState(false)
+
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--header-bg)] px-4 backdrop-blur-lg">
-      <nav className="page-wrap flex items-center gap-x-3 py-3 sm:py-4">
+    <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--header-bg)] backdrop-blur-lg">
+      <nav className="page-wrap flex items-center gap-x-3 px-4 py-3 sm:py-4">
+        {/* Logo */}
         <h2 className="m-0 flex-shrink-0 text-base font-semibold tracking-tight">
           <Link
             to="/"
@@ -17,39 +28,21 @@ export default function Header() {
           </Link>
         </h2>
 
+        {/* Desktop nav */}
         <div className="hidden items-center gap-x-4 text-sm font-semibold sm:flex">
-          <a
-            href="/#features"
-            className="nav-link"
-          >
-            Features
-          </a>
-          <a
-            href="/pricing"
-            className="nav-link"
-          >
-            Pricing
-          </a>
-          {siteConfig.features.blog && (
+          {NAV_LINKS.map((item) => (
             <Link
-              to="/blog"
+              key={item.href}
+              to={item.href as '/tools'}
               className="nav-link"
               activeProps={{ className: 'nav-link is-active' }}
             >
-              Blog
+              {item.label}
             </Link>
-          )}
-          {siteConfig.features.changelog && (
-            <Link
-              to="/changelog"
-              className="nav-link"
-              activeProps={{ className: 'nav-link is-active' }}
-            >
-              Changelog
-            </Link>
-          )}
+          ))}
         </div>
 
+        {/* Right side */}
         <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
           {siteConfig.social.twitter && (
             <a
@@ -59,11 +52,8 @@ export default function Header() {
               className="hidden rounded-xl p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)] sm:block"
             >
               <span className="sr-only">Follow us on X</span>
-              <svg viewBox="0 0 16 16" aria-hidden="true" width="24" height="24">
-                <path
-                  fill="currentColor"
-                  d="M12.6 1h2.2L10 6.48 15.64 15h-4.41L7.78 9.82 3.23 15H1l5.14-5.84L.72 1h4.52l3.12 4.73L12.6 1zm-.77 12.67h1.22L4.57 2.26H3.26l8.57 11.41z"
-                />
+              <svg viewBox="0 0 16 16" aria-hidden="true" width="20" height="20">
+                <path fill="currentColor" d="M12.6 1h2.2L10 6.48 15.64 15h-4.41L7.78 9.82 3.23 15H1l5.14-5.84L.72 1h4.52l3.12 4.73L12.6 1zm-.77 12.67h1.22L4.57 2.26H3.26l8.57 11.41z" />
               </svg>
             </a>
           )}
@@ -75,19 +65,53 @@ export default function Header() {
               className="hidden rounded-xl p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)] sm:block"
             >
               <span className="sr-only">GitHub</span>
-              <svg viewBox="0 0 16 16" aria-hidden="true" width="24" height="24">
-                <path
-                  fill="currentColor"
-                  d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
-                />
+              <svg viewBox="0 0 16 16" aria-hidden="true" width="20" height="20">
+                <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
               </svg>
             </a>
           )}
 
           <BetterAuthHeader />
           <ThemeToggle />
+
+          {/* Mobile hamburger */}
+          <button
+            type="button"
+            aria-label="Toggle menu"
+            onClick={() => setMobileOpen((o) => !o)}
+            className="flex items-center justify-center rounded-xl p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)] sm:hidden"
+          >
+            {mobileOpen ? (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-5 w-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-5 w-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </button>
         </div>
       </nav>
+
+      {/* Mobile menu */}
+      {mobileOpen && (
+        <div className="border-t border-[var(--line)] bg-[var(--header-bg)] px-4 pb-4 sm:hidden">
+          <nav className="flex flex-col gap-1 pt-2">
+            {NAV_LINKS.map((item) => (
+              <Link
+                key={item.href}
+                to={item.href as '/tools'}
+                onClick={() => setMobileOpen(false)}
+                className="rounded-xl px-3 py-2.5 text-sm font-medium text-[var(--sea-ink-soft)] no-underline transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
+                activeProps={{ className: 'rounded-xl px-3 py-2.5 text-sm font-medium text-[var(--sea-ink)] no-underline bg-[var(--link-bg-hover)]' }}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+      )}
     </header>
   )
 }

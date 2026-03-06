@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { getToolBySlug, getRelatedTools } from '#/lib/public'
 import { ToolCard } from '#/components/tools/ToolCard'
 import { SITE_TITLE, SITE_URL } from '#/lib/site'
+import { softwareApplicationSchema, breadcrumbSchema } from '#/components/seo/JsonLd'
 
 export const Route = createFileRoute('/tools/$slug')({
   loader: async ({ params }) => {
@@ -38,19 +39,23 @@ export const Route = createFileRoute('/tools/$slug')({
       scripts: [
         {
           type: 'application/ld+json',
-          children: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'SoftwareApplication',
-            name: tool.name,
-            url: tool.url,
-            description: tool.description,
-            applicationCategory: 'WebApplication',
-            offers: {
-              '@type': 'Offer',
-              price: tool.pricingType === 'free' ? '0' : undefined,
-              priceCurrency: 'USD',
-            },
-          }),
+          children: JSON.stringify(softwareApplicationSchema(tool)),
+        },
+        {
+          type: 'application/ld+json',
+          children: JSON.stringify(
+            breadcrumbSchema(
+              [
+                { name: 'Home', href: '/' },
+                { name: 'Tools', href: '/tools' },
+                ...(tool.categories[0]
+                  ? [{ name: tool.categories[0].name, href: `/tools/category/${tool.categories[0].slug}` }]
+                  : []),
+                { name: tool.name, href: `/tools/${tool.slug}` },
+              ],
+              SITE_URL,
+            ),
+          ),
         },
       ],
     }
