@@ -10,6 +10,7 @@ import PaymentFailedEmail from '#/emails/payment-failed'
 import { addCredits } from '#/lib/credits'
 import { CREDIT_PACKS } from '#/config/billing'
 import type { CreditPackKey } from '#/config/billing'
+import { notify } from '#/lib/notifications'
 
 async function handleStripeWebhook({ request }: { request: Request }) {
   const stripe = getStripe()
@@ -155,25 +156,33 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     periodEnd = sub.items.data[0]?.current_period_end
   }
 
-  await sendEmail({
-    to: dbUser.email,
-    subject: 'Subscription confirmed',
-    template: SubscriptionEmail,
-    props: {
-      userName: dbUser.name,
-      planName: plan.charAt(0).toUpperCase() + plan.slice(1),
-      amount: session.amount_total
-        ? `$${(session.amount_total / 100).toFixed(2)}`
-        : '',
-      nextBillingDate: periodEnd
-        ? new Date(periodEnd * 1000).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })
-        : undefined,
-    },
-  })
+  await Promise.all([
+    sendEmail({
+      to: dbUser.email,
+      subject: 'Subscription confirmed',
+      template: SubscriptionEmail,
+      props: {
+        userName: dbUser.name,
+        planName: plan.charAt(0).toUpperCase() + plan.slice(1),
+        amount: session.amount_total
+          ? `$${(session.amount_total / 100).toFixed(2)}`
+          : '',
+        nextBillingDate: periodEnd
+          ? new Date(periodEnd * 1000).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })
+          : undefined,
+      },
+    }),
+    notify({
+      type: 'payment_success',
+      user: dbUser.email,
+      plan: plan.charAt(0).toUpperCase() + plan.slice(1),
+      amount: session.amount_total ?? 0,
+    }),
+  ])
 }
 
 async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
@@ -209,6 +218,12 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
       subscriptionPlan: 'free',
     })
     .where(eq(user.stripeCustomerId, customerId))
+
+  await notify({
+    type: 'subscription_canceled',
+    user: dbUser.email,
+    plan: dbUser.subscriptionPlan ?? 'unknown',
+  })
 }
 
 async function handlePaymentFailed(invoice: Stripe.Invoice) {
@@ -226,14 +241,21 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
     .set({ subscriptionStatus: 'past_due' })
     .where(eq(user.stripeCustomerId, customerId))
 
-  await sendEmail({
-    to: dbUser.email,
-    subject: 'Payment failed — action required',
-    template: PaymentFailedEmail,
-    props: {
-      userName: dbUser.name,
-    },
-  })
+  await Promise.all([
+    sendEmail({
+      to: dbUser.email,
+      subject: 'Payment failed — action required',
+      template: PaymentFailedEmail,
+      props: {
+        userName: dbUser.name,
+      },
+    }),
+    notify({
+      type: 'payment_failed',
+      user: dbUser.email,
+      plan: dbUser.subscriptionPlan ?? 'unknown',
+    }),
+  ])
 }
 
 export const Route = createFileRoute('/api/webhooks/stripe')({

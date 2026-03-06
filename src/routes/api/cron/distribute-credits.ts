@@ -4,6 +4,7 @@ import { db } from '#/db/index'
 import { user } from '#/db/schema'
 import { distributeMonthlyCredits } from '#/lib/credits'
 import { PLAN_MONTHLY_CREDITS } from '#/config/billing'
+import { notify } from '#/lib/notifications'
 
 // Constant-time string comparison to prevent timing oracle attacks
 function timingSafeEqual(a: string, b: string): boolean {
@@ -41,6 +42,7 @@ async function handleDistributeCredits({ request }: { request: Request }) {
   let distributed = 0
   let skipped = 0
   let errors = 0
+  let totalCredits = 0
 
   for (const u of activeUsers) {
     const plan = u.subscriptionPlan
@@ -56,6 +58,7 @@ async function handleDistributeCredits({ request }: { request: Request }) {
       const result = await distributeMonthlyCredits(u.id, source, amount)
       if (result.distributed) {
         distributed++
+        totalCredits += amount
       } else {
         skipped++
       }
@@ -64,6 +67,8 @@ async function handleDistributeCredits({ request }: { request: Request }) {
       console.error('[cron] distributeMonthlyCredits failed for user', u.id, err)
     }
   }
+
+  await notify({ type: 'credits_distributed', count: distributed, totalCredits })
 
   const status = errors > 0 ? 207 : 200
   return Response.json({ distributed, skipped, errors }, { status })
