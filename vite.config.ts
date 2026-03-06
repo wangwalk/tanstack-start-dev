@@ -34,9 +34,9 @@ const config = defineConfig({
     rollupOptions: {
       // During the client build, Rollup walks the full static import graph before
       // TanStack Start's server-function transform strips server-only code.
-      // This means server-only packages (postgres → net/tls/perf_hooks, etc.) and
-      // Cloudflare Workers runtime modules end up in the module graph even though
-      // they'll be tree-shaken from the final client bundle.
+      // This means server-only packages and Cloudflare Workers runtime modules
+      // end up in the module graph even though they'll be tree-shaken from the
+      // final client bundle.
       //
       // Marking them as external prevents Rollup from failing on unresolved imports
       // during graph analysis. These modules are safe to externalize because:
