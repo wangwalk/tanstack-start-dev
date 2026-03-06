@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
 import type Stripe from 'stripe'
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { getStripe } from '#/lib/stripe'
 import { db } from '#/db/index'
-import { user } from '#/db/schema'
+import { user, tool, listingOrder } from '#/db/schema'
 import { sendEmail } from '#/lib/email'
 import SubscriptionEmail from '#/emails/subscription'
 import PaymentFailedEmail from '#/emails/payment-failed'
@@ -97,6 +97,37 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         `Purchased ${pack.name} (${pack.credits} credits)`,
         'purchase',
       )
+    }
+    return
+  }
+
+  // Handle paid listing purchases
+  if (
+    session.mode === 'payment' &&
+    session.metadata?.type === 'listing_purchase'
+  ) {
+    const toolId = session.metadata.toolId
+    const tier = session.metadata.tier as 'standard' | 'featured'
+
+    if (toolId && tier) {
+      await db
+        .update(listingOrder)
+        .set({ status: 'paid', paidAt: new Date() })
+        .where(
+          and(
+            eq(listingOrder.stripeSessionId, session.id),
+            eq(listingOrder.status, 'pending'),
+          ),
+        )
+
+      await db
+        .update(tool)
+        .set({
+          listingTier: tier,
+          isFeatured: tier === 'featured',
+          updatedAt: new Date(),
+        })
+        .where(eq(tool.id, toolId))
     }
     return
   }

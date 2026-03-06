@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useRouteContext, useRouterState } from '@tanstack/react-router'
-import { LayoutDashboard, Settings, ShieldCheck, Menu, X, LogOut, Zap } from 'lucide-react'
+import { LayoutDashboard, Settings, ShieldCheck, Menu, X, LogOut, Zap, Send, Star } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { authClient } from '#/lib/auth-client'
 import ThemeToggle from '#/components/ThemeToggle'
@@ -18,6 +18,8 @@ interface NavItem {
 
 const baseNavItems: NavItem[] = [
   { to: '/dashboard', label: 'Overview', icon: LayoutDashboard, exact: true },
+  { to: '/dashboard/submissions', label: 'My Submissions', icon: Send, exact: false },
+  { to: '/dashboard/listings', label: 'My Listings', icon: Star, exact: false },
   { to: '/dashboard/settings', label: 'Settings', icon: Settings, exact: false },
 ]
 

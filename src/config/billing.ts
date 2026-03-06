@@ -45,6 +45,26 @@ export const BILLING_PLANS = {
 export type PlanKey = keyof typeof BILLING_PLANS
 export type BillingInterval = 'monthly' | 'yearly'
 
+export const LISTING_TIERS = {
+  standard: {
+    name: 'Standard',
+    amount: 3900, // $39 in cents
+    display: '$39',
+    priceId: process.env.STRIPE_PRICE_LISTING_STANDARD!,
+  },
+  featured: {
+    name: 'Featured',
+    amount: 9900, // $99 in cents
+    display: '$99',
+    priceId: process.env.STRIPE_PRICE_LISTING_FEATURED!,
+  },
+} as const
+
+// Upgrade from standard → featured (pay the difference)
+export const LISTING_UPGRADE_AMOUNT = 6000 // $60 in cents
+
+export type ListingTierKey = keyof typeof LISTING_TIERS
+
 export const REGISTER_GIFT_CREDITS = 100
 
 export const PLAN_MONTHLY_CREDITS = {
