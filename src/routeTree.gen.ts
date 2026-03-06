@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
@@ -21,9 +22,14 @@ import { Route as ChangelogRouteImport } from './routes/changelog'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ToolsIndexRouteImport } from './routes/tools/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as ToolsTagsRouteImport } from './routes/tools/tags'
+import { Route as ToolsSubmitRouteImport } from './routes/tools/submit'
+import { Route as ToolsSearchRouteImport } from './routes/tools/search'
+import { Route as ToolsSlugRouteImport } from './routes/tools/$slug'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthVerifyEmailRouteImport } from './routes/auth/verify-email'
@@ -33,9 +39,14 @@ import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-passw
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
 import { Route as AuthBannedRouteImport } from './routes/auth/banned'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as DashboardSubmissionsIndexRouteImport } from './routes/dashboard/submissions/index'
 import { Route as AdminToolsIndexRouteImport } from './routes/admin/tools/index'
 import { Route as AdminTagsIndexRouteImport } from './routes/admin/tags/index'
+import { Route as AdminReviewIndexRouteImport } from './routes/admin/review/index'
 import { Route as AdminCategoriesIndexRouteImport } from './routes/admin/categories/index'
+import { Route as ToolsTagSlugRouteImport } from './routes/tools/tag.$slug'
+import { Route as ToolsSubmitSuccessRouteImport } from './routes/tools/submit.success'
+import { Route as ToolsCategorySlugRouteImport } from './routes/tools/category.$slug'
 import { Route as DashboardSettingsSecurityRouteImport } from './routes/dashboard/settings/security'
 import { Route as DashboardSettingsProfileRouteImport } from './routes/dashboard/settings/profile'
 import { Route as DashboardSettingsNotificationsRouteImport } from './routes/dashboard/settings/notifications'
@@ -51,6 +62,11 @@ import { Route as AdminUsersUserIdRouteImport } from './routes/admin/users.$user
 import { Route as AdminToolsNewRouteImport } from './routes/admin/tools/new'
 import { Route as AdminToolsToolIdRouteImport } from './routes/admin/tools/$toolId'
 
+const ToolsRoute = ToolsRouteImport.update({
+  id: '/tools',
+  path: '/tools',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -111,6 +127,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ToolsIndexRoute = ToolsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ToolsRoute,
+} as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -125,6 +146,26 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const ToolsTagsRoute = ToolsTagsRouteImport.update({
+  id: '/tags',
+  path: '/tags',
+  getParentRoute: () => ToolsRoute,
+} as any)
+const ToolsSubmitRoute = ToolsSubmitRouteImport.update({
+  id: '/submit',
+  path: '/submit',
+  getParentRoute: () => ToolsRoute,
+} as any)
+const ToolsSearchRoute = ToolsSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => ToolsRoute,
+} as any)
+const ToolsSlugRoute = ToolsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ToolsRoute,
 } as any)
 const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
   id: '/settings',
@@ -171,6 +212,12 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AdminRoute,
 } as any)
+const DashboardSubmissionsIndexRoute =
+  DashboardSubmissionsIndexRouteImport.update({
+    id: '/submissions/',
+    path: '/submissions/',
+    getParentRoute: () => DashboardRoute,
+  } as any)
 const AdminToolsIndexRoute = AdminToolsIndexRouteImport.update({
   id: '/tools/',
   path: '/tools/',
@@ -181,10 +228,30 @@ const AdminTagsIndexRoute = AdminTagsIndexRouteImport.update({
   path: '/tags/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminReviewIndexRoute = AdminReviewIndexRouteImport.update({
+  id: '/review/',
+  path: '/review/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCategoriesIndexRoute = AdminCategoriesIndexRouteImport.update({
   id: '/categories/',
   path: '/categories/',
   getParentRoute: () => AdminRoute,
+} as any)
+const ToolsTagSlugRoute = ToolsTagSlugRouteImport.update({
+  id: '/tag/$slug',
+  path: '/tag/$slug',
+  getParentRoute: () => ToolsRoute,
+} as any)
+const ToolsSubmitSuccessRoute = ToolsSubmitSuccessRouteImport.update({
+  id: '/success',
+  path: '/success',
+  getParentRoute: () => ToolsSubmitRoute,
+} as any)
+const ToolsCategorySlugRoute = ToolsCategorySlugRouteImport.update({
+  id: '/category/$slug',
+  path: '/category/$slug',
+  getParentRoute: () => ToolsRoute,
 } as any)
 const DashboardSettingsSecurityRoute =
   DashboardSettingsSecurityRouteImport.update({
@@ -277,6 +344,7 @@ export interface FileRoutesByFullPath {
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/tools': typeof ToolsRouteWithChildren
   '/admin/users': typeof AdminUsersRouteWithChildren
   '/auth/banned': typeof AuthBannedRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -286,9 +354,14 @@ export interface FileRoutesByFullPath {
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dashboard/settings': typeof DashboardSettingsRouteWithChildren
+  '/tools/$slug': typeof ToolsSlugRoute
+  '/tools/search': typeof ToolsSearchRoute
+  '/tools/submit': typeof ToolsSubmitRouteWithChildren
+  '/tools/tags': typeof ToolsTagsRoute
   '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/tools/': typeof ToolsIndexRoute
   '/admin/tools/$toolId': typeof AdminToolsToolIdRoute
   '/admin/tools/new': typeof AdminToolsNewRoute
   '/admin/users/$userId': typeof AdminUsersUserIdRoute
@@ -303,9 +376,14 @@ export interface FileRoutesByFullPath {
   '/dashboard/settings/notifications': typeof DashboardSettingsNotificationsRoute
   '/dashboard/settings/profile': typeof DashboardSettingsProfileRoute
   '/dashboard/settings/security': typeof DashboardSettingsSecurityRoute
+  '/tools/category/$slug': typeof ToolsCategorySlugRoute
+  '/tools/submit/success': typeof ToolsSubmitSuccessRoute
+  '/tools/tag/$slug': typeof ToolsTagSlugRoute
   '/admin/categories/': typeof AdminCategoriesIndexRoute
+  '/admin/review/': typeof AdminReviewIndexRoute
   '/admin/tags/': typeof AdminTagsIndexRoute
   '/admin/tools/': typeof AdminToolsIndexRoute
+  '/dashboard/submissions/': typeof DashboardSubmissionsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -327,9 +405,14 @@ export interface FileRoutesByTo {
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dashboard/settings': typeof DashboardSettingsRouteWithChildren
+  '/tools/$slug': typeof ToolsSlugRoute
+  '/tools/search': typeof ToolsSearchRoute
+  '/tools/submit': typeof ToolsSubmitRouteWithChildren
+  '/tools/tags': typeof ToolsTagsRoute
   '/admin': typeof AdminIndexRoute
   '/blog': typeof BlogIndexRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/tools': typeof ToolsIndexRoute
   '/admin/tools/$toolId': typeof AdminToolsToolIdRoute
   '/admin/tools/new': typeof AdminToolsNewRoute
   '/admin/users/$userId': typeof AdminUsersUserIdRoute
@@ -344,9 +427,14 @@ export interface FileRoutesByTo {
   '/dashboard/settings/notifications': typeof DashboardSettingsNotificationsRoute
   '/dashboard/settings/profile': typeof DashboardSettingsProfileRoute
   '/dashboard/settings/security': typeof DashboardSettingsSecurityRoute
+  '/tools/category/$slug': typeof ToolsCategorySlugRoute
+  '/tools/submit/success': typeof ToolsSubmitSuccessRoute
+  '/tools/tag/$slug': typeof ToolsTagSlugRoute
   '/admin/categories': typeof AdminCategoriesIndexRoute
+  '/admin/review': typeof AdminReviewIndexRoute
   '/admin/tags': typeof AdminTagsIndexRoute
   '/admin/tools': typeof AdminToolsIndexRoute
+  '/dashboard/submissions': typeof DashboardSubmissionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -362,6 +450,7 @@ export interface FileRoutesById {
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/tools': typeof ToolsRouteWithChildren
   '/admin/users': typeof AdminUsersRouteWithChildren
   '/auth/banned': typeof AuthBannedRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -371,9 +460,14 @@ export interface FileRoutesById {
   '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dashboard/settings': typeof DashboardSettingsRouteWithChildren
+  '/tools/$slug': typeof ToolsSlugRoute
+  '/tools/search': typeof ToolsSearchRoute
+  '/tools/submit': typeof ToolsSubmitRouteWithChildren
+  '/tools/tags': typeof ToolsTagsRoute
   '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/tools/': typeof ToolsIndexRoute
   '/admin/tools/$toolId': typeof AdminToolsToolIdRoute
   '/admin/tools/new': typeof AdminToolsNewRoute
   '/admin/users/$userId': typeof AdminUsersUserIdRoute
@@ -388,9 +482,14 @@ export interface FileRoutesById {
   '/dashboard/settings/notifications': typeof DashboardSettingsNotificationsRoute
   '/dashboard/settings/profile': typeof DashboardSettingsProfileRoute
   '/dashboard/settings/security': typeof DashboardSettingsSecurityRoute
+  '/tools/category/$slug': typeof ToolsCategorySlugRoute
+  '/tools/submit/success': typeof ToolsSubmitSuccessRoute
+  '/tools/tag/$slug': typeof ToolsTagSlugRoute
   '/admin/categories/': typeof AdminCategoriesIndexRoute
+  '/admin/review/': typeof AdminReviewIndexRoute
   '/admin/tags/': typeof AdminTagsIndexRoute
   '/admin/tools/': typeof AdminToolsIndexRoute
+  '/dashboard/submissions/': typeof DashboardSubmissionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -407,6 +506,7 @@ export interface FileRouteTypes {
     | '/rss.xml'
     | '/sitemap.xml'
     | '/terms'
+    | '/tools'
     | '/admin/users'
     | '/auth/banned'
     | '/auth/forgot-password'
@@ -416,9 +516,14 @@ export interface FileRouteTypes {
     | '/auth/verify-email'
     | '/blog/$slug'
     | '/dashboard/settings'
+    | '/tools/$slug'
+    | '/tools/search'
+    | '/tools/submit'
+    | '/tools/tags'
     | '/admin/'
     | '/blog/'
     | '/dashboard/'
+    | '/tools/'
     | '/admin/tools/$toolId'
     | '/admin/tools/new'
     | '/admin/users/$userId'
@@ -433,9 +538,14 @@ export interface FileRouteTypes {
     | '/dashboard/settings/notifications'
     | '/dashboard/settings/profile'
     | '/dashboard/settings/security'
+    | '/tools/category/$slug'
+    | '/tools/submit/success'
+    | '/tools/tag/$slug'
     | '/admin/categories/'
+    | '/admin/review/'
     | '/admin/tags/'
     | '/admin/tools/'
+    | '/dashboard/submissions/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -457,9 +567,14 @@ export interface FileRouteTypes {
     | '/auth/verify-email'
     | '/blog/$slug'
     | '/dashboard/settings'
+    | '/tools/$slug'
+    | '/tools/search'
+    | '/tools/submit'
+    | '/tools/tags'
     | '/admin'
     | '/blog'
     | '/dashboard'
+    | '/tools'
     | '/admin/tools/$toolId'
     | '/admin/tools/new'
     | '/admin/users/$userId'
@@ -474,9 +589,14 @@ export interface FileRouteTypes {
     | '/dashboard/settings/notifications'
     | '/dashboard/settings/profile'
     | '/dashboard/settings/security'
+    | '/tools/category/$slug'
+    | '/tools/submit/success'
+    | '/tools/tag/$slug'
     | '/admin/categories'
+    | '/admin/review'
     | '/admin/tags'
     | '/admin/tools'
+    | '/dashboard/submissions'
   id:
     | '__root__'
     | '/'
@@ -491,6 +611,7 @@ export interface FileRouteTypes {
     | '/rss.xml'
     | '/sitemap.xml'
     | '/terms'
+    | '/tools'
     | '/admin/users'
     | '/auth/banned'
     | '/auth/forgot-password'
@@ -500,9 +621,14 @@ export interface FileRouteTypes {
     | '/auth/verify-email'
     | '/blog/$slug'
     | '/dashboard/settings'
+    | '/tools/$slug'
+    | '/tools/search'
+    | '/tools/submit'
+    | '/tools/tags'
     | '/admin/'
     | '/blog/'
     | '/dashboard/'
+    | '/tools/'
     | '/admin/tools/$toolId'
     | '/admin/tools/new'
     | '/admin/users/$userId'
@@ -517,9 +643,14 @@ export interface FileRouteTypes {
     | '/dashboard/settings/notifications'
     | '/dashboard/settings/profile'
     | '/dashboard/settings/security'
+    | '/tools/category/$slug'
+    | '/tools/submit/success'
+    | '/tools/tag/$slug'
     | '/admin/categories/'
+    | '/admin/review/'
     | '/admin/tags/'
     | '/admin/tools/'
+    | '/dashboard/submissions/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -535,6 +666,7 @@ export interface RootRouteChildren {
   RssDotxmlRoute: typeof RssDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  ToolsRoute: typeof ToolsRouteWithChildren
   AuthBannedRoute: typeof AuthBannedRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
@@ -552,6 +684,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tools': {
+      id: '/tools'
+      path: '/tools'
+      fullPath: '/tools'
+      preLoaderRoute: typeof ToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -636,6 +775,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tools/': {
+      id: '/tools/'
+      path: '/'
+      fullPath: '/tools/'
+      preLoaderRoute: typeof ToolsIndexRouteImport
+      parentRoute: typeof ToolsRoute
+    }
     '/dashboard/': {
       id: '/dashboard/'
       path: '/'
@@ -656,6 +802,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/tools/tags': {
+      id: '/tools/tags'
+      path: '/tags'
+      fullPath: '/tools/tags'
+      preLoaderRoute: typeof ToolsTagsRouteImport
+      parentRoute: typeof ToolsRoute
+    }
+    '/tools/submit': {
+      id: '/tools/submit'
+      path: '/submit'
+      fullPath: '/tools/submit'
+      preLoaderRoute: typeof ToolsSubmitRouteImport
+      parentRoute: typeof ToolsRoute
+    }
+    '/tools/search': {
+      id: '/tools/search'
+      path: '/search'
+      fullPath: '/tools/search'
+      preLoaderRoute: typeof ToolsSearchRouteImport
+      parentRoute: typeof ToolsRoute
+    }
+    '/tools/$slug': {
+      id: '/tools/$slug'
+      path: '/$slug'
+      fullPath: '/tools/$slug'
+      preLoaderRoute: typeof ToolsSlugRouteImport
+      parentRoute: typeof ToolsRoute
     }
     '/dashboard/settings': {
       id: '/dashboard/settings'
@@ -720,6 +894,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/dashboard/submissions/': {
+      id: '/dashboard/submissions/'
+      path: '/submissions'
+      fullPath: '/dashboard/submissions/'
+      preLoaderRoute: typeof DashboardSubmissionsIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/admin/tools/': {
       id: '/admin/tools/'
       path: '/tools'
@@ -734,12 +915,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTagsIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/review/': {
+      id: '/admin/review/'
+      path: '/review'
+      fullPath: '/admin/review/'
+      preLoaderRoute: typeof AdminReviewIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/categories/': {
       id: '/admin/categories/'
       path: '/categories'
       fullPath: '/admin/categories/'
       preLoaderRoute: typeof AdminCategoriesIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/tools/tag/$slug': {
+      id: '/tools/tag/$slug'
+      path: '/tag/$slug'
+      fullPath: '/tools/tag/$slug'
+      preLoaderRoute: typeof ToolsTagSlugRouteImport
+      parentRoute: typeof ToolsRoute
+    }
+    '/tools/submit/success': {
+      id: '/tools/submit/success'
+      path: '/success'
+      fullPath: '/tools/submit/success'
+      preLoaderRoute: typeof ToolsSubmitSuccessRouteImport
+      parentRoute: typeof ToolsSubmitRoute
+    }
+    '/tools/category/$slug': {
+      id: '/tools/category/$slug'
+      path: '/category/$slug'
+      fullPath: '/tools/category/$slug'
+      preLoaderRoute: typeof ToolsCategorySlugRouteImport
+      parentRoute: typeof ToolsRoute
     }
     '/dashboard/settings/security': {
       id: '/dashboard/settings/security'
@@ -860,6 +1069,7 @@ interface AdminRouteChildren {
   AdminToolsToolIdRoute: typeof AdminToolsToolIdRoute
   AdminToolsNewRoute: typeof AdminToolsNewRoute
   AdminCategoriesIndexRoute: typeof AdminCategoriesIndexRoute
+  AdminReviewIndexRoute: typeof AdminReviewIndexRoute
   AdminTagsIndexRoute: typeof AdminTagsIndexRoute
   AdminToolsIndexRoute: typeof AdminToolsIndexRoute
 }
@@ -870,6 +1080,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminToolsToolIdRoute: AdminToolsToolIdRoute,
   AdminToolsNewRoute: AdminToolsNewRoute,
   AdminCategoriesIndexRoute: AdminCategoriesIndexRoute,
+  AdminReviewIndexRoute: AdminReviewIndexRoute,
   AdminTagsIndexRoute: AdminTagsIndexRoute,
   AdminToolsIndexRoute: AdminToolsIndexRoute,
 }
@@ -900,16 +1111,52 @@ const DashboardSettingsRouteWithChildren =
 interface DashboardRouteChildren {
   DashboardSettingsRoute: typeof DashboardSettingsRouteWithChildren
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardSubmissionsIndexRoute: typeof DashboardSubmissionsIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardSettingsRoute: DashboardSettingsRouteWithChildren,
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardSubmissionsIndexRoute: DashboardSubmissionsIndexRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
   DashboardRouteChildren,
 )
+
+interface ToolsSubmitRouteChildren {
+  ToolsSubmitSuccessRoute: typeof ToolsSubmitSuccessRoute
+}
+
+const ToolsSubmitRouteChildren: ToolsSubmitRouteChildren = {
+  ToolsSubmitSuccessRoute: ToolsSubmitSuccessRoute,
+}
+
+const ToolsSubmitRouteWithChildren = ToolsSubmitRoute._addFileChildren(
+  ToolsSubmitRouteChildren,
+)
+
+interface ToolsRouteChildren {
+  ToolsSlugRoute: typeof ToolsSlugRoute
+  ToolsSearchRoute: typeof ToolsSearchRoute
+  ToolsSubmitRoute: typeof ToolsSubmitRouteWithChildren
+  ToolsTagsRoute: typeof ToolsTagsRoute
+  ToolsIndexRoute: typeof ToolsIndexRoute
+  ToolsCategorySlugRoute: typeof ToolsCategorySlugRoute
+  ToolsTagSlugRoute: typeof ToolsTagSlugRoute
+}
+
+const ToolsRouteChildren: ToolsRouteChildren = {
+  ToolsSlugRoute: ToolsSlugRoute,
+  ToolsSearchRoute: ToolsSearchRoute,
+  ToolsSubmitRoute: ToolsSubmitRouteWithChildren,
+  ToolsTagsRoute: ToolsTagsRoute,
+  ToolsIndexRoute: ToolsIndexRoute,
+  ToolsCategorySlugRoute: ToolsCategorySlugRoute,
+  ToolsTagSlugRoute: ToolsTagSlugRoute,
+}
+
+const ToolsRouteWithChildren = ToolsRoute._addFileChildren(ToolsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -924,6 +1171,7 @@ const rootRouteChildren: RootRouteChildren = {
   RssDotxmlRoute: RssDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  ToolsRoute: ToolsRouteWithChildren,
   AuthBannedRoute: AuthBannedRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,

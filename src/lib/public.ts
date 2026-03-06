@@ -1,0 +1,369 @@
+/**
+ * Public server functions for the tool directory.
+ * No auth required — these power public-facing pages.
+ */
+import { and, asc, count, desc, eq, like, or, SQL } from 'drizzle-orm'
+import { createServerFn } from '@tanstack/react-start'
+import { db } from '#/db/index'
+import { category, tag, tool, toolCategory, toolTag } from '#/db/schema'
+
+const PUBLIC_PAGE_SIZE = 24
+
+// ---------------------------------------------------------------------------
+// Homepage
+// ---------------------------------------------------------------------------
+
+export const getFeaturedTools = createServerFn().handler(async () => {
+  return db
+    .select()
+    .from(tool)
+    .where(and(eq(tool.status, 'approved'), eq(tool.isFeatured, true)))
+    .orderBy(desc(tool.approvedAt))
+    .limit(8)
+})
+
+export const getNewTools = createServerFn()
+  .inputValidator((input: { limit?: number }) => input)
+  .handler(async ({ data }) => {
+    return db
+      .select()
+      .from(tool)
+      .where(eq(tool.status, 'approved'))
+      .orderBy(desc(tool.approvedAt))
+      .limit(data.limit ?? 12)
+  })
+
+export const getCategoriesWithCount = createServerFn().handler(async () => {
+  const rows = await db
+    .select()
+    .from(category)
+    .orderBy(asc(category.sortOrder), asc(category.name))
+
+  const usageCounts = await db
+    .select({ categoryId: toolCategory.categoryId, count: count() })
+    .from(toolCategory)
+    .innerJoin(tool, and(eq(toolCategory.toolId, tool.id), eq(tool.status, 'approved')))
+    .groupBy(toolCategory.categoryId)
+
+  const countMap = new Map(usageCounts.map((r) => [r.categoryId, r.count]))
+  return rows.map((r) => ({ ...r, toolCount: countMap.get(r.id) ?? 0 }))
+})
+
+// ---------------------------------------------------------------------------
+// Category page
+// ---------------------------------------------------------------------------
+
+export const getCategoryBySlug = createServerFn()
+  .inputValidator((input: { slug: string }) => input)
+  .handler(async ({ data }) => {
+    const [cat] = await db
+      .select()
+      .from(category)
+      .where(eq(category.slug, data.slug))
+      .limit(1)
+    if (!cat) return null
+
+    const children = await db
+      .select()
+      .from(category)
+      .where(eq(category.parentId, cat.id))
+      .orderBy(asc(category.sortOrder), asc(category.name))
+
+    return { ...cat, children }
+  })
+
+export const getToolsByCategory = createServerFn()
+  .inputValidator(
+    (input: { slug: string; pricingType?: string; sort?: string; page?: number }) => input,
+  )
+  .handler(async ({ data }) => {
+    const page = data.page ?? 1
+    const offset = (page - 1) * PUBLIC_PAGE_SIZE
+
+    const [cat] = await db
+      .select({ id: category.id })
+      .from(category)
+      .where(eq(category.slug, data.slug))
+      .limit(1)
+    if (!cat) return { tools: [], total: 0, page, totalPages: 0 }
+
+    const conditions: SQL[] = [eq(tool.status, 'approved'), eq(toolCategory.categoryId, cat.id)]
+    if (data.pricingType && data.pricingType !== 'all') {
+      conditions.push(eq(tool.pricingType, data.pricingType))
+    }
+
+    const orderBy = data.sort === 'name' ? asc(tool.name) : desc(tool.approvedAt)
+
+    const [rows, [{ total }]] = await Promise.all([
+      db
+        .select({ tool: tool })
+        .from(tool)
+        .innerJoin(toolCategory, eq(toolCategory.toolId, tool.id))
+        .where(and(...conditions))
+        .orderBy(orderBy)
+        .limit(PUBLIC_PAGE_SIZE)
+        .offset(offset),
+      db
+        .select({ total: count() })
+        .from(tool)
+        .innerJoin(toolCategory, eq(toolCategory.toolId, tool.id))
+        .where(and(...conditions)),
+    ])
+
+    return {
+      tools: rows.map((r) => r.tool),
+      total,
+      page,
+      totalPages: Math.ceil(total / PUBLIC_PAGE_SIZE),
+    }
+  })
+
+// ---------------------------------------------------------------------------
+// Tool detail page
+// ---------------------------------------------------------------------------
+
+export const getToolBySlug = createServerFn()
+  .inputValidator((input: { slug: string }) => input)
+  .handler(async ({ data }) => {
+    const [row] = await db
+      .select()
+      .from(tool)
+      .where(and(eq(tool.slug, data.slug), eq(tool.status, 'approved')))
+      .limit(1)
+    if (!row) return null
+
+    const [categories, tags] = await Promise.all([
+      db
+        .select({ id: category.id, name: category.name, slug: category.slug })
+        .from(category)
+        .innerJoin(toolCategory, eq(toolCategory.categoryId, category.id))
+        .where(eq(toolCategory.toolId, row.id)),
+      db
+        .select({ id: tag.id, name: tag.name, slug: tag.slug })
+        .from(tag)
+        .innerJoin(toolTag, eq(toolTag.tagId, tag.id))
+        .where(eq(toolTag.toolId, row.id)),
+    ])
+
+    return { ...row, categories, tags }
+  })
+
+export const getRelatedTools = createServerFn()
+  .inputValidator(
+    (input: { toolId: string; categoryIds: string[]; limit?: number }) => input,
+  )
+  .handler(async ({ data }) => {
+    if (data.categoryIds.length === 0) return []
+    const limit = data.limit ?? 6
+
+    const rows = await db
+      .selectDistinct({ tool: tool })
+      .from(tool)
+      .innerJoin(toolCategory, eq(toolCategory.toolId, tool.id))
+      .where(
+        and(
+          eq(tool.status, 'approved'),
+          or(...data.categoryIds.map((id) => eq(toolCategory.categoryId, id))),
+        ),
+      )
+      .orderBy(desc(tool.approvedAt))
+      .limit(limit + 1)
+
+    return rows
+      .map((r) => r.tool)
+      .filter((t) => t.id !== data.toolId)
+      .slice(0, limit)
+  })
+
+// ---------------------------------------------------------------------------
+// Tag pages
+// ---------------------------------------------------------------------------
+
+export const getTagsWithCount = createServerFn().handler(async () => {
+  const rows = await db.select().from(tag).orderBy(asc(tag.name))
+
+  const usageCounts = await db
+    .select({ tagId: toolTag.tagId, count: count() })
+    .from(toolTag)
+    .innerJoin(tool, and(eq(toolTag.toolId, tool.id), eq(tool.status, 'approved')))
+    .groupBy(toolTag.tagId)
+
+  const countMap = new Map(usageCounts.map((r) => [r.tagId, r.count]))
+  return rows
+    .map((r) => ({ ...r, toolCount: countMap.get(r.id) ?? 0 }))
+    .filter((r) => r.toolCount > 0)
+    .sort((a, b) => b.toolCount - a.toolCount)
+})
+
+export const getTagBySlug = createServerFn()
+  .inputValidator((input: { slug: string }) => input)
+  .handler(async ({ data }) => {
+    const [row] = await db.select().from(tag).where(eq(tag.slug, data.slug)).limit(1)
+    return row ?? null
+  })
+
+export const getToolsByTag = createServerFn()
+  .inputValidator(
+    (input: { slug: string; pricingType?: string; sort?: string; page?: number }) => input,
+  )
+  .handler(async ({ data }) => {
+    const page = data.page ?? 1
+    const offset = (page - 1) * PUBLIC_PAGE_SIZE
+
+    const [t] = await db
+      .select({ id: tag.id })
+      .from(tag)
+      .where(eq(tag.slug, data.slug))
+      .limit(1)
+    if (!t) return { tools: [], total: 0, page, totalPages: 0 }
+
+    const conditions: SQL[] = [eq(tool.status, 'approved'), eq(toolTag.tagId, t.id)]
+    if (data.pricingType && data.pricingType !== 'all') {
+      conditions.push(eq(tool.pricingType, data.pricingType))
+    }
+
+    const orderBy = data.sort === 'name' ? asc(tool.name) : desc(tool.approvedAt)
+
+    const [rows, [{ total }]] = await Promise.all([
+      db
+        .select({ tool: tool })
+        .from(tool)
+        .innerJoin(toolTag, eq(toolTag.toolId, tool.id))
+        .where(and(...conditions))
+        .orderBy(orderBy)
+        .limit(PUBLIC_PAGE_SIZE)
+        .offset(offset),
+      db
+        .select({ total: count() })
+        .from(tool)
+        .innerJoin(toolTag, eq(toolTag.toolId, tool.id))
+        .where(and(...conditions)),
+    ])
+
+    return {
+      tools: rows.map((r) => r.tool),
+      total,
+      page,
+      totalPages: Math.ceil(total / PUBLIC_PAGE_SIZE),
+    }
+  })
+
+// ---------------------------------------------------------------------------
+// Search
+// ---------------------------------------------------------------------------
+
+export const searchTools = createServerFn()
+  .inputValidator(
+    (input: {
+      query?: string
+      categorySlug?: string
+      tagSlug?: string
+      pricingType?: string
+      sort?: string
+      page?: number
+    }) => input,
+  )
+  .handler(async ({ data }) => {
+    const page = data.page ?? 1
+    const offset = (page - 1) * PUBLIC_PAGE_SIZE
+
+    const baseConditions: SQL[] = [eq(tool.status, 'approved')]
+
+    if (data.query) {
+      const q = `%${data.query}%`
+      baseConditions.push(or(like(tool.name, q), like(tool.description, q)) as SQL)
+    }
+    if (data.pricingType && data.pricingType !== 'all') {
+      baseConditions.push(eq(tool.pricingType, data.pricingType))
+    }
+
+    const orderBy = data.sort === 'name' ? asc(tool.name) : desc(tool.approvedAt)
+
+    if (data.categorySlug) {
+      const [cat] = await db
+        .select({ id: category.id })
+        .from(category)
+        .where(eq(category.slug, data.categorySlug))
+        .limit(1)
+
+      const conditions: SQL[] = [...baseConditions]
+      if (cat) conditions.push(eq(toolCategory.categoryId, cat.id))
+
+      const [rows, [{ total }]] = await Promise.all([
+        db
+          .selectDistinct({ tool: tool })
+          .from(tool)
+          .innerJoin(toolCategory, eq(toolCategory.toolId, tool.id))
+          .where(and(...conditions))
+          .orderBy(orderBy)
+          .limit(PUBLIC_PAGE_SIZE)
+          .offset(offset),
+        db
+          .select({ total: count() })
+          .from(tool)
+          .innerJoin(toolCategory, eq(toolCategory.toolId, tool.id))
+          .where(and(...conditions)),
+      ])
+      return { tools: rows.map((r) => r.tool), total, page, totalPages: Math.ceil(total / PUBLIC_PAGE_SIZE) }
+    }
+
+    if (data.tagSlug) {
+      const [t] = await db
+        .select({ id: tag.id })
+        .from(tag)
+        .where(eq(tag.slug, data.tagSlug))
+        .limit(1)
+
+      const conditions: SQL[] = [...baseConditions]
+      if (t) conditions.push(eq(toolTag.tagId, t.id))
+
+      const [rows, [{ total }]] = await Promise.all([
+        db
+          .selectDistinct({ tool: tool })
+          .from(tool)
+          .innerJoin(toolTag, eq(toolTag.toolId, tool.id))
+          .where(and(...conditions))
+          .orderBy(orderBy)
+          .limit(PUBLIC_PAGE_SIZE)
+          .offset(offset),
+        db
+          .select({ total: count() })
+          .from(tool)
+          .innerJoin(toolTag, eq(toolTag.toolId, tool.id))
+          .where(and(...conditions))
+          .limit(1),
+      ])
+      return { tools: rows.map((r) => r.tool), total, page, totalPages: Math.ceil(total / PUBLIC_PAGE_SIZE) }
+    }
+
+    const [rows, [{ total }]] = await Promise.all([
+      db
+        .select()
+        .from(tool)
+        .where(and(...baseConditions))
+        .orderBy(orderBy)
+        .limit(PUBLIC_PAGE_SIZE)
+        .offset(offset),
+      db.select({ total: count() }).from(tool).where(and(...baseConditions)),
+    ])
+
+    return { tools: rows, total, page, totalPages: Math.ceil(total / PUBLIC_PAGE_SIZE) }
+  })
+
+// ---------------------------------------------------------------------------
+// Public lists (for dropdowns)
+// ---------------------------------------------------------------------------
+
+export const getPublicCategories = createServerFn().handler(async () => {
+  return db
+    .select({ id: category.id, name: category.name, slug: category.slug })
+    .from(category)
+    .orderBy(asc(category.sortOrder), asc(category.name))
+})
+
+export const getPublicTags = createServerFn().handler(async () => {
+  return db
+    .select({ id: tag.id, name: tag.name, slug: tag.slug })
+    .from(tag)
+    .orderBy(asc(tag.name))
+})
