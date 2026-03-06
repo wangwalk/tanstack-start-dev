@@ -5,6 +5,7 @@ import { SITE_TITLE, SITE_URL } from '#/lib/site'
 import { authClient } from '#/lib/auth-client'
 import { createCheckoutSession, getUserSubscription } from '#/lib/billing'
 import { BILLING_PLANS } from '#/config/billing'
+import { m } from '#/paraglide/messages.js'
 import type { PlanKey, BillingInterval } from '#/config/billing'
 
 export const Route = createFileRoute('/pricing')({
@@ -44,54 +45,54 @@ function getPlans(interval: BillingInterval) {
 
   return [
     {
-      name: 'Free',
+      name: () => m.pricing_free_name(),
       price: '$0',
-      period: '/mo',
-      desc: 'Perfect for getting started',
+      period: () => m.pricing_period_mo(),
+      desc: () => m.pricing_free_desc(),
       features: [
-        'Up to 3 projects',
-        '1 GB storage',
-        'Community support',
-        'Basic analytics',
+        () => m.pricing_free_f1(),
+        () => m.pricing_free_f2(),
+        () => m.pricing_free_f3(),
+        () => m.pricing_free_f4(),
       ],
-      cta: 'Get Started',
+      cta: () => m.pricing_free_cta(),
       highlighted: false,
       planKey: null as PlanKey | null,
       interval: interval as BillingInterval | undefined,
       href: '/auth/sign-up',
     },
     {
-      name: 'Pro',
+      name: () => m.pricing_pro_name(),
       price: isYearly ? pro.yearly.amount : pro.monthly.amount,
-      period: isYearly ? '/yr' : '/mo',
-      desc: 'For growing teams',
+      period: () => isYearly ? m.pricing_period_yr() : m.pricing_period_mo(),
+      desc: () => m.pricing_pro_desc(),
       features: [
-        'Unlimited projects',
-        '100 GB storage',
-        'Priority support',
-        'Advanced analytics',
-        'Custom domains',
-        'Team collaboration',
+        () => m.pricing_pro_f1(),
+        () => m.pricing_pro_f2(),
+        () => m.pricing_pro_f3(),
+        () => m.pricing_pro_f4(),
+        () => m.pricing_pro_f5(),
+        () => m.pricing_pro_f6(),
       ],
-      cta: 'Start Free Trial',
+      cta: () => m.pricing_pro_cta(),
       highlighted: true,
       planKey: 'pro' as PlanKey,
       interval: interval as BillingInterval | undefined,
       href: null as string | null,
     },
     {
-      name: 'Lifetime',
+      name: () => m.pricing_lifetime_name(),
       price: lifetime.amount,
-      period: ' one-time',
-      desc: 'Pay once, own it forever',
+      period: () => m.pricing_period_one_time(),
+      desc: () => m.pricing_lifetime_desc(),
       features: [
-        'Everything in Pro',
-        'All future updates',
-        'Lifetime support',
-        'No recurring fees',
-        'Priority feature requests',
+        () => m.pricing_lifetime_f1(),
+        () => m.pricing_lifetime_f2(),
+        () => m.pricing_lifetime_f3(),
+        () => m.pricing_lifetime_f4(),
+        () => m.pricing_lifetime_f5(),
       ],
-      cta: 'Get Lifetime Access',
+      cta: () => m.pricing_lifetime_cta(),
       highlighted: false,
       planKey: 'lifetime' as PlanKey,
       interval: undefined as BillingInterval | undefined,
@@ -156,12 +157,12 @@ function PricingPage() {
     <main className="page-wrap px-4 pb-8 pt-14">
       {/* Header */}
       <section className="mb-10 text-center">
-        <p className="island-kicker mb-2">Pricing</p>
+        <p className="island-kicker mb-2">{m.pricing_kicker()}</p>
         <h1 className="display-title mb-4 text-4xl font-bold tracking-tight text-[var(--sea-ink)] sm:text-5xl">
-          Simple, transparent pricing
+          {m.pricing_title()}
         </h1>
         <p className="mx-auto max-w-lg text-[var(--sea-ink-soft)]">
-          Start for free, upgrade when you're ready. No hidden fees.
+          {m.pricing_description()}
         </p>
 
         {/* Billing interval toggle */}
@@ -175,7 +176,7 @@ function PricingPage() {
                 : 'text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]'
             }`}
           >
-            Monthly
+            {m.pricing_monthly()}
           </button>
           <button
             type="button"
@@ -186,7 +187,7 @@ function PricingPage() {
                 : 'text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]'
             }`}
           >
-            Yearly
+            {m.pricing_yearly()}
             <span className="ml-1.5 rounded-full bg-[rgba(79,184,178,0.15)] px-2 py-0.5 text-xs font-semibold text-[var(--lagoon-deep)]">
               -{YEARLY_DISCOUNT_PERCENT}%
             </span>
@@ -201,31 +202,31 @@ function PricingPage() {
 
           return (
             <article
-              key={plan.name}
+              key={plan.name()}
               className={`island-shell feature-card rise-in rounded-2xl p-6 ${plan.highlighted ? 'ring-2 ring-[var(--lagoon)]' : ''}`}
               style={{ animationDelay: `${i * 100 + 80}ms` }}
             >
               {plan.highlighted && (
                 <span className="mb-3 inline-block rounded-full bg-[rgba(79,184,178,0.15)] px-3 py-1 text-xs font-semibold text-[var(--lagoon-deep)]">
-                  Most Popular
+                  {m.pricing_most_popular()}
                 </span>
               )}
-              <p className="island-kicker mb-1">{plan.name}</p>
+              <p className="island-kicker mb-1">{plan.name()}</p>
               <p className="m-0 mb-1">
                 <span className="display-title text-3xl font-bold text-[var(--sea-ink)]">
                   {plan.price}
                 </span>
                 <span className="text-sm text-[var(--sea-ink-soft)]">
-                  {plan.period}
+                  {plan.period()}
                 </span>
               </p>
               <p className="mb-4 text-sm text-[var(--sea-ink-soft)]">
-                {plan.desc}
+                {plan.desc()}
               </p>
               <ul className="mb-6 space-y-2 pl-0">
                 {plan.features.map((f) => (
                   <li
-                    key={f}
+                    key={f()}
                     className="flex items-start gap-2 text-sm text-[var(--sea-ink-soft)]"
                   >
                     <svg
@@ -239,7 +240,7 @@ function PricingPage() {
                         clipRule="evenodd"
                       />
                     </svg>
-                    {f}
+                    {f()}
                   </li>
                 ))}
               </ul>
@@ -247,7 +248,7 @@ function PricingPage() {
               {/* CTA */}
               {isCurrent ? (
                 <span className="block w-full rounded-full border border-[var(--lagoon)] bg-[rgba(79,184,178,0.1)] px-5 py-2.5 text-center text-sm font-semibold text-[var(--lagoon-deep)]">
-                  Current Plan
+                  {m.pricing_current_plan()}
                 </span>
               ) : plan.planKey ? (
                 <button
@@ -260,7 +261,7 @@ function PricingPage() {
                       : 'border border-[var(--line)] bg-[var(--surface)] text-[var(--sea-ink)] hover:border-[var(--lagoon)]'
                   }`}
                 >
-                  {checkoutLoading ? 'Redirecting...' : plan.cta}
+                  {checkoutLoading ? m.pricing_redirecting() : plan.cta()}
                 </button>
               ) : (
                 <a
@@ -271,7 +272,7 @@ function PricingPage() {
                       : 'border border-[var(--line)] bg-[var(--surface)] text-[var(--sea-ink)] hover:border-[var(--lagoon)]'
                   }`}
                 >
-                  {plan.cta}
+                  {plan.cta()}
                 </a>
               )}
             </article>
@@ -285,17 +286,16 @@ function PricingPage() {
           <div className="pointer-events-none absolute -left-16 -top-16 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(79,184,178,0.24),transparent_66%)]" />
           <div className="pointer-events-none absolute -bottom-16 -right-16 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(47,106,74,0.14),transparent_66%)]" />
           <h2 className="display-title mb-4 text-3xl font-bold tracking-tight text-[var(--sea-ink)] sm:text-4xl">
-            Questions? We're here to help.
+            {m.pricing_faq_title()}
           </h2>
           <p className="mx-auto mb-8 max-w-lg text-[var(--sea-ink-soft)]">
-            Need help choosing the right plan? Contact our team for a
-            personalized recommendation.
+            {m.pricing_faq_description()}
           </p>
           <a
             href="/contact"
             className="inline-block rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-8 py-3 text-sm font-semibold text-white no-underline shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
           >
-            Contact Sales
+            {m.pricing_faq_cta()}
           </a>
         </div>
       </section>
