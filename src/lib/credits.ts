@@ -1,7 +1,4 @@
 import { eq, desc, lt, and, isNull, or, gt, lte, asc, sql } from 'drizzle-orm'
-import type { ExtractTablesWithRelations } from 'drizzle-orm'
-import type { PgTransaction } from 'drizzle-orm/pg-core'
-import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js'
 import { db } from '#/db/index'
 import {
   creditBalance,
@@ -10,17 +7,14 @@ import {
 } from '#/db/schema'
 import { userFn } from '#/lib/server-fn'
 import { REGISTER_GIFT_CREDITS } from '#/config/billing'
-import type * as schema from '#/db/schema'
 
 function generateId() {
   return crypto.randomUUID()
 }
 
-type Tx = PgTransaction<
-  PostgresJsQueryResultHKT,
-  typeof schema,
-  ExtractTablesWithRelations<typeof schema>
->
+// D1 transactions use a batch-style API. The `tx` object has the same
+// query-builder interface as `db`, so all existing queries work as-is.
+// SQLite/D1 is single-writer, so FOR UPDATE locks are unnecessary.
 
 // Only purchase/register_gift go through addCredits.
 // Monthly distribution has its own idempotent path via distributeMonthlyCredits.
@@ -77,18 +71,17 @@ export const consumeCredits = userFn({ method: 'POST' })
 
     if (amount <= 0) throw new Error('Amount must be positive')
 
-    const result = await db.transaction(async (tx: Tx) => {
-      // 1. Lock the balance row to prevent concurrent writes
+    const result = await db.transaction(async (tx) => {
+      // 1. Read the balance row
       const [row] = await tx
         .select()
         .from(creditBalance)
         .where(eq(creditBalance.userId, userId))
         .limit(1)
-        .for('update')
 
       const now = new Date()
 
-      // 2. Expire allocations past their expiry — lock rows before zeroing them
+      // 2. Expire allocations past their expiry
       const expired = await tx
         .select()
         .from(creditAllocation)
@@ -99,7 +92,6 @@ export const consumeCredits = userFn({ method: 'POST' })
             lte(creditAllocation.expiresAt, now),
           ),
         )
-        .for('update')
 
       let expiredSum = 0
       for (const alloc of expired) {
@@ -134,6 +126,7 @@ export const consumeCredits = userFn({ method: 'POST' })
       }
 
       // 4. FIFO: soonest-expiring first; NULL (never-expiring) last
+      // SQLite has no NULLS LAST — use CASE expression instead
       const allocations = await tx
         .select()
         .from(creditAllocation)
@@ -148,10 +141,10 @@ export const consumeCredits = userFn({ method: 'POST' })
           ),
         )
         .orderBy(
-          asc(sql`${creditAllocation.expiresAt} NULLS LAST`),
+          asc(sql`CASE WHEN ${creditAllocation.expiresAt} IS NULL THEN 1 ELSE 0 END`),
+          asc(creditAllocation.expiresAt),
           asc(creditAllocation.createdAt),
         )
-        .for('update')
 
       // 5. Deduct from allocations in order
       let remaining = amount
@@ -179,7 +172,7 @@ export const consumeCredits = userFn({ method: 'POST' })
         createdAt: now,
       })
 
-      // 7. Update balance — row must exist at this point (guaranteed by FOR UPDATE above)
+      // 7. Update balance — row must exist at this point
       if (!row) {
         throw new Error('Balance row missing — cannot write after consume')
       }
@@ -241,14 +234,13 @@ export async function addCredits(
 ): Promise<void> {
   const now = new Date()
 
-  await db.transaction(async (tx: Tx) => {
-    // Lock balance row first to prevent concurrent write races
+  await db.transaction(async (tx) => {
+    // Read balance row
     const [row] = await tx
       .select()
       .from(creditBalance)
       .where(eq(creditBalance.userId, userId))
       .limit(1)
-      .for('update')
 
     const currentBalance = row?.balance ?? 0
     const newBalance = currentBalance + amount
@@ -313,7 +305,7 @@ export async function distributeMonthlyCredits(
   const periodKey = formatPeriodKey(now)
   const expiresAt = getMonthEndExpiry(now)
 
-  const result = await db.transaction(async (tx: Tx) => {
+  const result = await db.transaction(async (tx) => {
     // Atomic idempotency: insert and let the partial unique index reject duplicates.
     // ON CONFLICT DO NOTHING means concurrent retries are safe with no TOCTOU gap.
     const [inserted] = await tx
@@ -335,13 +327,12 @@ export async function distributeMonthlyCredits(
       return { distributed: false }
     }
 
-    // Lock balance row before updating to prevent concurrent write races
+    // Read balance row
     const [row] = await tx
       .select()
       .from(creditBalance)
       .where(eq(creditBalance.userId, userId))
       .limit(1)
-      .for('update')
 
     const currentBalance = row?.balance ?? 0
     const newBalance = currentBalance + amount
