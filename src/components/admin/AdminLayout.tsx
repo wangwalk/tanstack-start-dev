@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useRouteContext, useRouterState } from '@tanstack/react-router'
-import { LayoutDashboard, Users, Menu, X, LogOut } from 'lucide-react'
+import { LayoutDashboard, Users, Wrench, FolderTree, Tag, Menu, X, LogOut } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { authClient } from '#/lib/auth-client'
 import ThemeToggle from '#/components/ThemeToggle'
@@ -17,6 +17,9 @@ interface NavItem {
 const navItems: NavItem[] = [
   { to: '/admin', label: 'Overview', icon: LayoutDashboard, exact: true },
   { to: '/admin/users', label: 'Users', icon: Users, exact: false },
+  { to: '/admin/tools', label: 'Tools', icon: Wrench, exact: false },
+  { to: '/admin/categories', label: 'Categories', icon: FolderTree, exact: false },
+  { to: '/admin/tags', label: 'Tags', icon: Tag, exact: false },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
