@@ -7,6 +7,7 @@ import { siteConfig } from '#/config/site'
 
 const NAV_LINKS = [
   { href: '/tools', label: 'Browse Tools', isRoute: true },
+  { href: '/tools/categories', label: 'Category', isRoute: true },
   { href: '/tools/submit', label: 'Submit', isRoute: true },
   { href: '/listing-pricing', label: 'List Your Tool', isRoute: true },
   ...(siteConfig.features.blog ? [{ href: '/blog', label: 'Blog', isRoute: true }] : []),

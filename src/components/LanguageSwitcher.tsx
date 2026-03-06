@@ -3,7 +3,7 @@ import { getLocale, locales, deLocalizeHref, localizeHref } from '#/paraglide/ru
 import { m } from '#/paraglide/messages.js'
 import { useState, useRef, useEffect } from 'react'
 
-const LOCALE_LABELS: Record<string, string> = {
+export const LOCALE_LABELS: Record<string, string> = {
   en: 'English',
   'zh-CN': '中文',
 }
