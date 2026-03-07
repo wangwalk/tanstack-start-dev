@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { SITE_TITLE, SITE_URL } from '#/lib/site'
 import { LISTING_TIERS } from '#/config/billing'
+import { FeatureCheck, FeatureDash } from '#/components/icons/FeatureCheck'
 
 export const Route = createFileRoute('/listing-pricing')({
   head: () => ({
@@ -16,22 +17,6 @@ export const Route = createFileRoute('/listing-pricing')({
   }),
   component: ListingPricingPage,
 })
-
-const CHECK = (
-  <svg viewBox="0 0 20 20" fill="currentColor" className="mt-0.5 h-4 w-4 shrink-0 text-[var(--lagoon)]">
-    <path
-      fillRule="evenodd"
-      d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-      clipRule="evenodd"
-    />
-  </svg>
-)
-
-const DASH = (
-  <svg viewBox="0 0 20 20" fill="currentColor" className="mt-0.5 h-4 w-4 shrink-0 text-[var(--line)]">
-    <path fillRule="evenodd" d="M3 10a.75.75 0 01.75-.75h12.5a.75.75 0 010 1.5H3.75A.75.75 0 013 10z" clipRule="evenodd" />
-  </svg>
-)
 
 const TIERS = [
   {
@@ -174,7 +159,7 @@ function ListingPricingPage() {
             <ul className="mb-6 grow space-y-2 pl-0">
               {tier.features.map((f) => (
                 <li key={f.label} className="flex items-start gap-2 text-sm text-[var(--sea-ink-soft)]">
-                  {f.included ? CHECK : DASH}
+                  {f.included ? <FeatureCheck /> : <FeatureDash />}
                   <span className={f.included ? '' : 'opacity-40'}>{f.label}</span>
                 </li>
               ))}
@@ -182,11 +167,7 @@ function ListingPricingPage() {
 
             <Link
               to={tier.ctaHref as '/tools/submit'}
-              className={`block rounded-full px-5 py-2.5 text-center text-sm font-semibold no-underline transition hover:-translate-y-0.5 ${
-                tier.ctaVariant === 'primary'
-                  ? 'border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:bg-[var(--lagoon-deep)]'
-                  : 'border border-[var(--line)] bg-[var(--surface)] text-[var(--sea-ink)] hover:border-[var(--lagoon)]'
-              }`}
+              className={`block text-center ${tier.ctaVariant === 'primary' ? 'btn-brand' : 'btn-brand-outline'}`}
             >
               {tier.cta}
             </Link>
@@ -237,7 +218,7 @@ function ListingPricingPage() {
           </p>
           <Link
             to="/tools/submit"
-            className="inline-block rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-8 py-3 text-sm font-semibold text-white no-underline shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+            className="btn-brand px-8 py-3"
           >
             Submit Your Tool
           </Link>

@@ -95,7 +95,7 @@ function BillingPage() {
           ) : (
             <a
               href="/#pricing"
-              className="inline-flex items-center justify-center rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-5 py-2 text-sm font-semibold text-white no-underline shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:opacity-90"
+              className="btn-brand inline-flex items-center justify-center no-underline"
             >
               Upgrade to Pro
             </a>

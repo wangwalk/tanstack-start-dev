@@ -181,10 +181,7 @@ function AdminUserDetailPage() {
             type="button"
             disabled={saving || role === userDetail.role || isSelf}
             onClick={() => void handleRoleSave()}
-            className={cn(
-              'rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-5 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:opacity-90',
-              'disabled:pointer-events-none disabled:opacity-60',
-            )}
+            className="btn-brand"
           >
             {saving ? 'Saving...' : saved ? 'Saved!' : 'Save role'}
           </button>

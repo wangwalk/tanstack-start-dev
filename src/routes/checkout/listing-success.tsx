@@ -155,13 +155,13 @@ function ListingSuccessPage() {
         <div className="flex flex-col gap-3 sm:flex-row">
           <Link
             to="/dashboard/listings"
-            className="flex-1 rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-5 py-2.5 text-center text-sm font-semibold text-white no-underline shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+            className="btn-brand flex-1 text-center no-underline"
           >
             Manage My Listings
           </Link>
           <Link
             to="/dashboard/submissions"
-            className="flex-1 rounded-full border border-[var(--line)] bg-[var(--surface)] px-5 py-2.5 text-center text-sm font-semibold text-[var(--sea-ink)] no-underline transition hover:border-[var(--lagoon)]"
+            className="btn-brand-outline flex-1 text-center no-underline"
           >
             View My Submissions
           </Link>

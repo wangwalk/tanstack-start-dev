@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { FeatureCheck } from '#/components/icons/FeatureCheck'
 import { toast } from 'sonner'
 import { SITE_TITLE, SITE_URL } from '#/lib/site'
 import { authClient } from '#/lib/auth-client'
@@ -229,17 +230,7 @@ function PricingPage() {
                     key={f()}
                     className="flex items-start gap-2 text-sm text-[var(--sea-ink-soft)]"
                   >
-                    <svg
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      className="mt-0.5 h-4 w-4 shrink-0 text-[var(--lagoon)]"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
+                    <FeatureCheck />
                     {f()}
                   </li>
                 ))}
@@ -255,10 +246,8 @@ function PricingPage() {
                   type="button"
                   disabled={checkoutLoading}
                   onClick={() => handleUpgrade(plan.planKey!, plan.interval)}
-                  className={`block w-full rounded-full px-5 py-2.5 text-center text-sm font-semibold transition hover:-translate-y-0.5 disabled:opacity-50 ${
-                    plan.highlighted
-                      ? 'border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:bg-[var(--lagoon-deep)]'
-                      : 'border border-[var(--line)] bg-[var(--surface)] text-[var(--sea-ink)] hover:border-[var(--lagoon)]'
+                  className={`block w-full px-5 py-2.5 text-center text-sm ${
+                    plan.highlighted ? 'btn-brand' : 'btn-brand-outline'
                   }`}
                 >
                   {checkoutLoading ? m.pricing_redirecting() : plan.cta()}
@@ -266,10 +255,8 @@ function PricingPage() {
               ) : (
                 <a
                   href={plan.href!}
-                  className={`block rounded-full px-5 py-2.5 text-center text-sm font-semibold no-underline transition hover:-translate-y-0.5 ${
-                    plan.highlighted
-                      ? 'border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:bg-[var(--lagoon-deep)]'
-                      : 'border border-[var(--line)] bg-[var(--surface)] text-[var(--sea-ink)] hover:border-[var(--lagoon)]'
+                  className={`block px-5 py-2.5 text-center text-sm no-underline ${
+                    plan.highlighted ? 'btn-brand' : 'btn-brand-outline'
                   }`}
                 >
                   {plan.cta()}
@@ -293,7 +280,7 @@ function PricingPage() {
           </p>
           <a
             href="/contact"
-            className="inline-block rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-8 py-3 text-sm font-semibold text-white no-underline shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+            className="btn-brand inline-block px-8 py-3 no-underline"
           >
             {m.pricing_faq_cta()}
           </a>

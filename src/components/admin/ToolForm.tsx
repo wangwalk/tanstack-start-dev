@@ -219,10 +219,7 @@ export function ToolForm({ categories, tags, saving, defaultValues, onSubmit }: 
       <button
         type="submit"
         disabled={saving}
-        className={cn(
-          'rounded-full bg-[var(--lagoon)] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:opacity-90',
-          'disabled:pointer-events-none disabled:opacity-60',
-        )}
+        className="btn-brand"
       >
         {saving ? 'Saving...' : 'Save tool'}
       </button>

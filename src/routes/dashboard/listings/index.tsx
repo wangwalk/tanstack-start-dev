@@ -75,7 +75,7 @@ function DashboardListingsPage() {
           </p>
           <Link
             to="/listing-pricing"
-            className="inline-block rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-6 py-2.5 text-sm font-semibold text-white no-underline shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+            className="btn-brand inline-block no-underline"
           >
             See Listing Plans
           </Link>
@@ -129,7 +129,7 @@ function DashboardListingsPage() {
                     type="button"
                     disabled={upgradingId === item.id}
                     onClick={() => handleUpgrade(item.id)}
-                    className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-3 py-1.5 text-xs font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)] disabled:opacity-50"
+                    className="btn-brand px-3 py-1.5 text-xs"
                   >
                     {upgradingId === item.id ? 'Redirecting…' : 'Upgrade to Featured — $60'}
                   </button>

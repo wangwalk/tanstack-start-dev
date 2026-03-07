@@ -259,7 +259,7 @@ function SubmitToolPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="rounded-full bg-[var(--lagoon)] px-8 py-3 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)] disabled:pointer-events-none disabled:opacity-60"
+              className="btn-brand px-8 py-3"
             >
               {isSubmitting ? '提交中...' : '提交工具'}
             </button>

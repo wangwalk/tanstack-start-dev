@@ -60,7 +60,7 @@ function ToolsHomePage() {
           />
           <button
             type="submit"
-            className="rounded-full bg-[var(--lagoon)] px-6 py-3 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+            className="btn-brand px-6 py-3"
           >
             搜索
           </button>
@@ -194,7 +194,7 @@ function ToolsHomePage() {
           </p>
           <Link
             to="/tools/submit"
-            className="inline-block rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-8 py-3 text-sm font-semibold text-white no-underline shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+            className="btn-brand inline-block px-8 py-3 no-underline"
           >
             提交工具
           </Link>

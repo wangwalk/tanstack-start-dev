@@ -103,7 +103,7 @@ function LandingPage() {
                 <div className="mt-8 flex flex-wrap items-center gap-3">
                   <Link
                     to="/tools"
-                    className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-5 py-2.5 text-sm font-semibold text-white no-underline shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+                    className="btn-brand no-underline"
                   >
                     {m.home_hero_browse_tools()}
                   </Link>
@@ -275,7 +275,7 @@ function LandingPage() {
 
             <Link
               to="/tools/categories"
-              className="mt-5 inline-flex rounded-full border border-[rgba(50,143,151,0.28)] bg-[var(--lagoon)] px-4 py-2.5 text-sm font-semibold text-white no-underline shadow-[0_10px_24px_rgba(79,184,178,0.25)] transition hover:bg-[var(--lagoon-deep)]"
+              className="btn-brand mt-5 inline-flex no-underline"
             >
               Open category atlas
             </Link>
@@ -325,13 +325,13 @@ function LandingPage() {
             <div className="mt-5 flex flex-col gap-2">
               <Link
                 to="/tools/submit"
-                className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-4 py-2.5 text-center text-sm font-semibold text-white no-underline shadow-[0_4px_14px_rgba(79,184,178,0.3)] transition hover:bg-[var(--lagoon-deep)]"
+                className="btn-brand text-center no-underline"
               >
                 {m.home_submit_primary()}
               </Link>
               <Link
                 to="/listing-pricing"
-                className="rounded-full border border-[var(--line)] px-4 py-2.5 text-center text-sm font-semibold text-[var(--sea-ink)] no-underline transition hover:border-[var(--lagoon)] hover:text-[var(--lagoon-deep)]"
+                className="btn-brand-outline text-center no-underline"
               >
                 {m.home_submit_secondary()}
               </Link>

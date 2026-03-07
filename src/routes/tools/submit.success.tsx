@@ -22,13 +22,13 @@ function SubmitSuccessPage() {
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link
             to="/dashboard/submissions"
-            className="rounded-full bg-[var(--lagoon)] px-6 py-2.5 text-sm font-semibold text-white no-underline shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+            className="btn-brand no-underline"
           >
             查看我的提交
           </Link>
           <Link
             to="/tools"
-            className="rounded-full border border-[var(--line)] px-6 py-2.5 text-sm font-semibold text-[var(--sea-ink)] no-underline transition hover:border-[var(--lagoon)] hover:text-[var(--lagoon-deep)]"
+            className="btn-brand-outline no-underline"
           >
             返回工具目录
           </Link>

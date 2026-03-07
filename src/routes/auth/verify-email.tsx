@@ -58,7 +58,7 @@ function VerifyEmailPage() {
                 type="button"
                 onClick={handleResend}
                 disabled={resendStatus === 'loading' || resendStatus === 'sent'}
-                className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+                className="btn-brand"
               >
                 {resendStatus === 'loading'
                   ? 'Sending…'
@@ -75,7 +75,7 @@ function VerifyEmailPage() {
           ) : (
             <Button
               asChild
-              className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+              className="btn-brand"
             >
               <Link to="/auth/sign-in">Sign in to resend</Link>
             </Button>
@@ -98,7 +98,7 @@ function VerifyEmailPage() {
         </p>
         <Button
           asChild
-          className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+          className="btn-brand"
         >
           <Link to="/dashboard" search={{ checkout: undefined }}>Go to Dashboard</Link>
         </Button>

@@ -42,7 +42,7 @@ function AdminToolsPage() {
         </h1>
         <Link
           to="/admin/tools/new"
-          className="rounded-full bg-[var(--lagoon)] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:opacity-90"
+          className="btn-brand"
         >
           Add tool
         </Link>

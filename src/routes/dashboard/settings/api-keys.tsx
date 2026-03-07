@@ -150,7 +150,7 @@ function ApiKeysPage() {
             <button
               type="button"
               onClick={() => setShowCreate(true)}
-              className="inline-flex items-center gap-2 rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+              className="btn-brand inline-flex items-center gap-2"
             >
               <Plus className="h-4 w-4" />
               Create key
@@ -183,7 +183,7 @@ function ApiKeysPage() {
               type="button"
               onClick={handleCreate}
               disabled={creating || !newKeyName.trim()}
-              className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)] disabled:pointer-events-none disabled:opacity-60"
+              className="btn-brand"
             >
               {creating ? 'Creating\u2026' : 'Create'}
             </button>

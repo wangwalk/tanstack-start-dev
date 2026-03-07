@@ -72,7 +72,7 @@ function DashboardSubmissionsPage() {
         <h1 className="display-title text-2xl font-bold text-[var(--sea-ink)]">我的提交</h1>
         <Link
           to="/tools/submit"
-          className="rounded-full bg-[var(--lagoon)] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:opacity-90"
+          className="btn-brand"
         >
           + 提交新工具
         </Link>
@@ -107,7 +107,7 @@ function DashboardSubmissionsPage() {
             <p className="text-[var(--sea-ink-soft)]">暂无提交记录</p>
             <Link
               to="/tools/submit"
-              className="mt-4 inline-block rounded-full bg-[var(--lagoon)] px-5 py-2 text-sm font-semibold text-white no-underline shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5"
+              className="btn-brand mt-4 inline-block no-underline"
             >
               提交第一个工具
             </Link>

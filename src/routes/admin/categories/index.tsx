@@ -126,10 +126,7 @@ function CategoryDialog({
             type="button"
             disabled={saving || !form.name.trim() || !form.slug.trim()}
             onClick={onSave}
-            className={cn(
-              'rounded-full bg-[var(--lagoon)] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:opacity-90',
-              'disabled:pointer-events-none disabled:opacity-60',
-            )}
+            className="btn-brand"
           >
             {saving ? 'Saving...' : 'Save'}
           </button>
@@ -284,7 +281,7 @@ function AdminCategoriesPage() {
         <button
           type="button"
           onClick={openCreate}
-          className="inline-flex items-center gap-1.5 rounded-full bg-[var(--lagoon)] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:opacity-90"
+          className="btn-brand inline-flex items-center gap-1.5"
         >
           <Plus className="h-4 w-4" />
           Add category

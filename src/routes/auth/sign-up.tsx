@@ -111,7 +111,7 @@ function SignUpPage() {
           </p>
           <Button
             asChild
-            className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+            className="btn-brand"
           >
             <Link to="/auth/sign-in">{m.auth_signup_success_go()}</Link>
           </Button>
@@ -198,7 +198,7 @@ function SignUpPage() {
         <Button
           type="submit"
           disabled={isLoading}
-          className="w-full rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+          className="btn-brand w-full"
         >
           {isLoading ? (
             <span className="inline-flex items-center gap-2">

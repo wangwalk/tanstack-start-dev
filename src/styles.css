@@ -523,6 +523,61 @@ a {
   }
 }
 
+.btn-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(50, 143, 151, 0.3);
+  border-radius: 999px;
+  background: var(--lagoon);
+  padding: 0.625rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(79, 184, 178, 0.35);
+  transition: background-color 180ms ease, transform 180ms ease;
+}
+
+.btn-brand:hover {
+  transform: translateY(-1px);
+  background: var(--lagoon-deep);
+  color: #fff;
+}
+
+.btn-brand:disabled,
+.btn-brand.is-disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.btn-brand-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  padding: 0.625rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--sea-ink);
+  text-decoration: none;
+  transition: border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.btn-brand-outline:hover {
+  transform: translateY(-1px);
+  border-color: var(--lagoon);
+  color: var(--lagoon-deep);
+}
+
+.btn-brand-outline:disabled,
+.btn-brand-outline.is-disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

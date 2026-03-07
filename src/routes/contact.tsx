@@ -184,7 +184,7 @@ function ContactPage() {
           <Button
             type="submit"
             disabled={isPending}
-            className="w-full rounded-full border border-[rgba(50,143,151,0.3)] bg-[var(--lagoon)] font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+            className="btn-brand w-full"
           >
             {isPending ? (
               <span className="inline-flex items-center gap-2">

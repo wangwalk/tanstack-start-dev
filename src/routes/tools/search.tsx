@@ -84,7 +84,7 @@ function SearchPage() {
           />
           <button
             type="submit"
-            className="rounded-full bg-[var(--lagoon)] px-6 py-3 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,184,178,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--lagoon-deep)]"
+            className="btn-brand px-6 py-3"
           >
             搜索
           </button>
