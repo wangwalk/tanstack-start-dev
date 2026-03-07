@@ -6,6 +6,8 @@ import { Button } from '#/components/ui/button'
 import { Route as RootRoute } from '#/routes/__root'
 import { toggleToolSave } from '#/lib/tool-saves'
 
+const countFormatter = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 })
+
 interface SaveToolButtonProps {
   toolId: string
   initialIsSaved: boolean
@@ -25,7 +27,7 @@ export function SaveToolButton({
   const [isPending, setIsPending] = useState(false)
   const [isSaved, setIsSaved] = useState(initialIsSaved)
   const [saveCount, setSaveCount] = useState(initialSaveCount)
-  const formattedCount = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(saveCount)
+  const formattedCount = countFormatter.format(saveCount)
 
   useEffect(() => {
     setIsSaved(initialIsSaved)

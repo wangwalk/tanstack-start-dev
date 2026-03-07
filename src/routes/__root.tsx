@@ -6,15 +6,11 @@ import {
   redirect,
   useRouterState,
 } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
+import { lazy, Suspense } from 'react'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
 
 import TanStackQueryProvider from '../integrations/tanstack-query/root-provider'
-
-import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
-
 import { Analytics } from '#/components/analytics'
 import { Toaster } from '#/components/ui/sonner'
 import appCss from '../styles.css?url'
@@ -22,8 +18,11 @@ import { getAnalyticsConfig } from '#/lib/analytics'
 import { getSession } from '#/lib/auth-guard'
 import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from '#/lib/site'
 import { getLocale } from '#/paraglide/runtime.js'
-
 import type { QueryClient } from '@tanstack/react-query'
+
+const DevToolsPanel = import.meta.env.DEV
+  ? lazy(() => import('#/components/DevToolsPanel'))
+  : null
 
 type Session = Awaited<ReturnType<typeof getSession>>
 
@@ -112,18 +111,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           {children}
           {!isDashboard && <Footer />}
           <Toaster />
-          <TanStackDevtools
-            config={{
-              position: 'bottom-right',
-            }}
-            plugins={[
-              {
-                name: 'Tanstack Router',
-                render: <TanStackRouterDevtoolsPanel />,
-              },
-              TanStackQueryDevtools,
-            ]}
-          />
+          {DevToolsPanel && (
+            <Suspense>
+              <DevToolsPanel />
+            </Suspense>
+          )}
         </TanStackQueryProvider>
         <Scripts />
       </body>
