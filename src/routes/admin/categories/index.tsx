@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { ChevronRight, Pencil, Plus, Trash2 } from 'lucide-react'
 import { getCategories, createCategory, updateCategory, deleteCategory } from '#/lib/categories'
 import { cn } from '#/lib/utils'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '#/components/ui/dialog'
 
 export const Route = createFileRoute('/admin/categories/')({
   loader: () => getCategories({}),
@@ -30,6 +31,7 @@ const inputClass =
   'w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3 py-1.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20'
 
 function CategoryDialog({
+  open,
   title,
   form,
   setForm,
@@ -39,6 +41,7 @@ function CategoryDialog({
   onSave,
   onClose,
 }: {
+  open: boolean
   title: string
   form: FormState
   setForm: (f: FormState) => void
@@ -49,9 +52,11 @@ function CategoryDialog({
   onClose: () => void
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--sea-ink)]/30 backdrop-blur-sm p-4">
-      <div className="island-shell w-full max-w-md rounded-2xl px-6 py-6 space-y-4">
-        <h2 className="font-semibold text-[var(--sea-ink)]">{title}</h2>
+    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose() }}>
+      <DialogContent className="island-shell max-w-md rounded-2xl border-[var(--line)] p-6" showCloseButton={false}>
+        <DialogHeader>
+          <DialogTitle className="font-semibold text-[var(--sea-ink)]">{title}</DialogTitle>
+        </DialogHeader>
         <div className="space-y-3">
           <div className="space-y-1">
             <label className="text-xs font-medium text-[var(--sea-ink-soft)]">Name *</label>
@@ -118,7 +123,7 @@ function CategoryDialog({
             </select>
           </div>
         </div>
-        <div className="flex justify-end gap-2 pt-2">
+        <DialogFooter>
           <button type="button" onClick={onClose} className="px-4 py-2 text-sm text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]">
             Cancel
           </button>
@@ -130,9 +135,9 @@ function CategoryDialog({
           >
             {saving ? 'Saving…' : 'Save'}
           </button>
-        </div>
-      </div>
-    </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -244,7 +249,7 @@ function AdminCategoriesPage() {
           <td className="px-4 py-3">
             <div className="flex items-center gap-2" style={{ paddingLeft: depth * 20 }}>
               {children.length > 0 && (
-                <button type="button" onClick={() => toggleExpand(cat.id)} className="text-[var(--sea-ink-soft)]">
+                <button type="button" onClick={() => toggleExpand(cat.id)} aria-label="Expand" className="text-[var(--sea-ink-soft)]">
                   <ChevronRight className={cn('h-3.5 w-3.5 transition-transform', expanded && 'rotate-90')} />
                 </button>
               )}
@@ -257,10 +262,10 @@ function AdminCategoriesPage() {
           <td className="px-4 py-3 text-[var(--sea-ink-soft)]">{cat.toolCount}</td>
           <td className="px-4 py-3 text-right">
             <div className="flex justify-end gap-2">
-              <button type="button" onClick={() => openEdit(cat)} className="text-[var(--sea-ink-soft)] hover:text-[var(--lagoon)]">
+              <button type="button" onClick={() => openEdit(cat)} aria-label="Edit" className="text-[var(--sea-ink-soft)] hover:text-[var(--lagoon)]">
                 <Pencil className="h-3.5 w-3.5" />
               </button>
-              <button type="button" onClick={() => void handleDelete(cat.id)} className="text-[var(--sea-ink-soft)] hover:text-red-500">
+              <button type="button" onClick={() => void handleDelete(cat.id)} aria-label="Delete" className="text-[var(--sea-ink-soft)] hover:text-red-500">
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
             </div>
@@ -318,8 +323,8 @@ function AdminCategoriesPage() {
         </div>
       </div>
 
-      {showCreate && (
-        <CategoryDialog
+      <CategoryDialog
+          open={showCreate}
           title="Add category"
           form={form}
           setForm={setForm}
@@ -328,9 +333,8 @@ function AdminCategoriesPage() {
           onSave={() => void handleCreate()}
           onClose={() => setShowCreate(false)}
         />
-      )}
-      {editTarget && (
-        <CategoryDialog
+      <CategoryDialog
+          open={!!editTarget}
           title="Edit category"
           form={form}
           setForm={setForm}
@@ -340,7 +344,6 @@ function AdminCategoriesPage() {
           onSave={() => void handleUpdate()}
           onClose={() => setEditTarget(null)}
         />
-      )}
     </div>
   )
 }

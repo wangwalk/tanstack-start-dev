@@ -162,12 +162,14 @@ function AdminTagsPage() {
             onChange={(e) => { setNewName(e.target.value); setNewSlug(toSlug(e.target.value)) }}
             onKeyDown={(e) => { if (e.key === 'Enter') void handleCreate() }}
             className={cn(inputClass, 'flex-1')}
+            aria-label="Tag name"
             placeholder="Tag name"
           />
           <input
             value={newSlug}
             onChange={(e) => setNewSlug(e.target.value)}
             className={cn(inputClass, 'w-40')}
+            aria-label="Slug"
             placeholder="slug"
           />
           <button
@@ -245,10 +247,10 @@ function AdminTagsPage() {
                     </div>
                   ) : (
                     <div className="flex justify-end gap-2">
-                      <button type="button" onClick={() => openEdit(t)} className="text-[var(--sea-ink-soft)] hover:text-[var(--lagoon)]">
+                      <button type="button" onClick={() => openEdit(t)} aria-label="Edit" className="text-[var(--sea-ink-soft)] hover:text-[var(--lagoon)]">
                         <Pencil className="h-3.5 w-3.5" />
                       </button>
-                      <button type="button" onClick={() => void handleDelete(t.id)} className="text-[var(--sea-ink-soft)] hover:text-red-500">
+                      <button type="button" onClick={() => void handleDelete(t.id)} aria-label="Delete" className="text-[var(--sea-ink-soft)] hover:text-red-500">
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>
                     </div>

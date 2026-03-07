@@ -9,6 +9,7 @@ import {
   getTagsWithCount,
 } from '#/lib/public'
 import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from '#/lib/site'
+import { useMemo } from 'react'
 import { m } from '#/paraglide/messages.js'
 
 export const Route = createFileRoute('/')({
@@ -52,8 +53,8 @@ export const Route = createFileRoute('/')({
 function LandingPage() {
   const { stats, featured, newest, categories, trendingTags } = Route.useLoaderData()
   const navigate = Route.useNavigate()
-  const topCategories = categories.filter((cat) => !cat.parentId && cat.toolCount > 0)
-  const leadingCategories = topCategories.slice(0, 4)
+  const topCategories = useMemo(() => categories.filter((cat) => !cat.parentId && cat.toolCount > 0), [categories])
+  const leadingCategories = useMemo(() => topCategories.slice(0, 4), [topCategories])
 
   function handleSearch(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -68,9 +69,9 @@ function LandingPage() {
       <div className="home-orbit">
         <section className="space-y-10">
           <section className="island-shell rise-in relative overflow-hidden rounded-[2.2rem] px-6 py-12 sm:px-10 sm:py-16 md:py-[4.5rem]">
-            <div className="pointer-events-none absolute -left-20 -top-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(79,184,178,0.32),transparent_66%)]" />
-            <div className="pointer-events-none absolute right-[-8%] top-[18%] h-40 w-40 rounded-full border border-white/30 bg-white/20 blur-sm" />
-            <div className="pointer-events-none absolute -bottom-24 right-[-4%] h-60 w-60 rounded-full bg-[radial-gradient(circle,rgba(47,106,74,0.18),transparent_66%)]" />
+            <div className="pointer-events-none absolute -left-20 -top-20 h-56 w-56 rounded-full bg-[var(--deco-a)]" />
+            <div className="pointer-events-none absolute right-[-8%] top-[18%] h-40 w-40 rounded-full border border-[var(--inset-glint)]/30 bg-[var(--surface)]/20 blur-sm" />
+            <div className="pointer-events-none absolute -bottom-24 right-[-4%] h-60 w-60 rounded-full bg-[var(--deco-b)]" />
 
             <div className="relative grid gap-8 xl:grid-cols-[minmax(0,1.25fr)_260px] xl:items-end">
               <div>
@@ -87,12 +88,13 @@ function LandingPage() {
                     <input
                       name="q"
                       type="search"
+                      aria-label="Search tools"
                       placeholder={m.home_hero_search_placeholder()}
                       className="h-14 flex-1 rounded-[1.1rem] border border-transparent bg-white/55 px-5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/55 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20"
                     />
                     <button
                       type="submit"
-                      className="h-14 shrink-0 rounded-[1.1rem] bg-[var(--lagoon)] px-6 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(79,184,178,0.28)] transition hover:bg-[var(--lagoon-deep)]"
+                      className="h-14 shrink-0 rounded-[1.1rem] bg-[var(--lagoon)] px-6 text-sm font-semibold text-white shadow-[0_12px_24px_var(--lagoon-shadow)] transition hover:bg-[var(--lagoon-deep)]"
                     >
                       {m.home_hero_search_button()}
                     </button>
@@ -241,10 +243,10 @@ function LandingPage() {
           <section className="atlas-sidecard rise-in rounded-[2rem] p-5">
             <p className="island-kicker mb-2">Category Atlas</p>
             <h2 className="display-title text-2xl font-bold tracking-tight text-[var(--sea-ink)]">
-              A clearer map into the directory.
+              {m.home_sidebar_title()}
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-[var(--sea-ink-soft)]">
-              The right rail stays practical in this first pass: category entry points, signal tags, and submission cues without inventing a news system early.
+              {m.home_sidebar_description()}
             </p>
 
             <div className="mt-5 grid gap-3">

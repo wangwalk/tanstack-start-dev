@@ -79,6 +79,7 @@ function SearchPage() {
             name="q"
             type="search"
             defaultValue={q ?? ''}
+            aria-label="Search tools"
             placeholder="搜索工具名称或描述..."
             className="flex-1 rounded-full border border-[var(--line)] bg-[var(--surface)] px-5 py-3 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20"
           />

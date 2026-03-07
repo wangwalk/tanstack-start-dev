@@ -55,7 +55,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             to="/"
             className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--sea-ink)] no-underline"
           >
-            <span className="h-2 w-2 rounded-full bg-[linear-gradient(90deg,#56c6be,#7ed3bf)]" />
+            <span className="h-2 w-2 rounded-full bg-[var(--logo-gradient)]" />
             Stockholm
             <span className="rounded bg-[rgba(79,184,178,0.15)] px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wider text-[var(--lagoon-deep)]">
               Admin
