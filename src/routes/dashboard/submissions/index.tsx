@@ -155,7 +155,7 @@ function DashboardSubmissionsPage() {
                       onClick={() => void handleWithdraw(t.id)}
                       className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-50 dark:border-red-800/40 dark:text-red-400 dark:hover:bg-red-950/30"
                     >
-                      {withdrawing === t.id ? '撤回中...' : '撤回'}
+                      {withdrawing === t.id ? '撤回中…' : '撤回'}
                     </button>
                   )}
                   {(t.status === 'rejected' || t.status === 'draft') && (

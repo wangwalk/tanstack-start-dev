@@ -128,7 +128,7 @@ function CategoryDialog({
             onClick={onSave}
             className="btn-brand"
           >
-            {saving ? 'Saving...' : 'Save'}
+            {saving ? 'Saving…' : 'Save'}
           </button>
         </div>
       </div>

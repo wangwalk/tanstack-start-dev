@@ -221,7 +221,7 @@ export function ToolForm({ categories, tags, saving, defaultValues, onSubmit }: 
         disabled={saving}
         className="btn-brand"
       >
-        {saving ? 'Saving...' : 'Save tool'}
+        {saving ? 'Saving…' : 'Save tool'}
       </button>
     </form>
   )

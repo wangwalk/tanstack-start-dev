@@ -91,7 +91,7 @@ function EditToolPage() {
                 'disabled:pointer-events-none disabled:opacity-60',
               )}
             >
-              {deleting ? 'Deleting...' : 'Yes, delete'}
+              {deleting ? 'Deleting…' : 'Yes, delete'}
             </button>
             <button
               type="button"

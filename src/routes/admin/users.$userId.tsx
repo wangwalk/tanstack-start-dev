@@ -183,7 +183,7 @@ function AdminUserDetailPage() {
             onClick={() => void handleRoleSave()}
             className="btn-brand"
           >
-            {saving ? 'Saving...' : saved ? 'Saved!' : 'Save role'}
+            {saving ? 'Saving…' : saved ? 'Saved!' : 'Save role'}
           </button>
         </div>
         {isSelf && (
@@ -220,7 +220,7 @@ function AdminUserDetailPage() {
                 'disabled:pointer-events-none disabled:opacity-60',
               )}
             >
-              {banning ? 'Unbanning...' : 'Unban user'}
+              {banning ? 'Unbanning…' : 'Unban user'}
             </button>
           </div>
         ) : (
@@ -252,7 +252,7 @@ function AdminUserDetailPage() {
                 'disabled:pointer-events-none disabled:opacity-60',
               )}
             >
-              {banning ? 'Banning...' : 'Ban user'}
+              {banning ? 'Banning…' : 'Ban user'}
             </button>
             <p className="text-xs text-[var(--sea-ink-soft)]">
               Banning immediately revokes all active sessions.

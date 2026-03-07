@@ -1,5 +1,3 @@
-'use client'
-
 import { useState, useTransition } from 'react'
 import { subscribeNewsletter } from '#/lib/newsletter'
 
@@ -50,12 +48,12 @@ export default function NewsletterForm() {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="your@email.com"
           disabled={isPending}
-          className="w-full rounded-lg border border-[var(--line)] bg-[var(--bg)] px-3 py-2 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)] focus:outline-none focus:ring-2 focus:ring-[var(--sea-ink)] disabled:opacity-50 sm:w-56"
+          className="w-full rounded-lg border border-[var(--line)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-50 sm:w-56"
         />
         <button
           type="submit"
           disabled={isPending || !email}
-          className="rounded-lg bg-[var(--sea-ink)] px-4 py-2 text-sm font-medium text-[var(--bg)] transition hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-lg bg-[var(--sea-ink)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isPending ? 'Subscribing…' : 'Subscribe'}
         </button>
