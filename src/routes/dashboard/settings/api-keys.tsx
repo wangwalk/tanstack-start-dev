@@ -116,6 +116,7 @@ function ApiKeysPage() {
                 <button
                   type="button"
                   onClick={() => handleCopy(newlyCreatedKey)}
+                  aria-label="Copy API key"
                   className="shrink-0 rounded-lg border border-amber-300 bg-amber-100 p-2 text-amber-700 transition hover:bg-amber-200 dark:border-amber-700 dark:bg-amber-900/50 dark:text-amber-300 dark:hover:bg-amber-800/50"
                 >
                   {copied ? (

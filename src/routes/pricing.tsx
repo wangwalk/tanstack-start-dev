@@ -115,7 +115,7 @@ function PricingPage() {
 
   useEffect(() => {
     if (session?.user) {
-      getUserSubscription().then(setSubscription)
+      getUserSubscription().then(setSubscription).catch(() => null)
     }
   }, [session?.user?.id])
 
@@ -173,7 +173,7 @@ function PricingPage() {
             onClick={() => setInterval('monthly')}
             className={`rounded-full px-5 py-2 text-sm font-medium transition ${
               interval === 'monthly'
-                ? 'bg-[var(--lagoon)] text-white shadow-sm'
+                ? 'bg-[var(--lagoon)] text-[var(--primary-foreground)] shadow-sm'
                 : 'text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]'
             }`}
           >
@@ -184,12 +184,12 @@ function PricingPage() {
             onClick={() => setInterval('yearly')}
             className={`rounded-full px-5 py-2 text-sm font-medium transition ${
               interval === 'yearly'
-                ? 'bg-[var(--lagoon)] text-white shadow-sm'
+                ? 'bg-[var(--lagoon)] text-[var(--primary-foreground)] shadow-sm'
                 : 'text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]'
             }`}
           >
             {m.pricing_yearly()}
-            <span className="ml-1.5 rounded-full bg-[rgba(79,184,178,0.15)] px-2 py-0.5 text-xs font-semibold text-[var(--lagoon-deep)]">
+            <span className="ml-1.5 rounded-full bg-[var(--lagoon-glow)] px-2 py-0.5 text-xs font-semibold text-[var(--lagoon-deep)]">
               -{YEARLY_DISCOUNT_PERCENT}%
             </span>
           </button>
@@ -208,7 +208,7 @@ function PricingPage() {
               style={{ animationDelay: `${i * 100 + 80}ms` }}
             >
               {plan.highlighted && (
-                <span className="mb-3 inline-block rounded-full bg-[rgba(79,184,178,0.15)] px-3 py-1 text-xs font-semibold text-[var(--lagoon-deep)]">
+                <span className="mb-3 inline-block rounded-full bg-[var(--lagoon-glow)] px-3 py-1 text-xs font-semibold text-[var(--lagoon-deep)]">
                   {m.pricing_most_popular()}
                 </span>
               )}
@@ -270,8 +270,8 @@ function PricingPage() {
       {/* FAQ / Bottom CTA */}
       <section className="mt-16">
         <div className="island-shell rise-in relative overflow-hidden rounded-[2rem] px-6 py-12 text-center sm:px-10 sm:py-16">
-          <div className="pointer-events-none absolute -left-16 -top-16 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(79,184,178,0.24),transparent_66%)]" />
-          <div className="pointer-events-none absolute -bottom-16 -right-16 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(47,106,74,0.14),transparent_66%)]" />
+          <div className="pointer-events-none absolute -left-16 -top-16 h-48 w-48 rounded-full bg-[var(--deco-a)]" />
+          <div className="pointer-events-none absolute -bottom-16 -right-16 h-48 w-48 rounded-full bg-[var(--deco-b)]" />
           <h2 className="display-title mb-4 text-3xl font-bold tracking-tight text-[var(--sea-ink)] sm:text-4xl">
             {m.pricing_faq_title()}
           </h2>

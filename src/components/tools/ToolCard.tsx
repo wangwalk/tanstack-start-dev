@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { Link } from '@tanstack/react-router'
 import type { PublicToolCard } from '#/lib/public'
 import { pricingBadgeClass, pricingLabel } from '#/lib/pricing-display'
@@ -8,15 +9,20 @@ interface ToolCardProps {
 }
 
 export function ToolCard({ tool }: ToolCardProps) {
-  const categories = tool.categories.slice(0, 2)
-  const tagLinks = tool.tags.slice(0, 4)
-  const fallbackLinks = categories
-    .filter((category) => !tagLinks.some((entry) => entry.slug === category.slug))
-    .slice(0, Math.max(0, 4 - tagLinks.length))
-  const previewLinks = [
-    ...tagLinks.map((entry) => ({ ...entry, kind: 'tag' as const, label: `#${entry.name}` })),
-    ...fallbackLinks.map((entry) => ({ ...entry, kind: 'category' as const, label: entry.name })),
-  ]
+  const { categories, previewLinks } = useMemo(() => {
+    const cats = tool.categories.slice(0, 2)
+    const tagLinks = tool.tags.slice(0, 4)
+    const fallbackLinks = cats
+      .filter((category) => !tagLinks.some((entry) => entry.slug === category.slug))
+      .slice(0, Math.max(0, 4 - tagLinks.length))
+    return {
+      categories: cats,
+      previewLinks: [
+        ...tagLinks.map((entry) => ({ ...entry, kind: 'tag' as const, label: `#${entry.name}` })),
+        ...fallbackLinks.map((entry) => ({ ...entry, kind: 'category' as const, label: entry.name })),
+      ],
+    }
+  }, [tool.categories, tool.tags])
 
   return (
     <article className="island-shell feature-card group flex h-full flex-col gap-4 rounded-[1.6rem] p-4 transition hover:-translate-y-0.5">
@@ -28,10 +34,10 @@ export function ToolCard({ tool }: ToolCardProps) {
                 src={tool.logoUrl}
                 alt={`${tool.name} logo`}
                 loading="lazy"
-                className="h-11 w-11 shrink-0 rounded-2xl object-cover ring-1 ring-black/5"
+                className="h-11 w-11 shrink-0 rounded-2xl object-cover ring-1 ring-[var(--sea-ink)]/5"
               />
             ) : (
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[rgba(79,184,178,0.12)] text-lg font-bold text-[var(--lagoon-deep)]">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--lagoon-glow)] text-lg font-bold text-[var(--lagoon-deep)]">
                 {tool.name.charAt(0) || '?'}
               </div>
             )}
@@ -103,7 +109,7 @@ export function ToolCard({ tool }: ToolCardProps) {
               className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
             />
           ) : (
-            <div className="flex h-full min-h-28 flex-col justify-between bg-[linear-gradient(160deg,rgba(79,184,178,0.2),rgba(255,255,255,0.82))] p-3">
+            <div className="flex h-full min-h-28 flex-col justify-between bg-[linear-gradient(160deg,var(--lagoon-glow),var(--surface-strong))] p-3">
               <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--sea-ink-soft)]">
                 Snapshot
               </span>
@@ -120,7 +126,7 @@ export function ToolCard({ tool }: ToolCardProps) {
             initialIsSaved={tool.isSaved}
             initialSaveCount={tool.saveCount}
           />
-          {categories.slice(0, 2).map((category) => (
+          {categories.map((category) => (
             <Link
               key={category.id}
               to="/tools/category/$slug"

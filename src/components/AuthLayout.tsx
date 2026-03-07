@@ -17,7 +17,7 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
               to="/"
               className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--sea-ink)] no-underline"
             >
-              <span className="h-2.5 w-2.5 rounded-full bg-[linear-gradient(90deg,#56c6be,#7ed3bf)]" />
+              <span className="h-2.5 w-2.5 rounded-full bg-[var(--logo-gradient)]" />
               Stockholm
             </Link>
           </div>

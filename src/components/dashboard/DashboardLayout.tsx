@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link, useRouteContext, useRouterState } from '@tanstack/react-router'
 import { LayoutDashboard, Settings, ShieldCheck, Menu, X, LogOut, Zap, Send, Star, Bookmark } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
@@ -30,12 +30,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const { session, creditBalance } = useRouteContext({ from: '/dashboard' })
 
-  const navItems: NavItem[] = [
+  const navItems = useMemo<NavItem[]>(() => [
     ...baseNavItems,
     ...(session?.user.role === 'admin'
       ? [{ to: '/admin', label: 'Admin', icon: ShieldCheck, exact: false }]
       : []),
-  ]
+  ], [session?.user.role])
 
   useEffect(() => {
     setSidebarOpen(false)
@@ -65,7 +65,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             to="/"
             className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--sea-ink)] no-underline"
           >
-            <span className="h-2 w-2 rounded-full bg-[linear-gradient(90deg,#56c6be,#7ed3bf)]" />
+            <span className="h-2 w-2 rounded-full bg-[var(--logo-gradient)]" />
             Stockholm
           </Link>
           <Button

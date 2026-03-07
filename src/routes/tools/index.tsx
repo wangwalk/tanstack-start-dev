@@ -40,8 +40,8 @@ function ToolsHomePage() {
     <main className="page-wrap px-4 pb-16 pt-14">
       {/* Hero */}
       <section className="island-shell rise-in relative overflow-hidden rounded-[2rem] px-6 py-12 sm:px-10 sm:py-16">
-        <div className="pointer-events-none absolute -left-20 -top-24 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(79,184,178,0.32),transparent_66%)]" />
-        <div className="pointer-events-none absolute -bottom-20 -right-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(47,106,74,0.18),transparent_66%)]" />
+        <div className="pointer-events-none absolute -left-20 -top-24 h-56 w-56 rounded-full bg-[var(--deco-a)]" />
+        <div className="pointer-events-none absolute -bottom-20 -right-20 h-56 w-56 rounded-full bg-[var(--deco-b)]" />
         <p className="island-kicker mb-3">AI 工具目录</p>
         <h1 className="display-title mb-5 max-w-3xl text-4xl font-bold leading-[1.08] tracking-tight text-[var(--sea-ink)] sm:text-5xl">
           发现最好的 AI 工具
@@ -142,7 +142,7 @@ function ToolsHomePage() {
                   params={{ slug: cat.slug }}
                   className="island-shell feature-card group flex items-center gap-4 rounded-2xl p-4 no-underline transition hover:-translate-y-0.5"
                 >
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[rgba(79,184,178,0.12)] text-2xl">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[var(--lagoon-glow)] text-2xl">
                     {cat.icon ?? '🔧'}
                   </div>
                   <div className="min-w-0">
@@ -184,8 +184,8 @@ function ToolsHomePage() {
       {/* CTA banner */}
       <section className="mt-16">
         <div className="island-shell rise-in relative overflow-hidden rounded-[2rem] px-6 py-12 text-center sm:px-10 sm:py-14">
-          <div className="pointer-events-none absolute -left-16 -top-16 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(79,184,178,0.24),transparent_66%)]" />
-          <div className="pointer-events-none absolute -bottom-16 -right-16 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(47,106,74,0.14),transparent_66%)]" />
+          <div className="pointer-events-none absolute -left-16 -top-16 h-48 w-48 rounded-full bg-[var(--deco-a)]" />
+          <div className="pointer-events-none absolute -bottom-16 -right-16 h-48 w-48 rounded-full bg-[var(--deco-b)]" />
           <h2 className="display-title mb-4 text-2xl font-bold tracking-tight text-[var(--sea-ink)] sm:text-3xl">
             发现了好用的 AI 工具？
           </h2>

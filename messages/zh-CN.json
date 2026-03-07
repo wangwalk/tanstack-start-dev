@@ -49,8 +49,10 @@
   "home_newsletter_description": "\u8ba2\u9605\u540e\u6bcf\u5468\u6536\u5230 5 \u6b3e\u7cbe\u9009\u5de5\u5177\u63a8\u8350\uff0c\u4e0d\u9519\u8fc7\u4efb\u4f55\u597d\u5de5\u5177\u3002",
   "home_cta_title": "\u6709\u597d\u5de5\u5177\u60f3\u63a8\u8350\uff1f",
   "home_cta_description": "\u514d\u8d39\u63d0\u4ea4\uff0c\u5ba1\u6838\u901a\u8fc7\u5373\u53ef\u4e0a\u7ebf\u3002\u4ed8\u8d39 Featured \u53ef\u83b7\u5f97\u9996\u9875\u5c55\u793a\u548c Newsletter \u63a8\u8350\u3002",
-  "home_cta_submit_free": "\u514d\u8d39\u63d0\u4ea4\u5de5\u5177",
-  "home_cta_view_plans": "\u67e5\u770b\u4ed8\u8d39\u5957\u9910",
+  "home_cta_submit_free": "免费提交工具",
+  "home_cta_view_plans": "查看付费套餐",
+  "home_sidebar_title": "更清晰的目录导览。",
+  "home_sidebar_description": "分类入口、标签信号和提交引导 — 用最实用的方式帮你快速进入目录。",
 
   "pricing_kicker": "\u4ef7\u683c",
   "pricing_title": "\u7b80\u5355\u3001\u900f\u660e\u7684\u5b9a\u4ef7",

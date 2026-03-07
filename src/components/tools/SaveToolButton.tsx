@@ -80,7 +80,7 @@ export function SaveToolButton({
       type="button"
       disabled={isPending}
       onClick={() => void handleToggle()}
-      className="inline-flex items-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--sea-ink-soft)] transition hover:border-[var(--lagoon)] hover:text-[var(--lagoon-deep)] disabled:pointer-events-none disabled:opacity-50"
+      className="inline-flex items-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--sea-ink-soft)] transition hover:border-[var(--lagoon)] hover:text-[var(--lagoon-deep)] disabled:pointer-events-none disabled:opacity-50"
       aria-pressed={isSaved}
       aria-label={isSaved ? 'Remove from saved tools' : 'Save tool'}
     >

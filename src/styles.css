@@ -26,6 +26,11 @@
   --link-bg-hover: rgba(255, 255, 255, 0.9);
   --hero-a: rgba(79, 184, 178, 0.36);
   --hero-b: rgba(47, 106, 74, 0.2);
+  --logo-gradient: linear-gradient(90deg, #56c6be, #7ed3bf);
+  --lagoon-glow: rgba(79, 184, 178, 0.12);
+  --lagoon-shadow: rgba(79, 184, 178, 0.28);
+  --deco-a: radial-gradient(circle, rgba(79, 184, 178, 0.32), transparent 66%);
+  --deco-b: radial-gradient(circle, rgba(47, 106, 74, 0.18), transparent 66%);
 
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
@@ -91,6 +96,11 @@
   --link-bg-hover: rgba(24, 44, 49, 0.8);
   --hero-a: rgba(96, 215, 207, 0.18);
   --hero-b: rgba(110, 200, 154, 0.12);
+  --logo-gradient: linear-gradient(90deg, #60d7cf, #8de5db);
+  --lagoon-glow: rgba(96, 215, 207, 0.12);
+  --lagoon-shadow: rgba(96, 215, 207, 0.2);
+  --deco-a: radial-gradient(circle, rgba(96, 215, 207, 0.2), transparent 66%);
+  --deco-b: radial-gradient(circle, rgba(110, 200, 154, 0.12), transparent 66%);
 
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
@@ -329,7 +339,7 @@ a {
   height: 2px;
   transform: scaleX(0);
   transform-origin: left;
-  background: linear-gradient(90deg, var(--lagoon), #7ed3bf);
+  background: var(--logo-gradient);
   transition: transform 170ms ease;
 }
 
@@ -581,9 +591,5 @@ a {
 @layer base {
   * {
     @apply border-border outline-ring/50;
-  }
-  body {
-    background-color: var(--background);
-    color: var(--foreground);
   }
 }
