@@ -1,5 +1,3 @@
-'use client'
-
 import { useEffect, useState } from 'react'
 import { Bookmark, BookmarkCheck } from 'lucide-react'
 import { useNavigate, useRouter } from '@tanstack/react-router'
@@ -22,12 +20,12 @@ export function SaveToolButton({
   variant = 'card',
 }: SaveToolButtonProps) {
   const { session } = RootRoute.useRouteContext()
-  const formattedCount = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(saveCount)
   const navigate = useNavigate()
   const router = useRouter()
   const [isPending, setIsPending] = useState(false)
   const [isSaved, setIsSaved] = useState(initialIsSaved)
   const [saveCount, setSaveCount] = useState(initialSaveCount)
+  const formattedCount = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(saveCount)
 
   useEffect(() => {
     setIsSaved(initialIsSaved)

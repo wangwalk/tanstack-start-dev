@@ -28,18 +28,17 @@ function DashboardSavedToolsPage() {
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
-      <div>
-        <p className="island-kicker mb-2">Saved Tools</p>
-        <h1 className="display-title text-2xl font-bold text-[var(--sea-ink)]">My Saves</h1>
-        <p className="mt-2 text-sm text-[var(--sea-ink-soft)]">
-          Keep a short list of tools worth returning to, without rebuilding the directory every time.
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="display-title text-2xl font-bold text-[var(--sea-ink)]">My Saves</h1>
+          <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">
+            {total > 0 ? `${total} saved tool${total === 1 ? '' : 's'}` : 'Keep a short list of tools worth returning to.'}
+          </p>
+        </div>
       </div>
 
-      <p className="text-sm text-[var(--sea-ink-soft)]">{total} saved tools</p>
-
       {tools.length === 0 ? (
-        <div className="island-shell rounded-[2rem] px-6 py-16 text-center">
+        <div className="island-shell rounded-2xl px-6 py-16 text-center">
           <h2 className="text-lg font-semibold text-[var(--sea-ink)]">No saved tools yet</h2>
           <p className="mt-2 text-sm text-[var(--sea-ink-soft)]">
             Use the bookmark button on any tool card or detail page to build your shortlist.
