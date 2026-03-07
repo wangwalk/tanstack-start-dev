@@ -94,7 +94,7 @@ function SearchPage() {
       {/* Filters */}
       <div className="mb-6 flex flex-col gap-4">
         {/* Category filter */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex gap-2 overflow-x-auto pb-1 [&::-webkit-scrollbar]:hidden sm:flex-wrap sm:overflow-x-visible sm:pb-0">
           <button
             type="button"
             onClick={() => void navigate({ search: { ...search, category: undefined, page: 1 } })}

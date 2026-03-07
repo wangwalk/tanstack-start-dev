@@ -20,7 +20,7 @@ export function ToolCard({ tool }: ToolCardProps) {
 
   return (
     <article className="island-shell feature-card group flex h-full flex-col gap-4 rounded-[1.6rem] p-4 transition hover:-translate-y-0.5">
-      <div className="grid gap-4 sm:grid-cols-[1fr_108px]">
+      <div className="grid gap-4 md:grid-cols-[1fr_108px]">
         <div className="min-w-0">
           <div className="flex items-start gap-3">
             {tool.logoUrl ? (
@@ -93,7 +93,7 @@ export function ToolCard({ tool }: ToolCardProps) {
         <Link
           to="/tools/$slug"
           params={{ slug: tool.slug }}
-          className="hidden h-full min-h-28 overflow-hidden rounded-[1.25rem] border border-[var(--line)] bg-[var(--surface)] no-underline shadow-[inset_0_1px_0_var(--inset-glint)] sm:block"
+          className="hidden h-full min-h-28 overflow-hidden rounded-[1.25rem] border border-[var(--line)] bg-[var(--surface)] no-underline shadow-[inset_0_1px_0_var(--inset-glint)] md:block"
         >
           {tool.screenshotUrl ? (
             <img

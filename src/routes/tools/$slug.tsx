@@ -164,7 +164,7 @@ function ToolDetailPage() {
         </div>
 
         {/* Sidebar */}
-        <aside className="space-y-4">
+        <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <div className="island-shell rounded-2xl p-5">
             <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-[var(--sea-ink-soft)]">
               工具信息
