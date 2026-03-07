@@ -339,7 +339,7 @@ function AdminCategoriesPage() {
           form={form}
           setForm={setForm}
           allCategories={categories}
-          excludeId={editTarget.id}
+          excludeId={editTarget?.id}
           saving={saving}
           onSave={() => void handleUpdate()}
           onClose={() => setEditTarget(null)}
