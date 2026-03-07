@@ -117,7 +117,7 @@ function ToolDetailPage() {
               />
             ) : (
               <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[rgba(79,184,178,0.12)] text-2xl font-bold text-[var(--lagoon-deep)]">
-                {tool.name[0]}
+                {tool.name.charAt(0) || '?'}
               </div>
             )}
             <div className="flex-1">

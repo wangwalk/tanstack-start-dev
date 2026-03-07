@@ -49,6 +49,7 @@ export function ToolForm({ categories, tags, saving, defaultValues, onSubmit }: 
   const [isFeatured, setIsFeatured] = useState(defaultValues?.isFeatured ?? false)
   const [categoryIds, setCategoryIds] = useState<string[]>(defaultValues?.categoryIds ?? [])
   const [tagIds, setTagIds] = useState<string[]>(defaultValues?.tagIds ?? [])
+  const [validationError, setValidationError] = useState<string | null>(null)
 
   function handleNameChange(val: string) {
     setName(val)
@@ -57,6 +58,10 @@ export function ToolForm({ categories, tags, saving, defaultValues, onSubmit }: 
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    setValidationError(null)
+    if (!name.trim()) return setValidationError('Name is required')
+    if (!slug.trim()) return setValidationError('Slug is required')
+    if (!url.trim()) return setValidationError('URL is required')
     onSubmit({
       name: name.trim(),
       slug: slug.trim(),
@@ -79,6 +84,11 @@ export function ToolForm({ categories, tags, saving, defaultValues, onSubmit }: 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {validationError && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800/40 dark:bg-red-950/30 dark:text-red-400" role="alert">
+          {validationError}
+        </div>
+      )}
       {/* Basic info */}
       <section className="island-shell rounded-2xl px-6 py-6 space-y-4">
         <p className="island-kicker">Basic info</p>

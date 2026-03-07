@@ -139,6 +139,7 @@ function SubmitToolPage() {
               value={form.name}
               onChange={handleNameChange}
               placeholder="例如：ChatGPT"
+              maxLength={100}
               className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20"
             />
           </div>

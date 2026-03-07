@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { authClient } from '#/lib/auth-client'
 import { updateUserName } from '#/lib/user'
 
-const nameSchema = z.string().trim().min(1, 'Name is required')
+const nameSchema = z.string().trim().min(1, 'Name is required').max(100, 'Name must be 100 characters or fewer')
 
 const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
 const MAX_SIZE = 5 * 1024 * 1024 // 5 MB
@@ -176,6 +176,7 @@ function ProfilePage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={status === 'loading'}
+              maxLength={100}
               className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-60"
             />
           </div>

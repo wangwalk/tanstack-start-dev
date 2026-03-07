@@ -22,6 +22,7 @@ export function SaveToolButton({
   variant = 'card',
 }: SaveToolButtonProps) {
   const { session } = RootRoute.useRouteContext()
+  const formattedCount = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(saveCount)
   const navigate = useNavigate()
   const router = useRouter()
   const [isPending, setIsPending] = useState(false)
@@ -69,7 +70,7 @@ export function SaveToolButton({
       >
         {isSaved ? <BookmarkCheck className="h-4 w-4 text-[var(--lagoon-deep)]" /> : <Bookmark className="h-4 w-4" />}
         <span>{isSaved ? 'Saved' : 'Save'}</span>
-        <span className="text-xs text-[var(--sea-ink-soft)]">{saveCount}</span>
+        <span className="text-xs text-[var(--sea-ink-soft)]">{formattedCount}</span>
       </Button>
     )
   }
@@ -81,9 +82,10 @@ export function SaveToolButton({
       onClick={() => void handleToggle()}
       className="inline-flex items-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--sea-ink-soft)] transition hover:border-[var(--lagoon)] hover:text-[var(--lagoon-deep)] disabled:pointer-events-none disabled:opacity-50"
       aria-pressed={isSaved}
+      aria-label={isSaved ? 'Remove from saved tools' : 'Save tool'}
     >
       {isSaved ? <BookmarkCheck className="h-3.5 w-3.5 text-[var(--lagoon-deep)]" /> : <Bookmark className="h-3.5 w-3.5" />}
-      <span>{saveCount}</span>
+      <span aria-hidden="true">{formattedCount}</span>
     </button>
   )
 }

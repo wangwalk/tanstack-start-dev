@@ -44,7 +44,7 @@ export function ToolCard({ tool }: ToolCardProps) {
               />
             ) : (
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[rgba(79,184,178,0.12)] text-lg font-bold text-[var(--lagoon-deep)]">
-                {tool.name[0]}
+                {tool.name.charAt(0) || '?'}
               </div>
             )}
             <div className="min-w-0 flex-1">
