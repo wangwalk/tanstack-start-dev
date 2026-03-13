@@ -25,124 +25,75 @@ export function ToolCard({ tool }: ToolCardProps) {
   }, [tool.categories, tool.tags])
 
   return (
-    <article className="group flex h-full flex-col gap-4 rounded-xl border border-border bg-card shadow-sm p-4 transition hover:-translate-y-0.5">
-      <div className="grid gap-4 md:grid-cols-[1fr_108px]">
-        <div className="min-w-0">
-          <div className="flex items-start gap-3">
-            {tool.logoUrl ? (
-              <img
-                src={tool.logoUrl}
-                alt={`${tool.name} logo`}
-                loading="lazy"
-                className="h-11 w-11 shrink-0 rounded-2xl object-cover ring-1 ring-border"
-              />
-            ) : (
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-lg font-bold text-primary">
-                {tool.name.charAt(0) || '?'}
-              </div>
-            )}
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <Link
-                  to="/tools/$slug"
-                  params={{ slug: tool.slug }}
-                  className="truncate font-semibold text-foreground no-underline transition hover:text-primary"
-                >
-                  {tool.name}
-                </Link>
-                <span
-                  className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${pricingBadgeClass[tool.pricingType] ?? pricingBadgeClass.free}`}
-                >
-                  {pricingLabel[tool.pricingType] ?? tool.pricingType}
-                </span>
-                {tool.isFeatured && <span className="text-xs text-amber-500">★ Featured</span>}
-              </div>
-              {categories[0] && (
-                <p className="mt-1 truncate text-xs text-muted-foreground">{categories[0].name}</p>
-              )}
-            </div>
+    <article className="group flex h-full flex-col gap-3 rounded-lg border border-border bg-card p-4 transition hover:border-primary/40">
+      <div className="flex items-start gap-3">
+        {tool.logoUrl ? (
+          <img
+            src={tool.logoUrl}
+            alt={`${tool.name} logo`}
+            loading="lazy"
+            className="h-10 w-10 shrink-0 rounded-full object-cover"
+          />
+        ) : (
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+            {tool.name.charAt(0) || '?'}
           </div>
-
-          {tool.description && (
-            <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
-              {tool.description}
-            </p>
-          )}
-
-          {previewLinks.length > 0 && (
-            <div className="mt-4 flex flex-wrap gap-2">
-              {previewLinks.map((entry) =>
-                entry.kind === 'tag' ? (
-                  <Link
-                    key={`${entry.kind}-${entry.id}`}
-                    to="/tools/tag/$slug"
-                    params={{ slug: entry.slug }}
-                    className="rounded-full border border-border bg-card px-2.5 py-1 text-xs font-medium text-muted-foreground no-underline transition hover:border-primary hover:text-primary"
-                  >
-                    {entry.label}
-                  </Link>
-                ) : (
-                  <Link
-                    key={`${entry.kind}-${entry.id}`}
-                    to="/tools/category/$slug"
-                    params={{ slug: entry.slug }}
-                    className="rounded-full border border-border bg-card px-2.5 py-1 text-xs font-medium text-muted-foreground no-underline transition hover:border-primary hover:text-primary"
-                  >
-                    {entry.label}
-                  </Link>
-                ),
-              )}
-            </div>
+        )}
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              to="/tools/$slug"
+              params={{ slug: tool.slug }}
+              className="truncate text-sm font-semibold text-foreground no-underline transition hover:text-primary"
+            >
+              {tool.name}
+            </Link>
+            <span
+              className={`rounded-sm px-1.5 py-0.5 text-[10px] font-medium ${pricingBadgeClass[tool.pricingType] ?? pricingBadgeClass.free}`}
+            >
+              {pricingLabel[tool.pricingType] ?? tool.pricingType}
+            </span>
+            {tool.isFeatured && <span className="badge-sponsor">Featured</span>}
+          </div>
+          {categories[0] && (
+            <p className="mt-0.5 truncate text-xs text-muted-foreground">{categories[0].name}</p>
           )}
         </div>
-
-        <Link
-          to="/tools/$slug"
-          params={{ slug: tool.slug }}
-          className="hidden h-full min-h-28 overflow-hidden rounded-[1.25rem] border border-border bg-card no-underline md:block"
-        >
-          {tool.screenshotUrl ? (
-            <img
-              src={tool.screenshotUrl}
-              alt={`${tool.name} screenshot`}
-              loading="lazy"
-              className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
-            />
-          ) : (
-            <div className="flex h-full min-h-28 flex-col justify-between bg-muted p-3">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                Snapshot
-              </span>
-              <span className="text-sm font-semibold text-foreground">{tool.name}</span>
-            </div>
-          )}
-        </Link>
       </div>
 
-      <div className="mt-auto flex items-center justify-between gap-3 border-t border-border pt-3">
-        <div className="flex min-w-0 flex-wrap items-center gap-2">
-          <SaveToolButton
-            toolId={tool.id}
-            initialIsSaved={tool.isSaved}
-            initialSaveCount={tool.saveCount}
-          />
-          {categories.map((category) => (
+      {tool.description && (
+        <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+          {tool.description}
+        </p>
+      )}
+
+      {previewLinks.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {previewLinks.map((entry) => (
             <Link
-              key={category.id}
-              to="/tools/category/$slug"
-              params={{ slug: category.slug }}
-              className="text-xs font-medium text-muted-foreground no-underline transition hover:text-primary"
+              key={`${entry.kind}-${entry.id}`}
+              to={entry.kind === 'tag' ? '/tools/tag/$slug' : '/tools/category/$slug'}
+              params={{ slug: entry.slug }}
+              className="rounded-sm border border-border bg-background px-2 py-0.5 text-xs text-muted-foreground no-underline transition hover:border-primary hover:text-primary"
             >
-              {category.name}
+              {entry.label}
             </Link>
           ))}
         </div>
+      )}
+
+      <div className="mt-auto flex items-center justify-between gap-3 border-t border-border pt-3">
+        <SaveToolButton
+          toolId={tool.id}
+          initialIsSaved={tool.isSaved}
+          initialSaveCount={tool.saveCount}
+        />
         <Link
           to="/tools/$slug"
           params={{ slug: tool.slug }}
-          className="shrink-0 text-xs font-semibold uppercase tracking-[0.14em] text-primary no-underline transition hover:text-primary"
+          className="text-xs font-medium text-primary no-underline hover:underline"
         >
-          Open
+          View →
         </Link>
       </div>
     </article>

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { getToolBySlug, getRelatedTools } from '#/lib/public'
 import { pricingBadgeClass, pricingLabel } from '#/lib/pricing-display'
@@ -27,7 +28,7 @@ export const Route = createFileRoute('/tools/$slug')({
     if (!loaderData) return {}
     const { tool } = loaderData
     const title = `${tool.name} — ${tool.description ?? tool.name} | ${SITE_TITLE}`
-    const description = tool.description ?? `了解更多关于 ${tool.name} 的信息。`
+    const description = tool.description ?? `Learn more about ${tool.name}.`
     const url = `${SITE_URL}/tools/${tool.slug}`
     return {
       links: [{ rel: 'canonical', href: url }],
@@ -70,12 +71,13 @@ export const Route = createFileRoute('/tools/$slug')({
 
 function ToolDetailPage() {
   const { tool, related } = Route.useLoaderData()
+  const [activeTab, setActiveTab] = useState<'info' | 'related'>('info')
 
   return (
-    <main className="page-wrap px-4 pb-16 pt-8">
+    <main className="page-wrap px-4 pb-16 pt-6">
       {/* Breadcrumb */}
-      <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
-        <Link to="/tools" className="hover:text-primary">首页</Link>
+      <nav className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+        <Link to="/tools" className="hover:text-primary">Tools</Link>
         {tool.categories[0] && (
           <>
             <span>/</span>
@@ -92,19 +94,19 @@ function ToolDetailPage() {
         <span className="text-foreground">{tool.name}</span>
       </nav>
 
-      <div className="grid gap-8 lg:grid-cols-[1fr_280px]">
+      <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
         {/* Main content */}
-        <div className="space-y-8">
-          {/* Tool header */}
-          <div className="border border-border bg-card shadow-sm rise-in flex flex-col gap-4 rounded-2xl p-6 sm:flex-row sm:items-start">
+        <div className="space-y-6">
+          {/* Tool header - flat, no card wrapper */}
+          <div className="flex items-start gap-4">
             {tool.logoUrl ? (
               <img
                 src={tool.logoUrl}
                 alt={`${tool.name} logo`}
-                className="h-16 w-16 shrink-0 rounded-2xl object-cover"
+                className="h-14 w-14 shrink-0 rounded-xl object-cover"
               />
             ) : (
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-2xl font-bold text-primary">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-xl font-bold text-primary">
                 {tool.name.charAt(0) || '?'}
               </div>
             )}
@@ -112,18 +114,15 @@ function ToolDetailPage() {
               <div className="flex flex-wrap items-center gap-3">
                 <h1 className="text-2xl font-bold text-foreground">{tool.name}</h1>
                 <span
-                  className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${pricingBadgeClass[tool.pricingType] ?? pricingBadgeClass.free}`}
+                  className={`rounded-sm px-2 py-0.5 text-xs font-medium ${pricingBadgeClass[tool.pricingType] ?? pricingBadgeClass.free}`}
                 >
                   {pricingLabel[tool.pricingType] ?? tool.pricingType}
                 </span>
                 {tool.isFeatured && (
-                  <span className="text-sm text-amber-500">★ 精选</span>
+                  <span className="badge-sponsor">Featured</span>
                 )}
               </div>
-              {tool.description && (
-                <p className="mt-2 text-muted-foreground">{tool.description}</p>
-              )}
-              <div className="mt-4 flex flex-wrap items-center gap-3">
+              <div className="mt-3 flex flex-wrap items-center gap-2">
                 <Button asChild>
                   <a
                     href={tool.url}
@@ -131,7 +130,7 @@ function ToolDetailPage() {
                     rel="noopener noreferrer nofollow"
                     className="no-underline"
                   >
-                    访问官网 →
+                    Open site →
                   </a>
                 </Button>
                 <SaveToolButton
@@ -144,9 +143,117 @@ function ToolDetailPage() {
             </div>
           </div>
 
-          {/* Screenshot */}
+          {/* Info grid */}
+          <div className="grid grid-cols-2 gap-3 rounded-lg border border-border bg-card p-4 sm:grid-cols-4">
+            <div>
+              <p className="text-xs text-muted-foreground">Pricing</p>
+              <p className="mt-0.5 text-sm font-medium text-foreground">
+                {pricingLabel[tool.pricingType] ?? tool.pricingType}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Saves</p>
+              <p className="mt-0.5 text-sm font-medium text-foreground">{tool.saveCount}</p>
+            </div>
+            {tool.approvedAt && (
+              <div>
+                <p className="text-xs text-muted-foreground">Added on</p>
+                <p className="mt-0.5 text-sm font-medium text-foreground">
+                  {new Date(tool.approvedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                </p>
+              </div>
+            )}
+            {tool.categories[0] && (
+              <div>
+                <p className="text-xs text-muted-foreground">Category</p>
+                <p className="mt-0.5 text-sm font-medium text-foreground">{tool.categories[0].name}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Tags */}
+          {(tool.categories.length > 0 || tool.tags.length > 0) && (
+            <div className="flex flex-wrap gap-1.5">
+              {tool.categories.map((cat) => (
+                <Link
+                  key={cat.id}
+                  to="/tools/category/$slug"
+                  params={{ slug: cat.slug }}
+                  className="rounded-sm border border-border px-2 py-1 text-xs text-muted-foreground no-underline transition hover:border-primary hover:text-primary"
+                >
+                  {cat.name}
+                </Link>
+              ))}
+              {tool.tags.map((t) => (
+                <Link
+                  key={t.id}
+                  to="/tools/tag/$slug"
+                  params={{ slug: t.slug }}
+                  className="rounded-sm border border-border px-2 py-1 text-xs text-muted-foreground no-underline transition hover:border-primary hover:text-primary"
+                >
+                  #{t.name}
+                </Link>
+              ))}
+            </div>
+          )}
+
+          {/* Tab navigation */}
+          <div className="flex items-center gap-1 border-b border-border">
+            <button
+              type="button"
+              onClick={() => setActiveTab('info')}
+              className={`border-b-2 px-3 py-2 text-sm font-medium transition ${
+                activeTab === 'info'
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Product Information
+            </button>
+            {related.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setActiveTab('related')}
+                className={`border-b-2 px-3 py-2 text-sm font-medium transition ${
+                  activeTab === 'related'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Related Tools
+              </button>
+            )}
+          </div>
+
+          {/* Tab content */}
+          {activeTab === 'info' ? (
+            <div className="space-y-6">
+              {tool.description && (
+                <div>
+                  <h2 className="mb-2 text-lg font-bold text-foreground">What is {tool.name}?</h2>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{tool.description}</p>
+                </div>
+              )}
+              {tool.content && (
+                <div className="prose prose-sm max-w-none text-muted-foreground">
+                  {tool.content}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2">
+              {related.map((t) => (
+                <ToolCard key={t.id} tool={t} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Sidebar */}
+        <aside className="space-y-4 lg:sticky lg:top-16 lg:self-start">
+          {/* Screenshot preview */}
           {tool.screenshotUrl && (
-            <div className="border border-border bg-card shadow-sm overflow-hidden rounded-2xl">
+            <div className="overflow-hidden rounded-lg border border-border">
               <img
                 src={tool.screenshotUrl}
                 alt={`${tool.name} screenshot`}
@@ -155,103 +262,25 @@ function ToolDetailPage() {
             </div>
           )}
 
-          {/* Content / detailed description */}
-          {tool.content && (
-            <div className="border border-border bg-card shadow-sm rounded-2xl p-6">
-              <h2 className="mb-4 text-xl font-bold text-foreground">详细介绍</h2>
-              <div className="prose prose-sm max-w-none text-muted-foreground">
-                {tool.content}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Sidebar */}
-        <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
-          <div className="border border-border bg-card shadow-sm rounded-2xl p-5">
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              工具信息
-            </h3>
-            <dl className="space-y-3 text-sm">
-              <div>
-                <dt className="text-muted-foreground">定价</dt>
-                <dd className="mt-0.5 font-medium text-foreground">
-                  {pricingLabel[tool.pricingType] ?? tool.pricingType}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-muted-foreground">收藏数</dt>
-                <dd className="mt-0.5 font-medium text-foreground">{tool.saveCount}</dd>
-              </div>
-              {tool.categories.length > 0 && (
-                <div>
-                  <dt className="text-muted-foreground">分类</dt>
-                  <dd className="mt-1 flex flex-wrap gap-1.5">
-                    {tool.categories.map((cat) => (
-                      <Link
-                        key={cat.id}
-                        to="/tools/category/$slug"
-                        params={{ slug: cat.slug }}
-                        className="rounded-full border border-border px-2.5 py-0.5 text-xs text-muted-foreground no-underline transition hover:border-primary hover:text-primary"
-                      >
-                        {cat.name}
-                      </Link>
-                    ))}
-                  </dd>
-                </div>
-              )}
-              {tool.tags.length > 0 && (
-                <div>
-                  <dt className="text-muted-foreground">标签</dt>
-                  <dd className="mt-1 flex flex-wrap gap-1.5">
-                    {tool.tags.map((t) => (
-                      <Link
-                        key={t.id}
-                        to="/tools/tag/$slug"
-                        params={{ slug: t.slug }}
-                        className="rounded-full border border-border px-2.5 py-0.5 text-xs text-muted-foreground no-underline transition hover:border-primary hover:text-primary"
-                      >
-                        #{t.name}
-                      </Link>
-                    ))}
-                  </dd>
-                </div>
-              )}
-              {tool.approvedAt && (
-                <div>
-                  <dt className="text-muted-foreground">收录时间</dt>
-                  <dd className="mt-0.5 font-medium text-foreground">
-                    {new Date(tool.approvedAt).toLocaleDateString('zh-CN')}
-                  </dd>
-                </div>
-              )}
-            </dl>
-
-            <Button variant="outline" asChild className="mt-5 block text-center no-underline w-full">
+          {/* Update CTA */}
+          <div className="rounded-lg border border-border bg-card p-4">
+            <p className="text-sm font-semibold text-foreground">Is this your tool?</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Keep your listing up to date to reach more users.
+            </p>
+            <Button variant="outline" asChild className="mt-3 w-full text-center">
               <a
                 href={tool.url}
                 target="_blank"
                 rel="noopener noreferrer nofollow"
                 className="no-underline"
               >
-                访问官网 →
+                Update this tool
               </a>
             </Button>
           </div>
         </aside>
       </div>
-
-      {/* Related tools */}
-      {related.length > 0 && (
-        <section className="mt-16">
-          <h2 className="mb-6 text-xl font-bold text-foreground">相关工具</h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {related.map((t) => (
-              <ToolCard key={t.id} tool={t} />
-            ))}
-          </div>
-        </section>
-      )}
     </main>
   )
 }

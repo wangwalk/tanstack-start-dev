@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { getFeaturedTools, getNewTools, getCategoriesWithCount } from '#/lib/public'
-import { ToolCard } from '#/components/tools/ToolCard'
+import { ToolListItem } from '#/components/tools/ToolListItem'
 import { Button } from '#/components/ui/button'
 import { Input } from '#/components/ui/input'
 import { SITE_TITLE, SITE_URL } from '#/lib/site'
@@ -9,8 +9,8 @@ export const Route = createFileRoute('/tools/')({
   head: () => ({
     links: [{ rel: 'canonical', href: `${SITE_URL}/tools` }],
     meta: [
-      { title: `AI 工具导航 | ${SITE_TITLE}` },
-      { name: 'description', content: '发现最好的 AI 工具 — 按分类浏览、精选推荐、最新上架。' },
+      { title: `AI Tools Directory | ${SITE_TITLE}` },
+      { name: 'description', content: 'Discover the best AI tools — browse by category, featured picks, and latest additions.' },
     ],
   }),
   loader: async ({ context }) => {
@@ -39,39 +39,37 @@ function ToolsHomePage() {
   }
 
   return (
-    <main className="page-wrap px-4 pb-16 pt-14">
+    <main className="page-wrap px-4 pb-16 pt-8">
       {/* Hero */}
-      <section className="border border-border bg-card shadow-sm rise-in relative overflow-hidden rounded-[2rem] px-6 py-12 sm:px-10 sm:py-16">
-        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">AI 工具目录</p>
-        <h1 className="mb-5 max-w-3xl text-4xl font-bold leading-[1.08] tracking-tight text-foreground sm:text-5xl">
-          发现最好的 AI 工具
+      <section className="py-6">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          AI Tools Directory
         </h1>
-        <p className="mb-8 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-          精选 {categories.reduce((s, c) => s + c.toolCount, 0)}+ 款 AI 工具，按分类整理，持续更新。
+        <p className="mt-2 text-sm text-muted-foreground">
+          {categories.reduce((s, c) => s + c.toolCount, 0)}+ AI tools curated and organized by category.
         </p>
 
-        {/* Search */}
-        <form onSubmit={handleSearch} className="flex max-w-lg gap-2">
+        <form onSubmit={handleSearch} className="mt-4 flex max-w-lg gap-2">
           <Input
             name="q"
             type="search"
-            placeholder="搜索工具名称或描述..."
-            className="flex-1 rounded-full px-5 py-3"
+            placeholder="Search tools by name or description..."
+            className="h-10 flex-1"
           />
-          <Button type="submit" className="px-6 py-3">
-            搜索
+          <Button type="submit" className="h-10 px-6">
+            Search
           </Button>
         </form>
 
         {/* Category shortcuts */}
         {topCategories.length > 0 && (
-          <div className="mt-6 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap gap-1.5">
             {topCategories.map((cat) => (
               <Link
                 key={cat.id}
                 to="/tools/category/$slug"
                 params={{ slug: cat.slug }}
-                className="rounded-full border border-border bg-card/80 px-3 py-1.5 text-xs font-medium text-muted-foreground no-underline transition hover:border-primary hover:text-primary"
+                className="rounded-sm border border-border bg-card px-2.5 py-1 text-xs font-medium text-muted-foreground no-underline transition hover:border-primary hover:text-primary"
               >
                 {cat.icon && <span className="mr-1">{cat.icon}</span>}
                 {cat.name}
@@ -83,16 +81,11 @@ function ToolsHomePage() {
 
       {/* Featured */}
       {featured.length > 0 && (
-        <section className="mt-16">
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">精选推荐</p>
-              <h2 className="text-2xl font-bold text-foreground">编辑精选工具</h2>
-            </div>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <section className="mt-8">
+          <h2 className="mb-3 text-lg font-bold text-foreground">Featured Tools</h2>
+          <div>
             {featured.map((t) => (
-              <ToolCard key={t.id} tool={t} />
+              <ToolListItem key={t.id} tool={t} />
             ))}
           </div>
         </section>
@@ -100,36 +93,30 @@ function ToolsHomePage() {
 
       {/* New tools */}
       {newTools.length > 0 && (
-        <section className="mt-16">
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">最新上架</p>
-              <h2 className="text-2xl font-bold text-foreground">最近收录的工具</h2>
-            </div>
+        <section className="mt-10">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-lg font-bold text-foreground">Latest Tools</h2>
             <Link
               to="/tools/search"
               search={{ sort: 'latest' }}
               className="text-sm font-medium text-primary hover:underline"
             >
-              查看全部 →
+              View all →
             </Link>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div>
             {newTools.map((t) => (
-              <ToolCard key={t.id} tool={t} />
+              <ToolListItem key={t.id} tool={t} />
             ))}
           </div>
         </section>
       )}
 
-      {/* Popular categories */}
+      {/* Categories */}
       {categories.length > 0 && (
-        <section className="mt-16">
-          <div className="mb-6">
-            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">热门分类</p>
-            <h2 className="text-2xl font-bold text-foreground">按分类发现工具</h2>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <section className="mt-10">
+          <h2 className="mb-3 text-lg font-bold text-foreground">Browse by Category</h2>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
             {categories
               .filter((c) => !c.parentId && c.toolCount > 0)
               .map((cat) => (
@@ -137,16 +124,12 @@ function ToolsHomePage() {
                   key={cat.id}
                   to="/tools/category/$slug"
                   params={{ slug: cat.slug }}
-                  className="border border-border bg-card shadow-sm group flex items-center gap-4 rounded-2xl p-4 no-underline transition hover:-translate-y-0.5"
+                  className="flex items-center gap-2 rounded-lg border border-border bg-card p-3 no-underline transition hover:border-primary"
                 >
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-2xl">
-                    {cat.icon ?? '🔧'}
-                  </div>
+                  <span className="text-lg">{cat.icon ?? '🔧'}</span>
                   <div className="min-w-0">
-                    <p className="font-semibold text-foreground group-hover:text-primary">
-                      {cat.name}
-                    </p>
-                    <p className="text-sm text-muted-foreground">{cat.toolCount} 个工具</p>
+                    <p className="truncate text-sm font-medium text-foreground">{cat.name}</p>
+                    <p className="text-xs text-muted-foreground">{cat.toolCount} tools</p>
                   </div>
                 </Link>
               ))}
@@ -154,45 +137,17 @@ function ToolsHomePage() {
         </section>
       )}
 
-      {/* All categories */}
-      {categories.filter((c) => c.parentId).length > 0 && (
-        <section className="mt-16">
-          <div className="mb-6">
-            <h2 className="text-xl font-bold text-foreground">全部子分类</h2>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {categories
-              .filter((c) => c.parentId && c.toolCount > 0)
-              .map((cat) => (
-                <Link
-                  key={cat.id}
-                  to="/tools/category/$slug"
-                  params={{ slug: cat.slug }}
-                  className="rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium text-muted-foreground no-underline transition hover:border-primary hover:text-primary"
-                >
-                  {cat.name}
-                  <span className="ml-1.5 text-xs text-muted-foreground/60">{cat.toolCount}</span>
-                </Link>
-              ))}
-          </div>
-        </section>
-      )}
-
-      {/* CTA banner */}
-      <section className="mt-16">
-        <div className="border border-border bg-card shadow-sm rise-in relative overflow-hidden rounded-[2rem] px-6 py-12 text-center sm:px-10 sm:py-14">
-          <h2 className="mb-4 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            发现了好用的 AI 工具？
-          </h2>
-          <p className="mx-auto mb-8 max-w-lg text-muted-foreground">
-            欢迎提交到目录，帮助更多人发现优质 AI 工具。
-          </p>
-          <Button asChild className="px-8 py-3">
-            <Link to="/tools/submit" className="no-underline">
-              提交工具
-            </Link>
-          </Button>
-        </div>
+      {/* CTA */}
+      <section className="mt-12 rounded-lg border border-border bg-card p-8 text-center">
+        <h2 className="text-xl font-bold text-foreground">Have an AI tool to share?</h2>
+        <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
+          Submit your tool to the directory and help others discover it.
+        </p>
+        <Button asChild className="mt-4">
+          <Link to="/tools/submit" className="no-underline">
+            Submit Tool
+          </Link>
+        </Button>
       </section>
     </main>
   )
