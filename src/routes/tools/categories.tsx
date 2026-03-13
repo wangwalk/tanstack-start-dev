@@ -35,110 +35,85 @@ function CategoriesIndexPage() {
   const totalChildren = sections.reduce((sum, category) => sum + category.children.length, 0)
 
   return (
-    <main className="page-wrap px-4 pb-16 pt-8">
-      <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
-        <Link to="/tools" className="hover:text-primary">
-          Tool directory
-        </Link>
+    <main className="page-wrap px-4 pb-16 pt-6">
+      {/* Breadcrumb */}
+      <nav className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+        <Link to="/tools" className="hover:text-primary">Tools</Link>
         <span>/</span>
-        <span className="text-foreground">Category atlas</span>
+        <span className="text-foreground">Categories</span>
       </nav>
 
-      <section className="border border-border bg-card shadow-sm rise-in relative overflow-hidden rounded-[2.2rem] px-6 py-10 sm:px-10 sm:py-12">
-        <div className="relative grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-end">
-          <div className="max-w-3xl">
-            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">Category Atlas</p>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-              Browse the full map, then drill into the right lane.
-            </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-              This page is the stable information-architecture layer for the directory: every top-level category, every active child category, and the tool density behind each one.
-            </p>
-          </div>
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+          Category Atlas
+        </h1>
+        <p className="mt-1.5 text-sm text-muted-foreground">
+          {sections.length} top-level categories, {totalChildren} subcategories, {totalTools} indexed tools.
+        </p>
+      </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-[1.5rem] border border-border bg-card px-4 py-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                Top-level
-              </p>
-              <p className="mt-2 text-3xl font-bold text-primary">{sections.length}</p>
+      {/* Category grid */}
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+        {sections.map((category) => (
+          <Link
+            key={category.id}
+            to="/tools/category/$slug"
+            params={{ slug: category.slug }}
+            className="flex flex-col gap-2 rounded-lg border border-border bg-card p-3 no-underline transition hover:border-primary"
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-xl">{category.icon ?? '🔧'}</span>
+              <span className="truncate text-sm font-semibold text-foreground">{category.name}</span>
             </div>
-            <div className="rounded-[1.5rem] border border-border bg-card px-4 py-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                Subcategories
-              </p>
-              <p className="mt-2 text-3xl font-bold text-primary">{totalChildren}</p>
-            </div>
-            <div className="col-span-2 rounded-[1.5rem] border border-border bg-card px-4 py-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                Indexed tools
-              </p>
-              <p className="mt-2 text-3xl font-bold text-primary">{totalTools}</p>
-            </div>
-          </div>
-        </div>
-      </section>
+            <span className="text-xs text-muted-foreground">{category.toolCount} tools</span>
+          </Link>
+        ))}
+      </div>
 
-      <section className="mt-10 grid gap-5 lg:grid-cols-2">
-        {sections.map((category, index) => {
+      {/* Expanded sections with children */}
+      <div className="mt-8 grid gap-4 lg:grid-cols-2">
+        {sections.map((category) => {
           const children = category.children
+          if (children.length === 0) return null
 
           return (
-            <article
+            <div
               key={category.id}
-              className="border border-border bg-card shadow-sm rise-in rounded-[1.8rem] p-5"
-              style={{ animationDelay: `${index * 40}ms` }}
+              className="rounded-lg border border-border bg-card p-4"
             >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-start gap-4">
-                  <div className="inline-flex items-center justify-center rounded-xl bg-primary/10 h-14 w-14 text-3xl">
-                    {category.icon ?? '🔧'}
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                      Top level
-                    </p>
-                    <h2 className="mt-2 text-xl font-bold text-foreground">
-                      {category.name}
-                    </h2>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      {category.toolCount} indexed tools
-                    </p>
-                  </div>
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">{category.icon ?? '🔧'}</span>
+                <div>
+                  <h2 className="text-base font-bold text-foreground">{category.name}</h2>
+                  <p className="text-xs text-muted-foreground">{category.toolCount} tools</p>
                 </div>
-
                 <Link
                   to="/tools/category/$slug"
                   params={{ slug: category.slug }}
-                  className="rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground no-underline transition hover:border-primary hover:text-primary"
+                  className="ml-auto text-xs font-medium text-primary no-underline hover:underline"
                 >
                   Open
                 </Link>
               </div>
 
-              {children.length > 0 ? (
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {children.map((child) => (
-                    <Link
-                      key={child.id}
-                      to="/tools/category/$slug"
-                      params={{ slug: child.slug }}
-                      className="rounded-full border border-border bg-card/85 px-3 py-1.5 text-sm text-muted-foreground no-underline transition hover:border-primary hover:text-primary"
-                    >
-                      {child.name}
-                      <span className="ml-1.5 text-xs text-muted-foreground/70">{child.toolCount}</span>
-                    </Link>
-                  ))}
-                </div>
-              ) : (
-                <p className="mt-5 text-sm text-muted-foreground">
-                  No active child categories yet. Use the top-level page as the main browsing surface.
-                </p>
-              )}
-            </article>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {children.map((child) => (
+                  <Link
+                    key={child.id}
+                    to="/tools/category/$slug"
+                    params={{ slug: child.slug }}
+                    className="rounded-sm border border-border bg-background px-2 py-1 text-xs text-muted-foreground no-underline transition hover:border-primary hover:text-primary"
+                  >
+                    {child.name}
+                    <span className="ml-1 text-[10px] text-muted-foreground/60">{child.toolCount}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
           )
         })}
-      </section>
+      </div>
     </main>
   )
 }

@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { z } from 'zod'
 import { getCategoryBySlug, getToolsByCategory } from '#/lib/public'
-import { ToolCard } from '#/components/tools/ToolCard'
+import { ToolListItem } from '#/components/tools/ToolListItem'
 import { Pagination } from '#/components/tools/Pagination'
 import { SITE_TITLE, SITE_URL } from '#/lib/site'
 import { breadcrumbSchema, collectionPageSchema } from '#/components/seo/JsonLd'
@@ -36,11 +36,11 @@ export const Route = createFileRoute('/tools/category/$slug')({
     if (!loaderData) return {}
     const { cat, tools } = loaderData
     const url = `${SITE_URL}/tools/category/${cat.slug}`
-    const description = cat.description ?? `发现最好的 ${cat.name} AI 工具，精选推荐。`
+    const description = cat.description ?? `Discover the best ${cat.name} AI tools, curated and ranked.`
     return {
       links: [{ rel: 'canonical', href: url }],
       meta: [
-        { title: `${cat.name} AI 工具推荐 | ${SITE_TITLE}` },
+        { title: `${cat.name} AI Tools | ${SITE_TITLE}` },
         { name: 'description', content: description },
       ],
       scripts: [
@@ -70,11 +70,11 @@ export const Route = createFileRoute('/tools/category/$slug')({
 })
 
 const PRICING_OPTIONS = [
-  { value: 'all', label: '全部' },
-  { value: 'free', label: '免费' },
-  { value: 'freemium', label: '免费增值' },
-  { value: 'paid', label: '付费' },
-  { value: 'open_source', label: '开源' },
+  { value: 'all', label: 'All' },
+  { value: 'free', label: 'Free' },
+  { value: 'freemium', label: 'Freemium' },
+  { value: 'paid', label: 'Paid' },
+  { value: 'open_source', label: 'Open Source' },
 ]
 
 function CategoryPage() {
@@ -84,44 +84,42 @@ function CategoryPage() {
   const { slug } = Route.useParams()
 
   return (
-    <main className="page-wrap px-4 pb-16 pt-8">
+    <main className="page-wrap px-4 pb-16 pt-6">
       {/* Breadcrumb */}
-      <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
-        <Link to="/tools" className="hover:text-primary">首页</Link>
+      <nav className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+        <Link to="/tools" className="hover:text-primary">Tools</Link>
         <span>/</span>
         <span className="text-foreground">{cat.name}</span>
       </nav>
 
       {/* Header */}
-      <div className="border border-border bg-card shadow-sm rise-in mb-8 flex items-start gap-4 rounded-2xl p-6">
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-3xl">
-          {cat.icon ?? '🔧'}
-        </div>
+      <div className="mb-6 flex items-center gap-3">
+        <span className="text-2xl">{cat.icon ?? '🔧'}</span>
         <div>
           <h1 className="text-2xl font-bold text-foreground">{cat.name}</h1>
           {cat.description && (
-            <p className="mt-1 text-muted-foreground">{cat.description}</p>
+            <p className="mt-0.5 text-sm text-muted-foreground">{cat.description}</p>
           )}
-          <p className="mt-2 text-sm text-muted-foreground">共 {total} 个工具</p>
+          <p className="mt-1 text-xs text-muted-foreground">{total} tools</p>
         </div>
       </div>
 
       {/* Sub-categories */}
       {cat.children.length > 0 && (
-        <div className="mb-6 flex flex-wrap gap-2">
+        <div className="mb-4 flex flex-wrap gap-1.5">
           <Link
             to="/tools/category/$slug"
             params={{ slug }}
-            className="rounded-full border border-primary bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary no-underline"
+            className="rounded-sm border border-primary bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary no-underline"
           >
-            全部
+            All
           </Link>
           {cat.children.map((child) => (
             <Link
               key={child.id}
               to="/tools/category/$slug"
               params={{ slug: child.slug }}
-              className="rounded-full border border-border px-3 py-1.5 text-sm font-medium text-muted-foreground no-underline transition hover:border-primary hover:text-primary"
+              className="rounded-sm border border-border px-2.5 py-1 text-xs font-medium text-muted-foreground no-underline transition hover:border-primary hover:text-primary"
             >
               {child.name}
             </Link>
@@ -130,8 +128,8 @@ function CategoryPage() {
       )}
 
       {/* Filters */}
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="flex flex-wrap gap-2">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="flex flex-wrap gap-1.5">
           {PRICING_OPTIONS.map((opt) => (
             <button
               key={opt.value}
@@ -145,7 +143,7 @@ function CategoryPage() {
                   },
                 })
               }
-              className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
+              className={`rounded-sm border px-2.5 py-1 text-xs font-medium transition ${
                 (search.pricingType ?? 'all') === opt.value
                   ? 'border-primary bg-primary/10 text-primary'
                   : 'border-border text-muted-foreground hover:border-primary'
@@ -163,28 +161,28 @@ function CategoryPage() {
                 search: { ...search, sort: e.target.value as 'latest' | 'name', page: 1 },
               })
             }
-            className="rounded-xl border border-border bg-card px-4 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus-visible:ring-ring"
+            className="rounded-md border border-border bg-card px-3 py-1.5 text-sm text-foreground focus:border-primary focus:outline-none"
           >
-            <option value="latest">最新上架</option>
-            <option value="name">名称 A-Z</option>
+            <option value="latest">Latest</option>
+            <option value="name">Name A-Z</option>
           </select>
         </div>
       </div>
 
-      {/* Tool grid */}
+      {/* Tool list */}
       {tools.length === 0 ? (
-        <div className="border border-border bg-card shadow-sm rounded-2xl py-16 text-center text-muted-foreground">
-          该分类下暂无工具
+        <div className="rounded-lg border border-border bg-card py-12 text-center text-sm text-muted-foreground">
+          No tools found in this category.
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div>
           {tools.map((t) => (
-            <ToolCard key={t.id} tool={t} />
+            <ToolListItem key={t.id} tool={t} />
           ))}
         </div>
       )}
 
-      <div className="mt-8">
+      <div className="mt-6">
         <Pagination
           page={page}
           totalPages={totalPages}

@@ -1,6 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { useState, useMemo } from 'react'
 import { websiteSchema } from '#/components/seo/JsonLd'
-import { ToolCard } from '#/components/tools/ToolCard'
+import { ToolListItem } from '#/components/tools/ToolListItem'
+import { FeaturedSidebar } from '#/components/tools/FeaturedSidebar'
+import { NewsSidebar } from '#/components/tools/NewsSidebar'
 import {
   getCategoriesWithCount,
   getDirectoryStats,
@@ -9,7 +12,6 @@ import {
   getTagsWithCount,
 } from '#/lib/public'
 import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from '#/lib/site'
-import { useMemo } from 'react'
 import { m } from '#/paraglide/messages.js'
 import { Button } from '#/components/ui/button'
 import { Input } from '#/components/ui/input'
@@ -20,7 +22,7 @@ export const Route = createFileRoute('/')({
     const [stats, featured, newest, categories, tags] = await Promise.all([
       getDirectoryStats(),
       getFeaturedTools({ data: { viewerUserId } }),
-      getNewTools({ data: { limit: 6, viewerUserId } }),
+      getNewTools({ data: { limit: 20, viewerUserId } }),
       getCategoriesWithCount(),
       getTagsWithCount(),
     ])
@@ -52,11 +54,39 @@ export const Route = createFileRoute('/')({
   component: LandingPage,
 })
 
+type TabKey = 'today' | 'new' | 'saved' | 'free'
+
 function LandingPage() {
   const { stats, featured, newest, categories, trendingTags } = Route.useLoaderData()
   const navigate = Route.useNavigate()
+  const [activeTab, setActiveTab] = useState<TabKey>('today')
+
   const topCategories = useMemo(() => categories.filter((cat) => !cat.parentId && cat.toolCount > 0), [categories])
-  const leadingCategories = useMemo(() => topCategories.slice(0, 4), [topCategories])
+
+  const allTools = useMemo(() => {
+    const seen = new Set<string>()
+    const result: typeof featured = []
+    for (const t of [...featured, ...newest]) {
+      if (!seen.has(t.id)) {
+        seen.add(t.id)
+        result.push(t)
+      }
+    }
+    return result
+  }, [featured, newest])
+
+  const displayTools = useMemo(() => {
+    switch (activeTab) {
+      case 'today':
+        return allTools.slice(0, 15)
+      case 'new':
+        return newest
+      case 'saved':
+        return [...allTools].sort((a, b) => b.saveCount - a.saveCount).slice(0, 15)
+      case 'free':
+        return allTools.filter((t) => t.pricingType === 'free' || t.pricingType === 'open_source').slice(0, 15)
+    }
+  }, [activeTab, allTools, newest])
 
   function handleSearch(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -66,279 +96,120 @@ function LandingPage() {
     }
   }
 
+  const TABS: { key: TabKey; label: string }[] = [
+    { key: 'today', label: 'Today' },
+    { key: 'new', label: 'New' },
+    { key: 'saved', label: 'Most Saved' },
+    { key: 'free', label: 'Free' },
+  ]
+
   return (
-    <main className="page-wrap px-4 pb-16 pt-14">
-      <div className="grid gap-10 xl:grid-cols-[1fr_320px] xl:items-start">
-        <section className="space-y-10">
-          <section className="border border-border bg-card shadow-sm rise-in relative overflow-hidden rounded-[2.2rem] px-6 py-12 sm:px-10 sm:py-16 md:py-[4.5rem]">
-            <div className="relative grid gap-8 xl:grid-cols-[minmax(0,1.25fr)_260px] xl:items-end">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">{m.home_hero_kicker()}</p>
-                <h1 className="mb-5 max-w-4xl text-4xl font-bold leading-[1.02] tracking-tight text-foreground sm:text-5xl md:text-6xl">
-                  {m.home_hero_title()}
-                </h1>
-                <p className="mb-8 max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                  {m.home_hero_description()}
-                </p>
+    <main className="page-wrap px-4 pb-16 pt-8">
+      {/* Hero */}
+      <section className="py-8">
+        <h1 className="max-w-3xl text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl md:text-5xl">
+          {m.home_hero_title()}{' '}
+          <span className="bg-gradient-to-r from-purple-600 to-violet-500 bg-clip-text text-transparent">
+            AI Tools
+          </span>
+        </h1>
+        <p className="mt-3 text-sm text-muted-foreground">
+          {stats.toolCount.toLocaleString()} AIs and {stats.categoryCount} categories updated daily. {m.home_hero_description()}
+        </p>
 
-                <form onSubmit={handleSearch} className="max-w-3xl">
-                  <div className="flex flex-col gap-3 rounded-[1.8rem] border border-border bg-card p-3 shadow-sm sm:flex-row sm:items-center">
-                    <Input
-                      name="q"
-                      type="search"
-                      aria-label="Search tools"
-                      placeholder={m.home_hero_search_placeholder()}
-                      className="h-14 flex-1 rounded-[1.1rem]"
-                    />
-                    <Button
-                      type="submit"
-                      className="h-14 shrink-0 rounded-[1.1rem] px-6 text-sm font-semibold"
-                    >
-                      {m.home_hero_search_button()}
-                    </Button>
-                  </div>
-                  <p className="mt-3 text-sm text-muted-foreground">{m.home_hero_search_hint()}</p>
-                </form>
+        <form onSubmit={handleSearch} className="mt-5 flex max-w-xl gap-2">
+          <Input
+            name="q"
+            type="search"
+            aria-label="Search tools"
+            placeholder={m.home_hero_search_placeholder()}
+            className="h-10 flex-1"
+          />
+          <Button type="submit" className="h-10 px-6 text-sm font-semibold">
+            {m.home_hero_search_button()}
+          </Button>
+        </form>
+      </section>
 
-                <div className="mt-8 flex flex-wrap items-center gap-3">
-                  <Link
-                    to="/tools"
-                    className="no-underline"
-                  >
-                    <Button>{m.home_hero_browse_tools()}</Button>
-                  </Link>
-                  <Link
-                    to="/tools/submit"
-                    className="rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground no-underline transition hover:-translate-y-0.5 hover:border-border"
-                  >
-                    {m.home_hero_submit_tool()}
-                  </Link>
-                </div>
-              </div>
+      {/* Three-column layout */}
+      <div className="grid gap-6 lg:grid-cols-[220px_1fr_280px]">
+        {/* Left sidebar - featured */}
+        <div className="hidden lg:block lg:sticky lg:top-16 lg:self-start">
+          <FeaturedSidebar tools={featured.slice(0, 8)} />
+        </div>
 
-              <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
-                {[
-                  [stats.toolCount.toLocaleString(), m.home_stats_tools()],
-                  [stats.categoryCount.toString(), m.home_stats_categories()],
-                  [stats.tagCount.toString(), m.home_stats_tags()],
-                ].map(([value, label]) => (
-                  <div
-                    key={label}
-                    className="rounded-[1.4rem] border border-border bg-card px-4 py-4"
-                  >
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                      {label}
-                    </p>
-                    <p className="mt-2 text-3xl font-bold text-primary">{value}</p>
-                  </div>
-                ))}
-              </div>
+        {/* Center column */}
+        <div>
+          {/* Tab bar */}
+          <div className="mb-4 flex items-center gap-1 border-b border-border">
+            {TABS.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setActiveTab(tab.key)}
+                className={`border-b-2 px-3 py-2 text-sm font-medium transition ${
+                  activeTab === tab.key
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Tool list */}
+          <div>
+            {displayTools.map((tool) => (
+              <ToolListItem key={tool.id} tool={tool} />
+            ))}
+          </div>
+
+          {displayTools.length > 0 && (
+            <div className="mt-4 text-center">
+              <Link to="/tools" className="no-underline">
+                <Button variant="outline" size="sm">{m.home_featured_view_all()}</Button>
+              </Link>
             </div>
-          </section>
-
-          {featured.length > 0 && (
-            <section className="space-y-5">
-              <div className="flex items-end justify-between gap-4">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">{m.home_featured_kicker()}</p>
-                  <h2 className="text-2xl font-bold tracking-tight text-foreground">
-                    {m.home_featured_title()}
-                  </h2>
-                  <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-                    {m.home_featured_description()}
-                  </p>
-                </div>
-                <Link
-                  to="/tools"
-                  className="text-sm font-medium text-primary no-underline hover:underline"
-                >
-                  {m.home_featured_view_all()}
-                </Link>
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {featured.slice(0, 6).map((tool) => (
-                  <ToolCard key={tool.id} tool={tool} />
-                ))}
-              </div>
-            </section>
           )}
+        </div>
 
-          {newest.length > 0 && (
-            <section className="space-y-5">
-              <div className="flex items-end justify-between gap-4">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">{m.home_newest_kicker()}</p>
-                  <h2 className="text-2xl font-bold tracking-tight text-foreground">
-                    {m.home_newest_title()}
-                  </h2>
-                  <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-                    {m.home_newest_description()}
-                  </p>
-                </div>
-                <Link
-                  to="/tools/search"
-                  search={{ sort: 'latest' }}
-                  className="text-sm font-medium text-primary no-underline hover:underline"
-                >
-                  {m.home_newest_view_all()}
-                </Link>
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {newest.map((tool) => (
-                  <ToolCard key={tool.id} tool={tool} />
-                ))}
-              </div>
-            </section>
-          )}
+        {/* Right sidebar */}
+        <div className="hidden lg:block lg:sticky lg:top-16 lg:self-start">
+          <NewsSidebar trendingTags={trendingTags} />
+        </div>
+      </div>
 
-          {topCategories.length > 0 && (
-            <section className="space-y-5">
-              <div className="flex items-end justify-between gap-4">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">{m.home_categories_kicker()}</p>
-                  <h2 className="text-2xl font-bold tracking-tight text-foreground">
-                    {m.home_categories_title()}
-                  </h2>
-                  <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-                    Browse the full atlas instead of a hand-picked shortlist.
-                  </p>
-                </div>
-                <Link
-                  to="/tools/categories"
-                  className="text-sm font-medium text-primary no-underline hover:underline"
-                >
-                  {m.home_categories_view_all()}
-                </Link>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
-                {topCategories.map((cat, index) => (
-                  <Link
-                    key={cat.id}
-                    to="/tools/category/$slug"
-                    params={{ slug: cat.slug }}
-                    className="rounded-xl border border-border bg-card shadow-sm rise-in no-underline"
-                    style={{ animationDelay: `${index * 30}ms` }}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <span className="inline-flex items-center justify-center rounded-xl bg-primary/10">{cat.icon ?? '🔧'}</span>
-                      <span className="rounded-full border border-border bg-muted px-2 py-1 text-xs font-bold uppercase tracking-widest text-muted-foreground">{cat.toolCount} tools</span>
-                    </div>
-                    <div className="mt-6">
-                      <p className="text-sm font-bold text-foreground">{cat.name}</p>
-                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                        {m.home_categories_tool_count({ count: cat.toolCount })}
-                      </p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
-        </section>
-
-        <aside className="space-y-4 xl:sticky xl:top-24 xl:self-start">
-          <section className="border border-border bg-card shadow-sm rise-in rounded-[2rem] p-5">
-            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">Category Atlas</p>
-            <h2 className="text-2xl font-bold tracking-tight text-foreground">
-              {m.home_sidebar_title()}
-            </h2>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              {m.home_sidebar_description()}
-            </p>
-
-            <div className="mt-5 grid gap-3">
-              {leadingCategories.map((category) => (
-                <Link
-                  key={category.id}
-                  to="/tools/category/$slug"
-                  params={{ slug: category.slug }}
-                  className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3 transition hover:bg-accent no-underline"
-                >
-                  <span className="flex items-center gap-3">
-                    <span className="text-xl">{category.icon ?? '🔧'}</span>
-                    <span>
-                      <span className="block text-sm font-semibold text-foreground">
-                        {category.name}
-                      </span>
-                      <span className="block text-xs text-muted-foreground">
-                        {category.toolCount} indexed tools
-                      </span>
-                    </span>
-                  </span>
-                  <span className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-                    Open
-                  </span>
-                </Link>
-              ))}
-            </div>
-
+      {/* Category grid - full width */}
+      {topCategories.length > 0 && (
+        <section className="mt-12">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-bold text-foreground">{m.home_categories_title()}</h2>
             <Link
               to="/tools/categories"
-              className="mt-5 inline-flex no-underline"
+              className="text-sm font-medium text-primary no-underline hover:underline"
             >
-              <Button>Open category atlas</Button>
+              {m.home_categories_view_all()}
             </Link>
-          </section>
-
-          {trendingTags.length > 0 && (
-            <section className="border border-border bg-card shadow-sm rise-in rounded-[2rem] p-5">
-              <div className="mb-4 flex items-end justify-between gap-3">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">{m.home_trending_kicker()}</p>
-                  <h2 className="text-xl font-bold tracking-tight text-foreground">
-                    {m.home_trending_title()}
-                  </h2>
+          </div>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+            {topCategories.map((cat) => (
+              <Link
+                key={cat.id}
+                to="/tools/category/$slug"
+                params={{ slug: cat.slug }}
+                className="flex items-center gap-2 rounded-lg border border-border bg-card p-3 no-underline transition hover:border-primary"
+              >
+                <span className="text-lg">{cat.icon ?? '🔧'}</span>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-foreground">{cat.name}</p>
+                  <p className="text-xs text-muted-foreground">{cat.toolCount} tools</p>
                 </div>
-                <Link
-                  to="/tools/tags"
-                  className="text-sm font-medium text-primary no-underline hover:underline"
-                >
-                  {m.home_trending_view_all()}
-                </Link>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {trendingTags.map((tag, index) => (
-                  <Link
-                    key={tag.id}
-                    to="/tools/tag/$slug"
-                    params={{ slug: tag.slug }}
-                    className="rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium text-muted-foreground no-underline transition hover:-translate-y-0.5 hover:border-primary hover:text-primary"
-                    style={{ animationDelay: `${index * 30}ms` }}
-                  >
-                    #{tag.name}
-                    <span className="ml-1.5 text-xs text-muted-foreground/70">{tag.toolCount}</span>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
-
-          <section className="border border-border bg-card shadow-sm rise-in rounded-[2rem] p-5">
-            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">{m.home_submit_kicker()}</p>
-            <h2 className="text-xl font-bold tracking-tight text-foreground">
-              {m.home_submit_title()}
-            </h2>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              {m.home_submit_description()}
-            </p>
-            <div className="mt-5 flex flex-col gap-2">
-              <Link
-                to="/tools/submit"
-                className="text-center no-underline"
-              >
-                <Button className="w-full">{m.home_submit_primary()}</Button>
               </Link>
-              <Link
-                to="/listing-pricing"
-                className="text-center no-underline"
-              >
-                <Button variant="outline" className="w-full">{m.home_submit_secondary()}</Button>
-              </Link>
-            </div>
-          </section>
-        </aside>
-      </div>
+            ))}
+          </div>
+        </section>
+      )}
     </main>
   )
 }

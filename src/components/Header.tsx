@@ -1,43 +1,52 @@
 import { useState } from 'react'
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import BetterAuthHeader from '../integrations/better-auth/header-user.tsx'
 import ThemeToggle from './ThemeToggle'
 import LanguageSwitcher from './LanguageSwitcher'
 import { siteConfig } from '#/config/site'
 
 const NAV_LINKS = [
-  { href: '/tools', label: 'Browse Tools', isRoute: true },
-  { href: '/tools/categories', label: 'Category', isRoute: true },
-  { href: '/tools/submit', label: 'Submit', isRoute: true },
-  { href: '/listing-pricing', label: 'List Your Tool', isRoute: true },
-  ...(siteConfig.features.blog ? [{ href: '/blog', label: 'Blog', isRoute: true }] : []),
+  { href: '/tools', label: 'Browse Tools' },
+  { href: '/tools/categories', label: 'Category' },
+  { href: '/tools/submit', label: 'Submit' },
+  { href: '/listing-pricing', label: 'List Your Tool' },
+  ...(siteConfig.features.blog ? [{ href: '/blog', label: 'Blog' }] : []),
 ]
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const navigate = useNavigate()
+
+  function handleSearch(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const q = new FormData(e.currentTarget).get('q') as string
+    if (q.trim()) {
+      void navigate({ to: '/tools/search', search: { q: q.trim() } })
+    }
+  }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-lg">
-      <nav className="page-wrap flex items-center gap-x-3 px-4 py-3 sm:py-4">
+    <header className="sticky top-0 z-50 border-b border-border bg-card">
+      <nav className="page-wrap flex items-center gap-x-3 px-4 py-2.5">
         {/* Logo */}
-        <span className="m-0 flex-shrink-0 text-base font-semibold tracking-tight">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-sm text-foreground no-underline shadow-sm sm:px-4 sm:py-2"
-          >
-            <span className="h-2 w-2 rounded-full bg-primary" />
-            {siteConfig.name}
-          </Link>
-        </span>
+        <Link
+          to="/"
+          className="flex shrink-0 items-center gap-1.5 text-base font-bold text-foreground no-underline"
+        >
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-xs font-bold text-primary-foreground">
+            {siteConfig.name.charAt(0)}
+          </span>
+          {siteConfig.name}
+        </Link>
 
         {/* Desktop nav */}
-        <div className="hidden items-center gap-x-4 text-sm font-semibold sm:flex">
+        <div className="hidden items-center gap-x-4 text-sm sm:flex">
           {NAV_LINKS.map((item) => (
             <Link
               key={item.href}
               to={item.href as '/tools'}
-              className="text-sm font-medium text-muted-foreground no-underline transition hover:text-foreground"
-              activeProps={{ className: 'text-sm font-medium text-foreground no-underline transition hover:text-foreground' }}
+              className="text-sm font-medium text-foreground no-underline transition hover:text-primary"
+              activeProps={{ className: 'text-sm font-medium text-primary no-underline' }}
             >
               {item.label}
             </Link>
@@ -46,32 +55,23 @@ export default function Header() {
 
         {/* Right side */}
         <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
-          {siteConfig.social.twitter && (
-            <a
-              href={siteConfig.social.twitter}
-              target="_blank"
-              rel="noreferrer"
-              className="hidden rounded-xl p-2 text-muted-foreground transition hover:bg-accent hover:text-foreground sm:block"
+          {/* Compact search */}
+          <form onSubmit={handleSearch} className="hidden items-center gap-1 lg:flex">
+            <input
+              name="q"
+              type="search"
+              placeholder="Search tools..."
+              className="h-8 w-40 rounded-md border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+            />
+            <button
+              type="submit"
+              className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground transition hover:bg-primary/90"
             >
-              <span className="sr-only">Follow us on X</span>
-              <svg viewBox="0 0 16 16" aria-hidden="true" width="20" height="20">
-                <path fill="currentColor" d="M12.6 1h2.2L10 6.48 15.64 15h-4.41L7.78 9.82 3.23 15H1l5.14-5.84L.72 1h4.52l3.12 4.73L12.6 1zm-.77 12.67h1.22L4.57 2.26H3.26l8.57 11.41z" />
+              <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clipRule="evenodd" />
               </svg>
-            </a>
-          )}
-          {siteConfig.social.github && (
-            <a
-              href={siteConfig.social.github}
-              target="_blank"
-              rel="noreferrer"
-              className="hidden rounded-xl p-2 text-muted-foreground transition hover:bg-accent hover:text-foreground sm:block"
-            >
-              <span className="sr-only">GitHub</span>
-              <svg viewBox="0 0 16 16" aria-hidden="true" width="20" height="20">
-                <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
-              </svg>
-            </a>
-          )}
+            </button>
+          </form>
 
           <BetterAuthHeader />
           <LanguageSwitcher />
@@ -82,7 +82,7 @@ export default function Header() {
             type="button"
             aria-label="Toggle menu"
             onClick={() => setMobileOpen((o) => !o)}
-            className="flex items-center justify-center rounded-xl p-2 text-muted-foreground transition hover:bg-accent hover:text-foreground sm:hidden"
+            className="flex items-center justify-center rounded-md p-2 text-muted-foreground transition hover:bg-accent hover:text-foreground sm:hidden"
           >
             {mobileOpen ? (
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-5 w-5">
@@ -99,15 +99,15 @@ export default function Header() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="border-t border-border bg-background/80 px-4 pb-4 sm:hidden">
+        <div className="border-t border-border bg-card px-4 pb-4 sm:hidden">
           <nav className="flex flex-col gap-1 pt-2">
             {NAV_LINKS.map((item) => (
               <Link
                 key={item.href}
                 to={item.href as '/tools'}
                 onClick={() => setMobileOpen(false)}
-                className="rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground no-underline transition hover:bg-accent hover:text-foreground"
-                activeProps={{ className: 'rounded-xl px-3 py-2.5 text-sm font-medium text-foreground no-underline bg-accent' }}
+                className="rounded-md px-3 py-2.5 text-sm font-medium text-foreground no-underline transition hover:bg-accent"
+                activeProps={{ className: 'rounded-md px-3 py-2.5 text-sm font-medium text-primary no-underline bg-accent' }}
               >
                 {item.label}
               </Link>
