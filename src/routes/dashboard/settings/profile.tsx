@@ -3,6 +3,8 @@ import { useRef, useState } from 'react'
 import { z } from 'zod'
 import { authClient } from '#/lib/auth-client'
 import { updateUserName } from '#/lib/user'
+import { Button } from '#/components/ui/button'
+import { Input } from '#/components/ui/input'
 
 const nameSchema = z.string().trim().min(1, 'Name is required').max(100, 'Name must be 100 characters or fewer')
 
@@ -106,14 +108,14 @@ function ProfilePage() {
   return (
     <div className="space-y-6">
       {/* Avatar section */}
-      <section className="island-shell rise-in rounded-[2rem] px-6 py-8 sm:px-10">
-        <p className="island-kicker mb-4">Avatar</p>
+      <section className="rise-in border border-border bg-card shadow-sm rounded-[2rem] px-6 py-8 sm:px-10">
+        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">Avatar</p>
         <div className="flex items-center gap-4">
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={avatarStatus === 'loading'}
-            className="group relative flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[rgba(79,184,178,0.15)] text-lg font-semibold text-[var(--lagoon-deep)] transition hover:opacity-80 disabled:pointer-events-none"
+            className="group relative flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary/15 text-lg font-semibold text-primary transition hover:opacity-80 disabled:pointer-events-none"
           >
             {displayImage ? (
               <img
@@ -147,7 +149,7 @@ function ProfilePage() {
             className="hidden"
           />
           <div className="space-y-1">
-            <p className="text-sm text-[var(--sea-ink-soft)]">
+            <p className="text-sm text-muted-foreground">
               Click to upload a new avatar. JPEG, PNG, GIF, or WebP up to 5 MB.
             </p>
             {avatarStatus === 'success' && (
@@ -163,36 +165,35 @@ function ProfilePage() {
       </section>
 
       {/* Profile form */}
-      <section className="island-shell rise-in rounded-[2rem] px-6 py-8 sm:px-10">
-        <p className="island-kicker mb-4">Profile</p>
+      <section className="rise-in border border-border bg-card shadow-sm rounded-[2rem] px-6 py-8 sm:px-10">
+        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">Profile</p>
         <form onSubmit={handleSave} className="space-y-4">
           <div>
-            <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]">
+            <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-foreground">
               Name
             </label>
-            <input
+            <Input
               id="name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={status === 'loading'}
               maxLength={100}
-              className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-60"
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]">
+            <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-foreground">
               Email
             </label>
-            <input
+            <Input
               id="email"
               type="email"
               value={session?.user?.email ?? ''}
               disabled
-              className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--sea-ink)] opacity-60"
+              className="opacity-60"
             />
-            <p className="mt-1 text-xs text-[var(--sea-ink-soft)]">
+            <p className="mt-1 text-xs text-muted-foreground">
               Email cannot be changed
             </p>
           </div>
@@ -210,10 +211,9 @@ function ProfilePage() {
           )}
 
           <div className="flex justify-end">
-            <button
+            <Button
               type="submit"
               disabled={status === 'loading'}
-              className="btn-brand"
             >
               {status === 'loading' ? (
                 <span className="inline-flex items-center gap-2">
@@ -226,7 +226,7 @@ function ProfilePage() {
               ) : (
                 'Save changes'
               )}
-            </button>
+            </Button>
           </div>
         </form>
       </section>

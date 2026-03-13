@@ -44,12 +44,12 @@ function VerifyEmailPage() {
     return (
       <AuthLayout title="Verification failed" subtitle="We couldn't verify your email address.">
         <div className="mt-6 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--sand)]">
-            <svg viewBox="0 0 24 24" fill="none" stroke="var(--lagoon)" strokeWidth="1.5" className="h-8 w-8">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-8 w-8 text-primary">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
             </svg>
           </div>
-          <p className="mb-6 text-sm text-[var(--sea-ink-soft)]">
+          <p className="mb-6 text-sm text-muted-foreground">
             The verification link may have expired or already been used. Request a new one below.
           </p>
           {session?.user ? (
@@ -58,7 +58,6 @@ function VerifyEmailPage() {
                 type="button"
                 onClick={handleResend}
                 disabled={resendStatus === 'loading' || resendStatus === 'sent'}
-                className="btn-brand"
               >
                 {resendStatus === 'loading'
                   ? 'Sending…'
@@ -73,10 +72,7 @@ function VerifyEmailPage() {
               )}
             </>
           ) : (
-            <Button
-              asChild
-              className="btn-brand"
-            >
+            <Button asChild>
               <Link to="/auth/sign-in">Sign in to resend</Link>
             </Button>
           )}
@@ -88,17 +84,16 @@ function VerifyEmailPage() {
   return (
     <AuthLayout title="Email verified" subtitle="Your email address has been confirmed.">
       <div className="mt-6 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--sand)]">
-          <svg viewBox="0 0 24 24" fill="none" stroke="var(--lagoon)" strokeWidth="1.5" className="h-8 w-8">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-8 w-8 text-primary">
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
           </svg>
         </div>
-        <p className="mb-6 text-sm text-[var(--sea-ink-soft)]">
+        <p className="mb-6 text-sm text-muted-foreground">
           You're all set. Your account is now fully activated.
         </p>
         <Button
           asChild
-          className="btn-brand"
         >
           <Link to="/dashboard" search={{ checkout: undefined }}>Go to Dashboard</Link>
         </Button>

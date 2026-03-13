@@ -6,6 +6,7 @@ import TurnstileWidget from '#/components/TurnstileWidget'
 import { Button } from '#/components/ui/button'
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
+import { Textarea } from '#/components/ui/textarea'
 import { SITE_TITLE, SITE_URL } from '#/lib/site'
 
 export const Route = createFileRoute('/contact')({
@@ -66,14 +67,14 @@ function ContactPage() {
   if (success) {
     return (
       <main className="page-wrap px-4 py-12">
-        <section className="island-shell mx-auto max-w-lg rounded-2xl p-6 sm:p-8">
-          <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--sand)]">
+        <section className="border border-border bg-card shadow-sm mx-auto max-w-lg rounded-2xl p-6 sm:p-8">
+          <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
             <svg
               viewBox="0 0 24 24"
               fill="none"
-              stroke="var(--lagoon)"
+              stroke="currentColor"
               strokeWidth="1.5"
-              className="h-8 w-8"
+              className="h-8 w-8 text-primary"
             >
               <path
                 strokeLinecap="round"
@@ -82,11 +83,11 @@ function ContactPage() {
               />
             </svg>
           </div>
-          <p className="island-kicker mb-2">Message sent</p>
-          <h1 className="display-title mb-3 text-3xl font-bold text-[var(--sea-ink)]">
+          <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">Message sent</p>
+          <h1 className="mb-3 text-3xl font-bold text-foreground">
             Thanks for reaching out!
           </h1>
-          <p className="text-base leading-7 text-[var(--sea-ink-soft)]">
+          <p className="text-base leading-7 text-muted-foreground">
             We received your message and will get back to you as soon as possible. Check your inbox
             for a confirmation email.
           </p>
@@ -97,12 +98,12 @@ function ContactPage() {
 
   return (
     <main className="page-wrap px-4 py-12">
-      <section className="island-shell mx-auto max-w-lg rounded-2xl p-6 sm:p-8">
-        <p className="island-kicker mb-2">Contact</p>
-        <h1 className="display-title mb-3 text-3xl font-bold text-[var(--sea-ink)]">
+      <section className="border border-border bg-card shadow-sm mx-auto max-w-lg rounded-2xl p-6 sm:p-8">
+        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">Contact</p>
+        <h1 className="mb-3 text-3xl font-bold text-foreground">
           Get in touch
         </h1>
-        <p className="mb-8 text-base leading-7 text-[var(--sea-ink-soft)]">
+        <p className="mb-8 text-base leading-7 text-muted-foreground">
           Have a question or want to work together? Fill out the form and we'll get back to you
           shortly.
         </p>
@@ -157,7 +158,7 @@ function ContactPage() {
             <Label htmlFor="message" className="mb-1.5">
               Message
             </Label>
-            <textarea
+            <Textarea
               id="message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -165,7 +166,7 @@ function ContactPage() {
               required
               rows={5}
               disabled={isPending}
-              className="w-full resize-none rounded-lg border border-[var(--line)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-50"
+              className="resize-none"
             />
           </div>
 
@@ -184,7 +185,7 @@ function ContactPage() {
           <Button
             type="submit"
             disabled={isPending}
-            className="btn-brand w-full"
+            className="w-full"
           >
             {isPending ? (
               <span className="inline-flex items-center gap-2">

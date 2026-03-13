@@ -51,12 +51,11 @@ function ResetPasswordPage() {
     return (
       <AuthLayout title="Invalid reset link" subtitle="This link is missing a reset token.">
         <div className="mt-6 text-center">
-          <p className="mb-6 text-sm text-[var(--sea-ink-soft)]">
+          <p className="mb-6 text-sm text-muted-foreground">
             Reset links are only valid when opened from the email we send you.
           </p>
           <Button
             asChild
-            className="btn-brand"
           >
             <Link to="/auth/forgot-password">Request a new link</Link>
           </Button>
@@ -99,17 +98,16 @@ function ResetPasswordPage() {
     return (
       <AuthLayout title="Password updated" subtitle="Your password has been changed successfully.">
         <div className="mt-6 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--sand)]">
-            <svg viewBox="0 0 24 24" fill="none" stroke="var(--lagoon)" strokeWidth="1.5" className="h-8 w-8">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-8 w-8 text-primary">
               <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
             </svg>
           </div>
-          <p className="mb-6 text-sm text-[var(--sea-ink-soft)]">
+          <p className="mb-6 text-sm text-muted-foreground">
             You can now sign in with your new password.
           </p>
           <Button
             asChild
-            className="btn-brand"
           >
             <Link to="/auth/sign-in">Sign In</Link>
           </Button>
@@ -160,7 +158,7 @@ function ResetPasswordPage() {
         <Button
           type="submit"
           disabled={isLoading}
-          className="btn-brand w-full"
+          className="w-full"
         >
           {isLoading ? (
             <span className="inline-flex items-center gap-2">
@@ -175,9 +173,9 @@ function ResetPasswordPage() {
           )}
         </Button>
 
-        <p className="text-center text-sm text-[var(--sea-ink-soft)]">
+        <p className="text-center text-sm text-muted-foreground">
           Remember your password?{' '}
-          <Link to="/auth/sign-in" className="font-medium text-[var(--lagoon)] hover:underline">
+          <Link to="/auth/sign-in" className="font-medium text-primary hover:underline">
             Sign in
           </Link>
         </p>

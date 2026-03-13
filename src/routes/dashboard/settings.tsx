@@ -26,16 +26,16 @@ function SettingsLayout() {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <div className="rise-in">
-        <h1 className="display-title text-2xl font-bold tracking-tight text-[var(--sea-ink)]">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">
           Settings
         </h1>
-        <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">
+        <p className="mt-1 text-sm text-muted-foreground">
           Manage your account preferences
         </p>
       </div>
 
       {/* Tab navigation */}
-      <nav className="rise-in flex gap-1 overflow-x-auto rounded-2xl border border-[var(--line)] bg-[var(--surface-strong)] p-1">
+      <nav className="rise-in flex gap-1 overflow-x-auto rounded-2xl border border-border bg-card p-1">
         {tabs.map((tab) => {
           const isActive = pathname.startsWith(tab.to)
           return (
@@ -45,8 +45,8 @@ function SettingsLayout() {
               className={cn(
                 'flex items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2 text-sm font-medium transition',
                 isActive
-                  ? 'bg-[var(--surface)] text-[var(--sea-ink)] shadow-sm'
-                  : 'text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]',
+                  ? 'bg-card text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground',
               )}
             >
               <tab.icon className="h-4 w-4" />

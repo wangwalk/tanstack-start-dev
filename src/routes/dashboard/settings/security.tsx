@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react'
 import { z } from 'zod'
 import { authClient } from '#/lib/auth-client'
 import { getLinkedAccounts, getActiveSessions, revokeSession } from '#/lib/user'
+import { Button } from '#/components/ui/button'
+import { Input } from '#/components/ui/input'
 
 const passwordSchema = z
   .object({
@@ -71,49 +73,46 @@ function ChangePasswordSection() {
   }
 
   return (
-    <section className="island-shell rise-in rounded-[2rem] px-6 py-8 sm:px-10">
-      <p className="island-kicker mb-4">Change password</p>
+    <section className="rise-in border border-border bg-card shadow-sm rounded-[2rem] px-6 py-8 sm:px-10">
+      <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">Change password</p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="currentPassword" className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]">
+          <label htmlFor="currentPassword" className="mb-1.5 block text-sm font-medium text-foreground">
             Current password
           </label>
-          <input
+          <Input
             id="currentPassword"
             type="password"
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
             disabled={status === 'loading'}
-            className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-60"
           />
         </div>
 
         <div>
-          <label htmlFor="newPassword" className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]">
+          <label htmlFor="newPassword" className="mb-1.5 block text-sm font-medium text-foreground">
             New password
           </label>
-          <input
+          <Input
             id="newPassword"
             type="password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             placeholder="At least 8 characters"
             disabled={status === 'loading'}
-            className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-60"
           />
         </div>
 
         <div>
-          <label htmlFor="confirmNewPassword" className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]">
+          <label htmlFor="confirmNewPassword" className="mb-1.5 block text-sm font-medium text-foreground">
             Confirm new password
           </label>
-          <input
+          <Input
             id="confirmNewPassword"
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             disabled={status === 'loading'}
-            className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-60"
           />
         </div>
 
@@ -130,10 +129,9 @@ function ChangePasswordSection() {
         )}
 
         <div className="flex justify-end">
-          <button
+          <Button
             type="submit"
             disabled={status === 'loading'}
-            className="btn-brand"
           >
             {status === 'loading' ? (
               <span className="inline-flex items-center gap-2">
@@ -146,7 +144,7 @@ function ChangePasswordSection() {
             ) : (
               'Update password'
             )}
-          </button>
+          </Button>
         </div>
       </form>
     </section>
@@ -170,26 +168,26 @@ function ConnectedAccountsSection() {
   }
 
   return (
-    <section className="island-shell rise-in rounded-[2rem] px-6 py-8 sm:px-10">
-      <p className="island-kicker mb-4">Connected accounts</p>
+    <section className="rise-in border border-border bg-card shadow-sm rounded-[2rem] px-6 py-8 sm:px-10">
+      <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">Connected accounts</p>
       {loading ? (
-        <p className="text-sm text-[var(--sea-ink-soft)]">Loading…</p>
+        <p className="text-sm text-muted-foreground">Loading…</p>
       ) : accounts.length === 0 ? (
-        <p className="text-sm text-[var(--sea-ink-soft)]">No connected accounts</p>
+        <p className="text-sm text-muted-foreground">No connected accounts</p>
       ) : (
         <div className="space-y-3">
           {accounts.map((acc) => (
             <div
               key={acc.providerId}
-              className="flex items-center justify-between rounded-xl border border-[var(--line)] px-4 py-3"
+              className="flex items-center justify-between rounded-xl border border-border px-4 py-3"
             >
               <div className="flex items-center gap-3">
                 <ProviderIcon provider={acc.providerId} />
                 <div>
-                  <p className="text-sm font-medium text-[var(--sea-ink)]">
+                  <p className="text-sm font-medium text-foreground">
                     {providerLabel[acc.providerId] ?? acc.providerId}
                   </p>
-                  <p className="text-xs text-[var(--sea-ink-soft)]">
+                  <p className="text-xs text-muted-foreground">
                     Connected {new Date(acc.createdAt).toLocaleDateString()}
                   </p>
                 </div>
@@ -208,7 +206,7 @@ function ConnectedAccountsSection() {
 function ProviderIcon({ provider }: { provider: string }) {
   if (provider === 'github') {
     return (
-      <svg className="h-5 w-5 text-[var(--sea-ink)]" viewBox="0 0 24 24" fill="currentColor">
+      <svg className="h-5 w-5 text-foreground" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
       </svg>
     )
@@ -223,7 +221,7 @@ function ProviderIcon({ provider }: { provider: string }) {
       </svg>
     )
   }
-  return <div className="h-5 w-5 rounded-full bg-[var(--line)]" />
+  return <div className="h-5 w-5 rounded-full bg-border" />
 }
 
 function ActiveSessionsSection() {
@@ -269,31 +267,31 @@ function ActiveSessionsSection() {
   }
 
   return (
-    <section className="island-shell rise-in rounded-[2rem] px-6 py-8 sm:px-10">
-      <p className="island-kicker mb-4">Active sessions</p>
+    <section className="rise-in border border-border bg-card shadow-sm rounded-[2rem] px-6 py-8 sm:px-10">
+      <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">Active sessions</p>
       {loading ? (
-        <p className="text-sm text-[var(--sea-ink-soft)]">Loading…</p>
+        <p className="text-sm text-muted-foreground">Loading…</p>
       ) : sessions.length === 0 ? (
-        <p className="text-sm text-[var(--sea-ink-soft)]">No active sessions</p>
+        <p className="text-sm text-muted-foreground">No active sessions</p>
       ) : (
         <div className="space-y-3">
           {sessions.map((s) => (
             <div
               key={s.id}
-              className="flex items-center justify-between rounded-xl border border-[var(--line)] px-4 py-3"
+              className="flex items-center justify-between rounded-xl border border-border px-4 py-3"
             >
               <div>
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium text-[var(--sea-ink)]">
+                  <p className="text-sm font-medium text-foreground">
                     {parseUserAgent(s.userAgent)}
                   </p>
                   {s.isCurrent && (
-                    <span className="inline-flex items-center rounded-full border border-[rgba(79,184,178,0.3)] bg-[rgba(79,184,178,0.15)] px-2 py-0.5 text-[0.65rem] font-semibold text-[var(--lagoon-deep)]">
+                    <span className="inline-flex items-center rounded-full border border-primary/30 bg-primary/15 px-2 py-0.5 text-[0.65rem] font-semibold text-primary">
                       Current
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-[var(--sea-ink-soft)]">
+                <p className="text-xs text-muted-foreground">
                   {s.ipAddress ?? 'Unknown IP'} · Created{' '}
                   {new Date(s.createdAt).toLocaleDateString()}
                 </p>

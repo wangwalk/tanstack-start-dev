@@ -38,14 +38,14 @@ function BlogIndex() {
   return (
     <main className="page-wrap px-4 pb-8 pt-14">
       <section className="mb-4">
-        <p className="island-kicker mb-2">Latest Dispatches</p>
-        <h1 className="display-title m-0 text-4xl font-bold tracking-tight text-[var(--sea-ink)] sm:text-5xl">
+        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">Latest Dispatches</p>
+        <h1 className="m-0 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
           Blog
         </h1>
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <article className="island-shell rise-in rounded-2xl p-5 sm:p-6 lg:col-span-2">
+        <article className="border border-border bg-card shadow-sm rise-in rounded-2xl p-5 sm:p-6 lg:col-span-2">
           {featured.heroImage ? (
             <img
               src={featured.heroImage}
@@ -53,7 +53,7 @@ function BlogIndex() {
               className="mb-4 h-44 w-full rounded-xl object-cover xl:h-60"
             />
           ) : null}
-          <h2 className="m-0 text-2xl font-semibold text-[var(--sea-ink)]">
+          <h2 className="m-0 text-2xl font-semibold text-foreground">
             <Link
               to="/blog/$slug"
               params={{ slug: featured.slug }}
@@ -62,10 +62,10 @@ function BlogIndex() {
               {featured.title}
             </Link>
           </h2>
-          <p className="mb-2 mt-3 text-base text-[var(--sea-ink-soft)]">
+          <p className="mb-2 mt-3 text-base text-muted-foreground">
             {featured.description}
           </p>
-          <p className="m-0 text-xs text-[var(--sea-ink-soft)]">
+          <p className="m-0 text-xs text-muted-foreground">
             {new Date(featured.pubDate).toLocaleDateString()}
           </p>
         </article>
@@ -73,7 +73,7 @@ function BlogIndex() {
         {posts.map((post, index) => (
           <article
             key={post.slug}
-            className="island-shell rise-in rounded-2xl p-5 sm:last:col-span-2 lg:last:col-span-1"
+            className="border border-border bg-card shadow-sm rise-in rounded-2xl p-5 sm:last:col-span-2 lg:last:col-span-1"
             style={{ animationDelay: `${index * 80 + 120}ms` }}
           >
             {post.heroImage ? (
@@ -83,7 +83,7 @@ function BlogIndex() {
                 className="mb-4 h-44 w-full rounded-xl object-cover"
               />
             ) : null}
-            <h2 className="m-0 text-2xl font-semibold text-[var(--sea-ink)]">
+            <h2 className="m-0 text-2xl font-semibold text-foreground">
               <Link
                 to="/blog/$slug"
                 params={{ slug: post.slug }}
@@ -92,10 +92,10 @@ function BlogIndex() {
                 {post.title}
               </Link>
             </h2>
-            <p className="mb-2 mt-2 text-sm text-[var(--sea-ink-soft)]">
+            <p className="mb-2 mt-2 text-sm text-muted-foreground">
               {post.description}
             </p>
-            <p className="m-0 text-xs text-[var(--sea-ink-soft)]">
+            <p className="m-0 text-xs text-muted-foreground">
               {new Date(post.pubDate).toLocaleDateString()}
             </p>
           </article>

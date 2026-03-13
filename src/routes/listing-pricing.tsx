@@ -2,6 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { SITE_TITLE, SITE_URL } from '#/lib/site'
 import { LISTING_TIERS } from '#/config/billing'
 import { FeatureCheck, FeatureDash } from '#/components/icons/FeatureCheck'
+import { Button } from '#/components/ui/button'
 
 export const Route = createFileRoute('/listing-pricing')({
   head: () => ({
@@ -125,11 +126,11 @@ function ListingPricingPage() {
     <main className="page-wrap px-4 pb-16 pt-14">
       {/* Header */}
       <section className="mb-12 text-center">
-        <p className="island-kicker mb-2">List Your Tool</p>
-        <h1 className="display-title mb-4 text-4xl font-bold tracking-tight text-[var(--sea-ink)] sm:text-5xl">
+        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">List Your Tool</p>
+        <h1 className="mb-4 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
           Get discovered by thousands of users
         </h1>
-        <p className="mx-auto max-w-lg text-[var(--sea-ink-soft)]">
+        <p className="mx-auto max-w-lg text-muted-foreground">
           One-time payment. Permanent listing. No recurring fees.
         </p>
       </section>
@@ -139,26 +140,26 @@ function ListingPricingPage() {
         {TIERS.map((tier, i) => (
           <article
             key={tier.key}
-            className={`island-shell feature-card rise-in flex flex-col rounded-2xl p-6 ${tier.highlighted ? 'ring-2 ring-[var(--lagoon)]' : ''}`}
+            className={`border border-border bg-card shadow-sm rise-in flex flex-col rounded-2xl p-6 ${tier.highlighted ? 'ring-2 ring-primary' : ''}`}
             style={{ animationDelay: `${i * 80}ms` }}
           >
             {tier.highlighted && (
-              <span className="mb-3 inline-block rounded-full bg-[rgba(79,184,178,0.15)] px-3 py-1 text-xs font-semibold text-[var(--lagoon-deep)]">
+              <span className="mb-3 inline-block rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold text-primary">
                 Most Popular
               </span>
             )}
-            <p className="island-kicker mb-1">{tier.name}</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">{tier.name}</p>
             <p className="m-0 mb-1">
-              <span className="display-title text-3xl font-bold text-[var(--sea-ink)]">
+              <span className="text-3xl font-bold text-foreground">
                 {tier.price}
               </span>
-              <span className="text-sm text-[var(--sea-ink-soft)]">{tier.period}</span>
+              <span className="text-sm text-muted-foreground">{tier.period}</span>
             </p>
-            <p className="mb-5 text-sm text-[var(--sea-ink-soft)]">{tier.desc}</p>
+            <p className="mb-5 text-sm text-muted-foreground">{tier.desc}</p>
 
             <ul className="mb-6 grow space-y-2 pl-0">
               {tier.features.map((f) => (
-                <li key={f.label} className="flex items-start gap-2 text-sm text-[var(--sea-ink-soft)]">
+                <li key={f.label} className="flex items-start gap-2 text-sm text-muted-foreground">
                   {f.included ? <FeatureCheck /> : <FeatureDash />}
                   <span className={f.included ? '' : 'opacity-40'}>{f.label}</span>
                 </li>
@@ -167,9 +168,14 @@ function ListingPricingPage() {
 
             <Link
               to={tier.ctaHref as '/tools/submit'}
-              className={`block text-center ${tier.ctaVariant === 'primary' ? 'btn-brand' : 'btn-brand-outline'}`}
+              className="block text-center no-underline"
             >
-              {tier.cta}
+              <Button
+                variant={tier.ctaVariant === 'primary' ? 'default' : 'outline'}
+                className="w-full"
+              >
+                {tier.cta}
+              </Button>
             </Link>
           </article>
         ))}
@@ -177,21 +183,21 @@ function ListingPricingPage() {
 
       {/* FAQ */}
       <section className="mx-auto mt-20 max-w-2xl">
-        <h2 className="display-title mb-8 text-center text-2xl font-bold tracking-tight text-[var(--sea-ink)]">
+        <h2 className="mb-8 text-center text-2xl font-bold tracking-tight text-foreground">
           Frequently asked questions
         </h2>
         <div className="space-y-4">
           {FAQ.map((item) => (
             <details
               key={item.q}
-              className="island-shell group rounded-xl px-5 py-4"
+              className="border border-border bg-card shadow-sm group rounded-xl px-5 py-4"
             >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-[var(--sea-ink)]">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-foreground">
                 {item.q}
                 <svg
                   viewBox="0 0 20 20"
                   fill="currentColor"
-                  className="h-4 w-4 shrink-0 text-[var(--sea-ink-soft)] transition group-open:rotate-180"
+                  className="h-4 w-4 shrink-0 text-muted-foreground transition group-open:rotate-180"
                 >
                   <path
                     fillRule="evenodd"
@@ -200,7 +206,7 @@ function ListingPricingPage() {
                   />
                 </svg>
               </summary>
-              <p className="mt-3 text-sm leading-relaxed text-[var(--sea-ink-soft)]">{item.a}</p>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.a}</p>
             </details>
           ))}
         </div>
@@ -208,19 +214,18 @@ function ListingPricingPage() {
 
       {/* Bottom CTA */}
       <section className="mx-auto mt-16 max-w-2xl">
-        <div className="island-shell rise-in relative overflow-hidden rounded-[2rem] px-6 py-10 text-center">
-          <div className="pointer-events-none absolute -left-16 -top-16 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(79,184,178,0.24),transparent_66%)]" />
-          <h2 className="display-title mb-3 text-2xl font-bold tracking-tight text-[var(--sea-ink)]">
+        <div className="border border-border bg-card shadow-sm rise-in relative overflow-hidden rounded-[2rem] px-6 py-10 text-center">
+          <h2 className="mb-3 text-2xl font-bold tracking-tight text-foreground">
             Ready to get listed?
           </h2>
-          <p className="mb-6 text-sm text-[var(--sea-ink-soft)]">
+          <p className="mb-6 text-sm text-muted-foreground">
             Start for free or go Featured for maximum visibility.
           </p>
           <Link
             to="/tools/submit"
-            className="btn-brand px-8 py-3"
+            className="no-underline"
           >
-            Submit Your Tool
+            <Button className="px-8 py-3">Submit Your Tool</Button>
           </Link>
         </div>
       </section>

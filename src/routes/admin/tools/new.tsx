@@ -35,12 +35,12 @@ function NewToolPage() {
     <div className="mx-auto max-w-2xl space-y-6">
       <Link
         to="/admin/tools"
-        className="inline-flex items-center gap-1.5 text-sm text-[var(--sea-ink-soft)] transition hover:text-[var(--sea-ink)]"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition hover:text-foreground"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to tools
       </Link>
-      <h1 className="display-title text-2xl font-bold text-[var(--sea-ink)]">Add tool</h1>
+      <h1 className="text-2xl font-bold text-foreground">Add tool</h1>
       {error && <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600 dark:bg-red-900/20">{error}</p>}
       <ToolForm categories={categories} tags={tags} saving={saving} onSubmit={handleSubmit} />
     </div>

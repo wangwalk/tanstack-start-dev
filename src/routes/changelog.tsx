@@ -30,11 +30,11 @@ function ChangelogPage() {
   return (
     <main className="page-wrap px-4 pb-16 pt-14">
       <section className="mb-10">
-        <p className="island-kicker mb-2">What&apos;s New</p>
-        <h1 className="display-title m-0 text-4xl font-bold tracking-tight text-[var(--sea-ink)] sm:text-5xl">
+        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">What&apos;s New</p>
+        <h1 className="m-0 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
           Changelog
         </h1>
-        <p className="mt-3 text-base text-[var(--sea-ink-soft)]">
+        <p className="mt-3 text-base text-muted-foreground">
           {pageDescription}
         </p>
       </section>
@@ -46,7 +46,7 @@ function ChangelogPage() {
               <div className="flex-shrink-0 sm:w-36">
                 <time
                   dateTime={entry.date}
-                  className="inline-block rounded-full border border-[var(--chip-line)] bg-[var(--chip-bg)] px-3 py-1 text-xs font-semibold text-[var(--sea-ink-soft)]"
+                  className="inline-block rounded-full border border-border bg-card px-3 py-1 text-xs font-semibold text-muted-foreground"
                 >
                   {new Date(entry.date).toLocaleDateString('en-US', {
                     year: 'numeric',
@@ -59,7 +59,7 @@ function ChangelogPage() {
                     {entry.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="rounded-full bg-[var(--sea-tint)] px-2 py-0.5 text-xs text-[var(--sea-ink-soft)]"
+                        className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-muted-foreground"
                       >
                         {tag}
                       </span>
@@ -68,14 +68,14 @@ function ChangelogPage() {
                 )}
               </div>
 
-              <div className="island-shell min-w-0 flex-1 rounded-2xl p-6">
-                <h2 className="m-0 mb-2 text-xl font-semibold text-[var(--sea-ink)]">
+              <div className="border border-border bg-card shadow-sm min-w-0 flex-1 rounded-2xl p-6">
+                <h2 className="m-0 mb-2 text-xl font-semibold text-foreground">
                   {entry.title}
                 </h2>
-                <p className="mb-4 text-sm text-[var(--sea-ink-soft)]">
+                <p className="mb-4 text-sm text-muted-foreground">
                   {entry.description}
                 </p>
-                <div className="prose prose-slate prose-headings:text-[var(--sea-ink)] prose-p:text-[var(--sea-ink-soft)] prose-li:text-[var(--sea-ink-soft)] prose-strong:text-[var(--sea-ink)] prose-a:text-[var(--lagoon-deep)] prose-th:text-[var(--sea-ink)] prose-td:text-[var(--sea-ink-soft)] max-w-none text-sm">
+                <div className="prose prose-slate prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground prose-a:text-primary prose-th:text-foreground prose-td:text-muted-foreground max-w-none text-sm">
                   <MDXContent code={entry.mdx} />
                 </div>
               </div>

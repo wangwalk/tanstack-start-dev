@@ -6,6 +6,7 @@ import { createCreditCheckoutSession } from '#/lib/billing'
 import { getCreditTransactions } from '#/lib/credits'
 import { CREDIT_PACKS } from '#/config/billing'
 import type { CreditPackKey } from '#/config/billing'
+import { Button } from '#/components/ui/button'
 
 const searchSchema = z.object({
   checkout: z.enum(['success']).optional(),
@@ -66,15 +67,15 @@ function CreditsPage() {
       )}
 
       {/* Balance card */}
-      <section className="island-shell rise-in rounded-[2rem] px-6 py-8 sm:px-10">
-        <p className="island-kicker mb-4">Credit balance</p>
+      <section className="rise-in border border-border bg-card shadow-sm rounded-[2rem] px-6 py-8 sm:px-10">
+        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">Credit balance</p>
 
         <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-2 rounded-full border border-[rgba(79,184,178,0.3)] bg-[rgba(79,184,178,0.15)] px-4 py-1.5 text-lg font-bold text-[var(--lagoon-deep)]">
+          <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/15 px-4 py-1.5 text-lg font-bold text-primary">
             <Zap className="h-4 w-4" />
             {balance}
           </span>
-          <span className="text-sm text-[var(--sea-ink-soft)]">credits available</span>
+          <span className="text-sm text-muted-foreground">credits available</span>
         </div>
 
         {isLowBalance && (
@@ -85,8 +86,8 @@ function CreditsPage() {
       </section>
 
       {/* Buy credits */}
-      <section className="island-shell rise-in rounded-[2rem] px-6 py-8 sm:px-10">
-        <p className="island-kicker mb-6">Buy credits</p>
+      <section className="rise-in border border-border bg-card shadow-sm rounded-[2rem] px-6 py-8 sm:px-10">
+        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-6">Buy credits</p>
 
         <div className="grid gap-4 sm:grid-cols-3">
           {(
@@ -97,20 +98,20 @@ function CreditsPage() {
           ).map(([key, pack]) => (
             <div
               key={key}
-              className="flex flex-col gap-4 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5"
+              className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5"
             >
               <div>
-                <p className="font-semibold text-[var(--sea-ink)]">{pack.name}</p>
-                <p className="mt-1 text-2xl font-bold text-[var(--sea-ink)]">{pack.amount}</p>
-                <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">
+                <p className="font-semibold text-foreground">{pack.name}</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{pack.amount}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
                   {pack.credits} credits
                 </p>
               </div>
-              <button
+              <Button
                 type="button"
                 onClick={() => void handleBuyPack(key)}
                 disabled={purchasing !== null}
-                className="btn-brand mt-auto inline-flex items-center justify-center"
+                className="mt-auto inline-flex items-center justify-center"
               >
                 {purchasing === key ? (
                   <span className="inline-flex items-center gap-2">
@@ -134,7 +135,7 @@ function CreditsPage() {
                 ) : (
                   `Buy for ${pack.amount}`
                 )}
-              </button>
+              </Button>
             </div>
           ))}
         </div>
@@ -147,28 +148,28 @@ function CreditsPage() {
       </section>
 
       {/* Transaction history */}
-      <section className="island-shell rise-in rounded-[2rem] px-6 py-8 sm:px-10">
-        <p className="island-kicker mb-4">Transaction history</p>
+      <section className="rise-in border border-border bg-card shadow-sm rounded-[2rem] px-6 py-8 sm:px-10">
+        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">Transaction history</p>
 
         {transactions.length === 0 ? (
-          <p className="text-sm text-[var(--sea-ink-soft)]">
+          <p className="text-sm text-muted-foreground">
             No transactions yet. Purchase credits to get started.
           </p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-[var(--line)] text-left">
-                  <th className="pb-3 pr-4 font-medium text-[var(--sea-ink-soft)]">Date</th>
-                  <th className="pb-3 pr-4 font-medium text-[var(--sea-ink-soft)]">Type</th>
-                  <th className="pb-3 pr-4 font-medium text-[var(--sea-ink-soft)]">Amount</th>
-                  <th className="pb-3 font-medium text-[var(--sea-ink-soft)]">Description</th>
+                <tr className="border-b border-border text-left">
+                  <th className="pb-3 pr-4 font-medium text-muted-foreground">Date</th>
+                  <th className="pb-3 pr-4 font-medium text-muted-foreground">Type</th>
+                  <th className="pb-3 pr-4 font-medium text-muted-foreground">Amount</th>
+                  <th className="pb-3 font-medium text-muted-foreground">Description</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--line)]">
+              <tbody className="divide-y divide-border">
                 {transactions.map((tx) => (
                   <tr key={tx.id}>
-                    <td className="py-3 pr-4 text-[var(--sea-ink-soft)]">
+                    <td className="py-3 pr-4 text-muted-foreground">
                       {new Date(tx.createdAt).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'short',
@@ -176,21 +177,21 @@ function CreditsPage() {
                       })}
                     </td>
                     <td className="py-3 pr-4">
-                      <span className="capitalize text-[var(--sea-ink)]">{tx.type}</span>
+                      <span className="capitalize text-foreground">{tx.type}</span>
                     </td>
                     <td className="py-3 pr-4">
                       <span
                         className={
                           tx.amount > 0
-                            ? 'font-semibold text-teal-600 dark:text-teal-400'
-                            : 'font-semibold text-[var(--sea-ink-soft)]'
+                            ? 'font-semibold text-primary dark:text-primary'
+                            : 'font-semibold text-muted-foreground'
                         }
                       >
                         {tx.amount > 0 ? '+' : ''}
                         {tx.amount}
                       </span>
                     </td>
-                    <td className="py-3 text-[var(--sea-ink-soft)]">
+                    <td className="py-3 text-muted-foreground">
                       {tx.description ?? '—'}
                     </td>
                   </tr>

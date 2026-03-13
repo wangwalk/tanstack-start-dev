@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { getMySubmissions, withdrawSubmission } from '#/lib/submissions'
 import { cn } from '#/lib/utils'
 import { SITE_TITLE } from '#/lib/site'
+import { Button } from '#/components/ui/button'
 
 const searchSchema = z.object({
   status: z.string().optional(),
@@ -24,11 +25,11 @@ export const Route = createFileRoute('/dashboard/submissions/')({
 })
 
 const statusColors: Record<string, string> = {
-  draft: 'bg-[var(--line)] text-[var(--sea-ink-soft)]',
+  draft: 'bg-border text-muted-foreground',
   pending: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
   approved: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
   rejected: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-  archived: 'bg-[var(--line)] text-[var(--sea-ink-soft)]',
+  archived: 'bg-border text-muted-foreground',
 }
 
 const statusLabel: Record<string, string> = {
@@ -69,13 +70,12 @@ function DashboardSubmissionsPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="display-title text-2xl font-bold text-[var(--sea-ink)]">我的提交</h1>
-        <Link
-          to="/tools/submit"
-          className="btn-brand"
-        >
-          + 提交新工具
-        </Link>
+        <h1 className="text-2xl font-bold text-foreground">我的提交</h1>
+        <Button asChild>
+          <Link to="/tools/submit">
+            + 提交新工具
+          </Link>
+        </Button>
       </div>
 
       {/* Status filters */}
@@ -91,8 +91,8 @@ function DashboardSubmissionsPage() {
             }
             className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
               (search.status ?? 'all') === f.value
-                ? 'border-[var(--lagoon)] bg-[var(--lagoon)]/10 text-[var(--lagoon-deep)]'
-                : 'border-[var(--line)] text-[var(--sea-ink-soft)] hover:border-[var(--lagoon)]'
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-border text-muted-foreground hover:border-primary'
             }`}
           >
             {f.label}
@@ -101,24 +101,23 @@ function DashboardSubmissionsPage() {
       </div>
 
       {/* List */}
-      <div className="island-shell overflow-hidden rounded-2xl">
+      <div className="border border-border bg-card shadow-sm overflow-hidden rounded-2xl">
         {tools.length === 0 ? (
           <div className="py-16 text-center">
-            <p className="text-[var(--sea-ink-soft)]">暂无提交记录</p>
-            <Link
-              to="/tools/submit"
-              className="btn-brand mt-4 inline-block no-underline"
-            >
-              提交第一个工具
-            </Link>
+            <p className="text-muted-foreground">暂无提交记录</p>
+            <Button asChild className="mt-4">
+              <Link to="/tools/submit" className="inline-block no-underline">
+                提交第一个工具
+              </Link>
+            </Button>
           </div>
         ) : (
-          <div className="divide-y divide-[var(--line)]">
+          <div className="divide-y divide-border">
             {tools.map((t) => (
               <div key={t.id} className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center">
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-semibold text-[var(--sea-ink)]">{t.name}</p>
+                    <p className="font-semibold text-foreground">{t.name}</p>
                     <span
                       className={cn(
                         'rounded-full px-2 py-0.5 text-xs font-medium',
@@ -128,8 +127,8 @@ function DashboardSubmissionsPage() {
                       {statusLabel[t.status] ?? t.status}
                     </span>
                   </div>
-                  <p className="mt-0.5 truncate text-sm text-[var(--sea-ink-soft)]">{t.url}</p>
-                  <div className="mt-1 flex flex-wrap gap-3 text-xs text-[var(--sea-ink-soft)]">
+                  <p className="mt-0.5 truncate text-sm text-muted-foreground">{t.url}</p>
+                  <div className="mt-1 flex flex-wrap gap-3 text-xs text-muted-foreground">
                     <span>提交于 {new Date(t.createdAt).toLocaleDateString('zh-CN')}</span>
                     {t.approvedAt && (
                       <span>审核于 {new Date(t.approvedAt).toLocaleDateString('zh-CN')}</span>
@@ -143,7 +142,7 @@ function DashboardSubmissionsPage() {
                     <Link
                       to="/tools/$slug"
                       params={{ slug: t.slug }}
-                      className="rounded-lg border border-[var(--line)] px-3 py-1.5 text-xs font-medium text-[var(--sea-ink-soft)] no-underline transition hover:border-[var(--lagoon)] hover:text-[var(--lagoon-deep)]"
+                      className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground no-underline transition hover:border-primary hover:text-primary"
                     >
                       查看详情
                     </Link>
@@ -161,7 +160,7 @@ function DashboardSubmissionsPage() {
                   {(t.status === 'rejected' || t.status === 'draft') && (
                     <Link
                       to="/tools/submit"
-                      className="rounded-lg border border-[var(--lagoon)] px-3 py-1.5 text-xs font-medium text-[var(--lagoon-deep)] no-underline transition hover:bg-[var(--lagoon)]/10"
+                      className="rounded-lg border border-primary px-3 py-1.5 text-xs font-medium text-primary no-underline transition hover:bg-primary/10"
                     >
                       重新提交
                     </Link>
@@ -174,14 +173,14 @@ function DashboardSubmissionsPage() {
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between text-sm text-[var(--sea-ink-soft)]">
+      <div className="flex items-center justify-between text-sm text-muted-foreground">
         <span>第 {page} 页</span>
         <div className="flex gap-2">
           <button
             type="button"
             disabled={page <= 1}
             onClick={() => void navigate({ search: { ...search, page: page - 1 } })}
-            className="rounded-lg border border-[var(--line)] px-3 py-1.5 transition hover:bg-[var(--link-bg-hover)] disabled:pointer-events-none disabled:opacity-40"
+            className="rounded-lg border border-border px-3 py-1.5 transition hover:bg-accent disabled:pointer-events-none disabled:opacity-40"
           >
             上一页
           </button>
@@ -189,7 +188,7 @@ function DashboardSubmissionsPage() {
             type="button"
             disabled={tools.length < 20}
             onClick={() => void navigate({ search: { ...search, page: page + 1 } })}
-            className="rounded-lg border border-[var(--line)] px-3 py-1.5 transition hover:bg-[var(--link-bg-hover)] disabled:pointer-events-none disabled:opacity-40"
+            className="rounded-lg border border-border px-3 py-1.5 transition hover:bg-accent disabled:pointer-events-none disabled:opacity-40"
           >
             下一页
           </button>

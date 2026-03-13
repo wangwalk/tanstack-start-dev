@@ -92,32 +92,32 @@ function DashboardOverviewPage() {
       )}
 
       {/* Welcome card */}
-      <section className="island-shell rise-in rounded-[2rem] px-6 py-10 sm:px-10">
-        <h1 className="display-title text-3xl font-bold tracking-tight text-[var(--sea-ink)]">
+      <section className="rise-in border border-border bg-card shadow-sm rounded-[2rem] px-6 py-10 sm:px-10">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
           Welcome back{session?.user?.name ? `, ${session.user.name}` : ''}
         </h1>
-        <p className="mt-2 text-[var(--sea-ink-soft)]">
+        <p className="mt-2 text-muted-foreground">
           Here&apos;s an overview of your account.
         </p>
       </section>
 
       {/* Subscription status card */}
-      <section className="island-shell rise-in rounded-[2rem] px-6 py-8 sm:px-10">
-        <p className="island-kicker mb-4">Subscription</p>
+      <section className="rise-in border border-border bg-card shadow-sm rounded-[2rem] px-6 py-8 sm:px-10">
+        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">Subscription</p>
 
         {isActive && planName ? (
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-              <Badge className="rounded-full border border-[rgba(79,184,178,0.3)] bg-[rgba(79,184,178,0.15)] text-[var(--lagoon-deep)] hover:bg-[rgba(79,184,178,0.2)]">
+              <Badge className="rounded-full border border-primary/30 bg-primary/15 text-primary hover:bg-primary/20">
                 {planName}
               </Badge>
-              <span className="text-sm text-[var(--sea-ink-soft)]">Active</span>
+              <span className="text-sm text-muted-foreground">Active</span>
             </div>
             <Button
               type="button"
               variant="outline"
               onClick={handleManageBilling}
-              className="rounded-full border-[var(--line)] hover:bg-[var(--link-bg-hover)]"
+              className="rounded-full border-border hover:bg-accent"
             >
               Manage billing
             </Button>
@@ -125,18 +125,17 @@ function DashboardOverviewPage() {
         ) : (
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-              <Badge variant="outline" className="rounded-full border-[var(--line)] bg-[rgba(23,58,64,0.06)] text-[var(--sea-ink-soft)]">
+              <Badge variant="outline" className="rounded-full border-border bg-muted text-muted-foreground">
                 Free
               </Badge>
               {subscription.subscriptionStatus === 'canceled' && (
-                <span className="text-sm text-[var(--sea-ink-soft)]">
+                <span className="text-sm text-muted-foreground">
                   Canceled
                 </span>
               )}
             </div>
             <Button
               asChild
-              className="btn-brand"
             >
               <a href="/#pricing">Upgrade to Pro</a>
             </Button>

@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
+import { Button } from '#/components/ui/button'
 
 interface NotificationPref {
   key: string
@@ -52,25 +53,25 @@ function NotificationsPage() {
 
   return (
     <div className="space-y-6">
-      <section className="island-shell rise-in rounded-[2rem] px-6 py-8 sm:px-10">
-        <p className="island-kicker mb-4">Email notifications</p>
+      <section className="rise-in border border-border bg-card shadow-sm rounded-[2rem] px-6 py-8 sm:px-10">
+        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">Email notifications</p>
         <form onSubmit={handleSave} className="space-y-1">
           {prefs.map((pref) => (
             <label
               key={pref.key}
-              className="flex cursor-pointer items-center justify-between rounded-xl px-4 py-3 transition hover:bg-[var(--link-bg-hover)]"
+              className="flex cursor-pointer items-center justify-between rounded-xl px-4 py-3 transition hover:bg-accent"
             >
               <div>
-                <p className="text-sm font-medium text-[var(--sea-ink)]">{pref.label}</p>
-                <p className="text-xs text-[var(--sea-ink-soft)]">{pref.description}</p>
+                <p className="text-sm font-medium text-foreground">{pref.label}</p>
+                <p className="text-xs text-muted-foreground">{pref.description}</p>
               </div>
               <button
                 type="button"
                 role="switch"
                 aria-checked={values[pref.key]}
                 onClick={() => toggle(pref.key)}
-                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 focus:ring-offset-2 ${
-                  values[pref.key] ? 'bg-[var(--lagoon)]' : 'bg-[var(--line)]'
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus-visible:ring-ring focus:ring-2 focus:ring-offset-2 ${
+                  values[pref.key] ? 'bg-primary' : 'bg-border'
                 }`}
               >
                 <span
@@ -89,10 +90,9 @@ function NotificationsPage() {
           )}
 
           <div className="flex justify-end pt-3">
-            <button
+            <Button
               type="submit"
               disabled={status === 'loading'}
-              className="btn-brand"
             >
               {status === 'loading' ? (
                 <span className="inline-flex items-center gap-2">
@@ -105,7 +105,7 @@ function NotificationsPage() {
               ) : (
                 'Save preferences'
               )}
-            </button>
+            </Button>
           </div>
         </form>
       </section>

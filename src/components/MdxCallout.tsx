@@ -8,9 +8,9 @@ export function MdxCallout({
   children: ReactNode
 }) {
   return (
-    <aside className="not-prose my-6 rounded-xl border border-[var(--line)] bg-[var(--chip-bg)] p-4">
-      <p className="island-kicker mb-2">{title}</p>
-      <div className="text-sm leading-7 text-[var(--sea-ink-soft)]">
+    <aside className="not-prose my-6 rounded-xl border border-border bg-card p-4">
+      <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">{title}</p>
+      <div className="text-sm leading-7 text-muted-foreground">
         {children}
       </div>
     </aside>

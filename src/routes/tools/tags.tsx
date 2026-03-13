@@ -24,24 +24,24 @@ function TagsIndexPage() {
   return (
     <main className="page-wrap px-4 pb-16 pt-8">
       {/* Breadcrumb */}
-      <nav className="mb-6 flex items-center gap-2 text-sm text-[var(--sea-ink-soft)]">
-        <Link to="/tools" className="hover:text-[var(--lagoon)]">首页</Link>
+      <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
+        <Link to="/tools" className="hover:text-primary">首页</Link>
         <span>/</span>
-        <span className="text-[var(--sea-ink)]">所有标签</span>
+        <span className="text-foreground">所有标签</span>
       </nav>
 
       <div className="mb-8">
-        <p className="island-kicker mb-1">标签云</p>
-        <h1 className="display-title text-3xl font-bold text-[var(--sea-ink)]">所有标签</h1>
-        <p className="mt-2 text-[var(--sea-ink-soft)]">共 {tags.length} 个标签</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">标签云</p>
+        <h1 className="text-3xl font-bold text-foreground">所有标签</h1>
+        <p className="mt-2 text-muted-foreground">共 {tags.length} 个标签</p>
       </div>
 
       {tags.length === 0 ? (
-        <div className="island-shell rounded-2xl py-16 text-center text-[var(--sea-ink-soft)]">
+        <div className="border border-border bg-card shadow-sm rounded-2xl py-16 text-center text-muted-foreground">
           暂无标签
         </div>
       ) : (
-        <div className="island-shell rounded-2xl p-8">
+        <div className="border border-border bg-card shadow-sm rounded-2xl p-8">
           <div className="flex flex-wrap items-center gap-3">
             {tags.map((t) => {
               // Scale font size between 0.75rem and 1.5rem based on tool count
@@ -53,10 +53,10 @@ function TagsIndexPage() {
                   to="/tools/tag/$slug"
                   params={{ slug: t.slug }}
                   style={{ fontSize: `${fontSize}rem` }}
-                  className="font-medium text-[var(--sea-ink-soft)] no-underline transition hover:text-[var(--lagoon-deep)]"
+                  className="font-medium text-muted-foreground no-underline transition hover:text-primary"
                 >
                   #{t.name}
-                  <span className="ml-1 text-xs text-[var(--sea-ink-soft)]/60">{t.toolCount}</span>
+                  <span className="ml-1 text-xs text-muted-foreground/60">{t.toolCount}</span>
                 </Link>
               )
             })}

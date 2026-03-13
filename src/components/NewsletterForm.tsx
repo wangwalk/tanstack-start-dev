@@ -1,5 +1,7 @@
 import { useState, useTransition } from 'react'
 import { subscribeNewsletter } from '#/lib/newsletter'
+import { Input } from '#/components/ui/input'
+import { Button } from '#/components/ui/button'
 
 type Status = 'idle' | 'success' | 'error'
 
@@ -28,7 +30,7 @@ export default function NewsletterForm() {
 
   if (status === 'success') {
     return (
-      <p className="text-sm text-[var(--sea-ink)]">
+      <p className="text-sm text-foreground">
         Thanks for subscribing! Check your inbox for a confirmation.
       </p>
     )
@@ -40,7 +42,7 @@ export default function NewsletterForm() {
         Email address
       </label>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
-        <input
+        <Input
           id="newsletter-email"
           type="email"
           required
@@ -48,15 +50,14 @@ export default function NewsletterForm() {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="your@email.com"
           disabled={isPending}
-          className="w-full rounded-lg border border-[var(--line)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-50 sm:w-56"
+          className="w-full sm:w-56"
         />
-        <button
+        <Button
           type="submit"
           disabled={isPending || !email}
-          className="rounded-lg bg-[var(--sea-ink)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isPending ? 'Subscribing…' : 'Subscribe'}
-        </button>
+        </Button>
       </div>
       {status === 'error' && (
         <p className="text-xs text-red-500" role="alert">{errorMsg}</p>

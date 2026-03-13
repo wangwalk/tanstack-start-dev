@@ -36,47 +36,44 @@ function CategoriesIndexPage() {
 
   return (
     <main className="page-wrap px-4 pb-16 pt-8">
-      <nav className="mb-6 flex items-center gap-2 text-sm text-[var(--sea-ink-soft)]">
-        <Link to="/tools" className="hover:text-[var(--lagoon)]">
+      <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
+        <Link to="/tools" className="hover:text-primary">
           Tool directory
         </Link>
         <span>/</span>
-        <span className="text-[var(--sea-ink)]">Category atlas</span>
+        <span className="text-foreground">Category atlas</span>
       </nav>
 
-      <section className="island-shell rise-in relative overflow-hidden rounded-[2.2rem] px-6 py-10 sm:px-10 sm:py-12">
-        <div className="pointer-events-none absolute -left-20 top-0 h-52 w-52 rounded-full bg-[radial-gradient(circle,rgba(79,184,178,0.28),transparent_66%)]" />
-        <div className="pointer-events-none absolute -bottom-24 right-[-2rem] h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(47,106,74,0.16),transparent_66%)]" />
-
+      <section className="border border-border bg-card shadow-sm rise-in relative overflow-hidden rounded-[2.2rem] px-6 py-10 sm:px-10 sm:py-12">
         <div className="relative grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-end">
           <div className="max-w-3xl">
-            <p className="island-kicker mb-3">Category Atlas</p>
-            <h1 className="display-title text-3xl font-bold tracking-tight text-[var(--sea-ink)] sm:text-4xl">
+            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">Category Atlas</p>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               Browse the full map, then drill into the right lane.
             </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--sea-ink-soft)] sm:text-base">
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
               This page is the stable information-architecture layer for the directory: every top-level category, every active child category, and the tool density behind each one.
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-[1.5rem] border border-[var(--line)] bg-[var(--surface)] px-4 py-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--sea-ink-soft)]">
+            <div className="rounded-[1.5rem] border border-border bg-card px-4 py-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                 Top-level
               </p>
-              <p className="mt-2 text-3xl font-bold text-[var(--lagoon-deep)]">{sections.length}</p>
+              <p className="mt-2 text-3xl font-bold text-primary">{sections.length}</p>
             </div>
-            <div className="rounded-[1.5rem] border border-[var(--line)] bg-[var(--surface)] px-4 py-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--sea-ink-soft)]">
+            <div className="rounded-[1.5rem] border border-border bg-card px-4 py-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                 Subcategories
               </p>
-              <p className="mt-2 text-3xl font-bold text-[var(--lagoon-deep)]">{totalChildren}</p>
+              <p className="mt-2 text-3xl font-bold text-primary">{totalChildren}</p>
             </div>
-            <div className="col-span-2 rounded-[1.5rem] border border-[var(--line)] bg-[var(--surface)] px-4 py-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--sea-ink-soft)]">
+            <div className="col-span-2 rounded-[1.5rem] border border-border bg-card px-4 py-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                 Indexed tools
               </p>
-              <p className="mt-2 text-3xl font-bold text-[var(--lagoon-deep)]">{totalTools}</p>
+              <p className="mt-2 text-3xl font-bold text-primary">{totalTools}</p>
             </div>
           </div>
         </div>
@@ -89,22 +86,22 @@ function CategoriesIndexPage() {
           return (
             <article
               key={category.id}
-              className="atlas-card rise-in rounded-[1.8rem] p-5"
+              className="border border-border bg-card shadow-sm rise-in rounded-[1.8rem] p-5"
               style={{ animationDelay: `${index * 40}ms` }}
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4">
-                  <div className="atlas-card__icon h-14 w-14 text-3xl">
+                  <div className="inline-flex items-center justify-center rounded-xl bg-primary/10 h-14 w-14 text-3xl">
                     {category.icon ?? '🔧'}
                   </div>
                   <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--sea-ink-soft)]">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                       Top level
                     </p>
-                    <h2 className="mt-2 text-xl font-bold text-[var(--sea-ink)]">
+                    <h2 className="mt-2 text-xl font-bold text-foreground">
                       {category.name}
                     </h2>
-                    <p className="mt-2 text-sm text-[var(--sea-ink-soft)]">
+                    <p className="mt-2 text-sm text-muted-foreground">
                       {category.toolCount} indexed tools
                     </p>
                   </div>
@@ -113,7 +110,7 @@ function CategoriesIndexPage() {
                 <Link
                   to="/tools/category/$slug"
                   params={{ slug: category.slug }}
-                  className="rounded-full border border-[var(--line)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--sea-ink)] no-underline transition hover:border-[var(--lagoon)] hover:text-[var(--lagoon-deep)]"
+                  className="rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground no-underline transition hover:border-primary hover:text-primary"
                 >
                   Open
                 </Link>
@@ -126,15 +123,15 @@ function CategoriesIndexPage() {
                       key={child.id}
                       to="/tools/category/$slug"
                       params={{ slug: child.slug }}
-                      className="rounded-full border border-[var(--line)] bg-[var(--surface)]/85 px-3 py-1.5 text-sm text-[var(--sea-ink-soft)] no-underline transition hover:border-[var(--lagoon)] hover:text-[var(--lagoon-deep)]"
+                      className="rounded-full border border-border bg-card/85 px-3 py-1.5 text-sm text-muted-foreground no-underline transition hover:border-primary hover:text-primary"
                     >
                       {child.name}
-                      <span className="ml-1.5 text-xs text-[var(--sea-ink-soft)]/70">{child.toolCount}</span>
+                      <span className="ml-1.5 text-xs text-muted-foreground/70">{child.toolCount}</span>
                     </Link>
                   ))}
                 </div>
               ) : (
-                <p className="mt-5 text-sm text-[var(--sea-ink-soft)]">
+                <p className="mt-5 text-sm text-muted-foreground">
                   No active child categories yet. Use the top-level page as the main browsing surface.
                 </p>
               )}

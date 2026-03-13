@@ -85,19 +85,19 @@ function TagPage() {
   return (
     <main className="page-wrap px-4 pb-16 pt-8">
       {/* Breadcrumb */}
-      <nav className="mb-6 flex items-center gap-2 text-sm text-[var(--sea-ink-soft)]">
-        <Link to="/tools" className="hover:text-[var(--lagoon)]">首页</Link>
+      <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
+        <Link to="/tools" className="hover:text-primary">首页</Link>
         <span>/</span>
-        <Link to="/tools/tags" className="hover:text-[var(--lagoon)]">标签</Link>
+        <Link to="/tools/tags" className="hover:text-primary">标签</Link>
         <span>/</span>
-        <span className="text-[var(--sea-ink)]">#{tag.name}</span>
+        <span className="text-foreground">#{tag.name}</span>
       </nav>
 
       {/* Header */}
       <div className="mb-8">
-        <p className="island-kicker mb-1">标签</p>
-        <h1 className="display-title text-3xl font-bold text-[var(--sea-ink)]">#{tag.name}</h1>
-        <p className="mt-2 text-[var(--sea-ink-soft)]">共 {total} 个工具</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">标签</p>
+        <h1 className="text-3xl font-bold text-foreground">#{tag.name}</h1>
+        <p className="mt-2 text-muted-foreground">共 {total} 个工具</p>
       </div>
 
       {/* Filters */}
@@ -118,8 +118,8 @@ function TagPage() {
               }
               className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
                 (search.pricingType ?? 'all') === opt.value
-                  ? 'border-[var(--lagoon)] bg-[var(--lagoon)]/10 text-[var(--lagoon-deep)]'
-                  : 'border-[var(--line)] text-[var(--sea-ink-soft)] hover:border-[var(--lagoon)]'
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-border text-muted-foreground hover:border-primary'
               }`}
             >
               {opt.label}
@@ -134,7 +134,7 @@ function TagPage() {
                 search: { ...search, sort: e.target.value as 'latest' | 'name', page: 1 },
               })
             }
-            className="rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--sea-ink)] focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20"
+            className="rounded-xl border border-border bg-card px-4 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus-visible:ring-ring"
           >
             <option value="latest">最新上架</option>
             <option value="name">名称 A-Z</option>
@@ -144,7 +144,7 @@ function TagPage() {
 
       {/* Tool grid */}
       {tools.length === 0 ? (
-        <div className="island-shell rounded-2xl py-16 text-center text-[var(--sea-ink-soft)]">
+        <div className="border border-border bg-card shadow-sm rounded-2xl py-16 text-center text-muted-foreground">
           该标签下暂无工具
         </div>
       ) : (

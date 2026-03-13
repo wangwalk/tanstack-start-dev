@@ -111,7 +111,7 @@ function SignInPage() {
         <div className="flex justify-end">
           <Link
             to="/auth/forgot-password"
-            className="text-sm text-[var(--lagoon)] hover:underline"
+            className="text-sm text-primary hover:underline"
           >
             {m.auth_signin_forgot()}
           </Link>
@@ -126,7 +126,7 @@ function SignInPage() {
         <Button
           type="submit"
           disabled={isLoading}
-          className="btn-brand w-full"
+          className="w-full"
         >
           {isLoading ? (
             <span className="inline-flex items-center gap-2">
@@ -143,10 +143,10 @@ function SignInPage() {
 
         <div className="relative my-2">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-[var(--line)]" />
+            <div className="w-full border-t border-border" />
           </div>
           <div className="relative flex justify-center text-xs">
-            <span className="bg-[var(--surface)] px-3 text-[var(--sea-ink-soft)]">
+            <span className="bg-card px-3 text-muted-foreground">
               {m.auth_signin_or_continue()}
             </span>
           </div>
@@ -170,7 +170,7 @@ function SignInPage() {
                 setSocialLoading(null)
               }
             }}
-            className="w-full rounded-full border-[var(--line)] bg-[var(--surface)] hover:bg-[var(--sand)]"
+            className="w-full rounded-full border-border bg-card hover:bg-accent"
           >
             {socialLoading === 'github' ? (
               <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
@@ -202,7 +202,7 @@ function SignInPage() {
                 setSocialLoading(null)
               }
             }}
-            className="w-full rounded-full border-[var(--line)] bg-[var(--surface)] hover:bg-[var(--sand)]"
+            className="w-full rounded-full border-border bg-card hover:bg-accent"
           >
             {socialLoading === 'google' ? (
               <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
@@ -221,9 +221,9 @@ function SignInPage() {
           </Button>
         </div>
 
-        <p className="text-center text-sm text-[var(--sea-ink-soft)]">
+        <p className="text-center text-sm text-muted-foreground">
           {m.auth_signin_no_account()}{' '}
-          <Link to="/auth/sign-up" className="font-medium text-[var(--lagoon)] hover:underline">
+          <Link to="/auth/sign-up" className="font-medium text-primary hover:underline">
             {m.auth_signin_sign_up()}
           </Link>
         </p>

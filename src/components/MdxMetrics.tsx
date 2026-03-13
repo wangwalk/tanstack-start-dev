@@ -8,12 +8,12 @@ export function MdxMetrics({
       {items.map((item) => (
         <div
           key={item.label}
-          className="rounded-xl border border-[var(--line)] bg-[var(--chip-bg)] px-4 py-3"
+          className="rounded-xl border border-border bg-card px-4 py-3"
         >
-          <p className="m-0 text-xs uppercase tracking-[0.12em] text-[var(--sea-ink-soft)]">
+          <p className="m-0 text-xs uppercase tracking-[0.12em] text-muted-foreground">
             {item.label}
           </p>
-          <p className="m-0 mt-1 text-lg font-semibold text-[var(--sea-ink)]">
+          <p className="m-0 mt-1 text-lg font-semibold text-foreground">
             {item.value}
           </p>
         </div>

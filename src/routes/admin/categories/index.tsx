@@ -4,6 +4,7 @@ import { ChevronRight, Pencil, Plus, Trash2 } from 'lucide-react'
 import { getCategories, createCategory, updateCategory, deleteCategory } from '#/lib/categories'
 import { cn } from '#/lib/utils'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '#/components/ui/dialog'
+import { Button } from '#/components/ui/button'
 
 export const Route = createFileRoute('/admin/categories/')({
   loader: () => getCategories({}),
@@ -28,7 +29,7 @@ interface FormState {
 const emptyForm: FormState = { name: '', slug: '', description: '', icon: '', parentId: '', sortOrder: '0' }
 
 const inputClass =
-  'w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3 py-1.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20'
+  'w-full rounded-xl border border-border bg-card px-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus-visible:ring-ring'
 
 function CategoryDialog({
   open,
@@ -53,13 +54,13 @@ function CategoryDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) onClose() }}>
-      <DialogContent className="island-shell max-w-md rounded-2xl border-[var(--line)] p-6" showCloseButton={false}>
+      <DialogContent className="border border-border bg-card shadow-sm max-w-md rounded-2xl p-6" showCloseButton={false}>
         <DialogHeader>
-          <DialogTitle className="font-semibold text-[var(--sea-ink)]">{title}</DialogTitle>
+          <DialogTitle className="font-semibold text-foreground">{title}</DialogTitle>
         </DialogHeader>
         <div className="space-y-3">
           <div className="space-y-1">
-            <label className="text-xs font-medium text-[var(--sea-ink-soft)]">Name *</label>
+            <label className="text-xs font-medium text-muted-foreground">Name *</label>
             <input
               required
               value={form.name}
@@ -69,7 +70,7 @@ function CategoryDialog({
             />
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-medium text-[var(--sea-ink-soft)]">Slug *</label>
+            <label className="text-xs font-medium text-muted-foreground">Slug *</label>
             <input
               required
               value={form.slug}
@@ -78,7 +79,7 @@ function CategoryDialog({
             />
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-medium text-[var(--sea-ink-soft)]">Description</label>
+            <label className="text-xs font-medium text-muted-foreground">Description</label>
             <input
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -87,7 +88,7 @@ function CategoryDialog({
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <label className="text-xs font-medium text-[var(--sea-ink-soft)]">Icon (emoji)</label>
+              <label className="text-xs font-medium text-muted-foreground">Icon (emoji)</label>
               <input
                 value={form.icon}
                 onChange={(e) => setForm({ ...form, icon: e.target.value })}
@@ -96,7 +97,7 @@ function CategoryDialog({
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-medium text-[var(--sea-ink-soft)]">Sort order</label>
+              <label className="text-xs font-medium text-muted-foreground">Sort order</label>
               <input
                 type="number"
                 value={form.sortOrder}
@@ -106,7 +107,7 @@ function CategoryDialog({
             </div>
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-medium text-[var(--sea-ink-soft)]">Parent category</label>
+            <label className="text-xs font-medium text-muted-foreground">Parent category</label>
             <select
               value={form.parentId}
               onChange={(e) => setForm({ ...form, parentId: e.target.value })}
@@ -124,17 +125,16 @@ function CategoryDialog({
           </div>
         </div>
         <DialogFooter>
-          <button type="button" onClick={onClose} className="px-4 py-2 text-sm text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]">
+          <button type="button" onClick={onClose} className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground">
             Cancel
           </button>
-          <button
+          <Button
             type="button"
             disabled={saving || !form.name.trim() || !form.slug.trim()}
             onClick={onSave}
-            className="btn-brand"
           >
             {saving ? 'Saving…' : 'Save'}
-          </button>
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -245,11 +245,11 @@ function AdminCategoriesPage() {
 
     return (
       <>
-        <tr className="border-b border-[var(--line)] last:border-0 transition hover:bg-[var(--link-bg-hover)]">
+        <tr className="border-b border-border last:border-0 transition hover:bg-accent">
           <td className="px-4 py-3">
             <div className="flex items-center gap-2" style={{ paddingLeft: depth * 20 }}>
               {children.length > 0 && (
-                <button type="button" onClick={() => toggleExpand(cat.id)} aria-label="Expand" className="text-[var(--sea-ink-soft)]">
+                <button type="button" onClick={() => toggleExpand(cat.id)} aria-label="Expand" className="text-muted-foreground">
                   <ChevronRight className={cn('h-3.5 w-3.5 transition-transform', expanded && 'rotate-90')} />
                 </button>
               )}
@@ -257,15 +257,15 @@ function AdminCategoriesPage() {
               <span>{cat.icon && `${cat.icon} `}{cat.name}</span>
             </div>
           </td>
-          <td className="px-4 py-3 text-xs text-[var(--sea-ink-soft)]">{cat.slug}</td>
-          <td className="px-4 py-3 text-[var(--sea-ink-soft)]">{cat.sortOrder}</td>
-          <td className="px-4 py-3 text-[var(--sea-ink-soft)]">{cat.toolCount}</td>
+          <td className="px-4 py-3 text-xs text-muted-foreground">{cat.slug}</td>
+          <td className="px-4 py-3 text-muted-foreground">{cat.sortOrder}</td>
+          <td className="px-4 py-3 text-muted-foreground">{cat.toolCount}</td>
           <td className="px-4 py-3 text-right">
             <div className="flex justify-end gap-2">
-              <button type="button" onClick={() => openEdit(cat)} aria-label="Edit" className="text-[var(--sea-ink-soft)] hover:text-[var(--lagoon)]">
+              <button type="button" onClick={() => openEdit(cat)} aria-label="Edit" className="text-muted-foreground hover:text-primary">
                 <Pencil className="h-3.5 w-3.5" />
               </button>
-              <button type="button" onClick={() => void handleDelete(cat.id)} aria-label="Delete" className="text-[var(--sea-ink-soft)] hover:text-red-500">
+              <button type="button" onClick={() => void handleDelete(cat.id)} aria-label="Delete" className="text-muted-foreground hover:text-red-500">
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
             </div>
@@ -279,27 +279,27 @@ function AdminCategoriesPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="display-title text-2xl font-bold text-[var(--sea-ink)]">
+        <h1 className="text-2xl font-bold text-foreground">
           Categories
-          <span className="ml-2 text-base font-normal text-[var(--sea-ink-soft)]">({categories.length})</span>
+          <span className="ml-2 text-base font-normal text-muted-foreground">({categories.length})</span>
         </h1>
-        <button
+        <Button
           type="button"
           onClick={openCreate}
-          className="btn-brand inline-flex items-center gap-1.5"
+          className="inline-flex items-center gap-1.5"
         >
           <Plus className="h-4 w-4" />
           Add category
-        </button>
+        </Button>
       </div>
 
       {error && <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600 dark:bg-red-900/20">{error}</p>}
 
-      <div className="island-shell overflow-hidden rounded-2xl">
+      <div className="border border-border bg-card shadow-sm overflow-hidden rounded-2xl">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[var(--line)] text-left text-xs uppercase tracking-wider text-[var(--sea-ink-soft)]">
+              <tr className="border-b border-border text-left text-xs uppercase tracking-wider text-muted-foreground">
                 <th className="px-4 py-3 font-medium">Name</th>
                 <th className="px-4 py-3 font-medium">Slug</th>
                 <th className="px-4 py-3 font-medium">Order</th>
@@ -310,7 +310,7 @@ function AdminCategoriesPage() {
             <tbody>
               {categories.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-[var(--sea-ink-soft)]">
+                  <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
                     No categories yet.
                   </td>
                 </tr>

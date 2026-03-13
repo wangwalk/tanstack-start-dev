@@ -86,23 +86,23 @@ function CategoryPage() {
   return (
     <main className="page-wrap px-4 pb-16 pt-8">
       {/* Breadcrumb */}
-      <nav className="mb-6 flex items-center gap-2 text-sm text-[var(--sea-ink-soft)]">
-        <Link to="/tools" className="hover:text-[var(--lagoon)]">首页</Link>
+      <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
+        <Link to="/tools" className="hover:text-primary">首页</Link>
         <span>/</span>
-        <span className="text-[var(--sea-ink)]">{cat.name}</span>
+        <span className="text-foreground">{cat.name}</span>
       </nav>
 
       {/* Header */}
-      <div className="island-shell rise-in mb-8 flex items-start gap-4 rounded-2xl p-6">
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[rgba(79,184,178,0.12)] text-3xl">
+      <div className="border border-border bg-card shadow-sm rise-in mb-8 flex items-start gap-4 rounded-2xl p-6">
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-3xl">
           {cat.icon ?? '🔧'}
         </div>
         <div>
-          <h1 className="display-title text-2xl font-bold text-[var(--sea-ink)]">{cat.name}</h1>
+          <h1 className="text-2xl font-bold text-foreground">{cat.name}</h1>
           {cat.description && (
-            <p className="mt-1 text-[var(--sea-ink-soft)]">{cat.description}</p>
+            <p className="mt-1 text-muted-foreground">{cat.description}</p>
           )}
-          <p className="mt-2 text-sm text-[var(--sea-ink-soft)]">共 {total} 个工具</p>
+          <p className="mt-2 text-sm text-muted-foreground">共 {total} 个工具</p>
         </div>
       </div>
 
@@ -112,7 +112,7 @@ function CategoryPage() {
           <Link
             to="/tools/category/$slug"
             params={{ slug }}
-            className="rounded-full border border-[var(--lagoon)] bg-[var(--lagoon)]/10 px-3 py-1.5 text-sm font-medium text-[var(--lagoon-deep)] no-underline"
+            className="rounded-full border border-primary bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary no-underline"
           >
             全部
           </Link>
@@ -121,7 +121,7 @@ function CategoryPage() {
               key={child.id}
               to="/tools/category/$slug"
               params={{ slug: child.slug }}
-              className="rounded-full border border-[var(--line)] px-3 py-1.5 text-sm font-medium text-[var(--sea-ink-soft)] no-underline transition hover:border-[var(--lagoon)] hover:text-[var(--lagoon-deep)]"
+              className="rounded-full border border-border px-3 py-1.5 text-sm font-medium text-muted-foreground no-underline transition hover:border-primary hover:text-primary"
             >
               {child.name}
             </Link>
@@ -147,8 +147,8 @@ function CategoryPage() {
               }
               className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
                 (search.pricingType ?? 'all') === opt.value
-                  ? 'border-[var(--lagoon)] bg-[var(--lagoon)]/10 text-[var(--lagoon-deep)]'
-                  : 'border-[var(--line)] text-[var(--sea-ink-soft)] hover:border-[var(--lagoon)]'
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-border text-muted-foreground hover:border-primary'
               }`}
             >
               {opt.label}
@@ -163,7 +163,7 @@ function CategoryPage() {
                 search: { ...search, sort: e.target.value as 'latest' | 'name', page: 1 },
               })
             }
-            className="rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--sea-ink)] focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20"
+            className="rounded-xl border border-border bg-card px-4 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus-visible:ring-ring"
           >
             <option value="latest">最新上架</option>
             <option value="name">名称 A-Z</option>
@@ -173,7 +173,7 @@ function CategoryPage() {
 
       {/* Tool grid */}
       {tools.length === 0 ? (
-        <div className="island-shell rounded-2xl py-16 text-center text-[var(--sea-ink-soft)]">
+        <div className="border border-border bg-card shadow-sm rounded-2xl py-16 text-center text-muted-foreground">
           该分类下暂无工具
         </div>
       ) : (
