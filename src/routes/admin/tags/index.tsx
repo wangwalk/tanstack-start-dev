@@ -16,7 +16,7 @@ function toSlug(str: string) {
 type TagRow = Awaited<ReturnType<typeof getTags>>[number]
 
 const inputClass =
-  'w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3 py-1.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20'
+  'w-full rounded-xl border border-border bg-card px-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus-visible:ring-ring'
 
 function AdminTagsPage() {
   const tags = Route.useLoaderData()
@@ -108,14 +108,14 @@ function AdminTagsPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="display-title text-2xl font-bold text-[var(--sea-ink)]">
+        <h1 className="text-2xl font-bold text-foreground">
           Tags
-          <span className="ml-2 text-base font-normal text-[var(--sea-ink-soft)]">({tags.length})</span>
+          <span className="ml-2 text-base font-normal text-muted-foreground">({tags.length})</span>
         </h1>
         <button
           type="button"
           onClick={() => setShowMerge(!showMerge)}
-          className="text-sm text-[var(--lagoon)] hover:underline"
+          className="text-sm text-primary hover:underline"
         >
           Merge tags
         </button>
@@ -125,15 +125,15 @@ function AdminTagsPage() {
 
       {/* Merge panel */}
       {showMerge && (
-        <div className="island-shell rounded-2xl px-6 py-5 space-y-3">
-          <p className="text-sm font-medium text-[var(--sea-ink)]">Merge tags</p>
-          <p className="text-xs text-[var(--sea-ink-soft)]">All tools from the source tag will be reassigned to the target tag. The source tag will be deleted.</p>
+        <div className="border border-border bg-card shadow-sm rounded-2xl px-6 py-5 space-y-3">
+          <p className="text-sm font-medium text-foreground">Merge tags</p>
+          <p className="text-xs text-muted-foreground">All tools from the source tag will be reassigned to the target tag. The source tag will be deleted.</p>
           <div className="flex gap-3">
             <select value={mergeSourceId} onChange={(e) => setMergeSourceId(e.target.value)} className={cn(inputClass, 'flex-1')}>
               <option value="">Source tag...</option>
               {tags.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
             </select>
-            <span className="self-center text-[var(--sea-ink-soft)]">→</span>
+            <span className="self-center text-muted-foreground">→</span>
             <select value={mergeTargetId} onChange={(e) => setMergeTargetId(e.target.value)} className={cn(inputClass, 'flex-1')}>
               <option value="">Target tag...</option>
               {tags.filter((t) => t.id !== mergeSourceId).map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
@@ -143,7 +143,7 @@ function AdminTagsPage() {
               disabled={saving || !mergeSourceId || !mergeTargetId || mergeSourceId === mergeTargetId}
               onClick={() => void handleMerge()}
               className={cn(
-                'rounded-full bg-[var(--lagoon)] px-4 py-1.5 text-sm font-semibold text-white transition hover:opacity-90',
+                'rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground transition hover:opacity-90',
                 'disabled:pointer-events-none disabled:opacity-60',
               )}
             >
@@ -154,8 +154,8 @@ function AdminTagsPage() {
       )}
 
       {/* Add new tag */}
-      <div className="island-shell rounded-2xl px-6 py-5 space-y-3">
-        <p className="island-kicker">Add tag</p>
+      <div className="border border-border bg-card shadow-sm rounded-2xl px-6 py-5 space-y-3">
+        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Add tag</p>
         <div className="flex gap-3">
           <input
             value={newName}
@@ -177,7 +177,7 @@ function AdminTagsPage() {
             disabled={saving || !newName.trim()}
             onClick={() => void handleCreate()}
             className={cn(
-              'inline-flex items-center gap-1 rounded-full bg-[var(--lagoon)] px-4 py-1.5 text-sm font-semibold text-white transition hover:opacity-90',
+              'inline-flex items-center gap-1 rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground transition hover:opacity-90',
               'disabled:pointer-events-none disabled:opacity-60',
             )}
           >
@@ -188,10 +188,10 @@ function AdminTagsPage() {
       </div>
 
       {/* Tag list */}
-      <div className="island-shell overflow-hidden rounded-2xl">
+      <div className="border border-border bg-card shadow-sm overflow-hidden rounded-2xl">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-[var(--line)] text-left text-xs uppercase tracking-wider text-[var(--sea-ink-soft)]">
+            <tr className="border-b border-border text-left text-xs uppercase tracking-wider text-muted-foreground">
               <th className="px-4 py-3 font-medium">Name</th>
               <th className="px-4 py-3 font-medium">Slug</th>
               <th className="px-4 py-3 font-medium">Tools</th>
@@ -201,11 +201,11 @@ function AdminTagsPage() {
           <tbody>
             {tags.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-[var(--sea-ink-soft)]">No tags yet.</td>
+                <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">No tags yet.</td>
               </tr>
             )}
             {tags.map((t) => (
-              <tr key={t.id} className="border-b border-[var(--line)] last:border-0 hover:bg-[var(--link-bg-hover)]">
+              <tr key={t.id} className="border-b border-border last:border-0 hover:bg-accent">
                 <td className="px-4 py-2">
                   {editingId === t.id ? (
                     <input
@@ -215,7 +215,7 @@ function AdminTagsPage() {
                       autoFocus
                     />
                   ) : (
-                    <span className="text-[var(--sea-ink)]">{t.name}</span>
+                    <span className="text-foreground">{t.name}</span>
                   )}
                 </td>
                 <td className="px-4 py-2">
@@ -226,10 +226,10 @@ function AdminTagsPage() {
                       className={inputClass}
                     />
                   ) : (
-                    <span className="text-xs text-[var(--sea-ink-soft)]">{t.slug}</span>
+                    <span className="text-xs text-muted-foreground">{t.slug}</span>
                   )}
                 </td>
-                <td className="px-4 py-2 text-[var(--sea-ink-soft)]">{t.toolCount}</td>
+                <td className="px-4 py-2 text-muted-foreground">{t.toolCount}</td>
                 <td className="px-4 py-2 text-right">
                   {editingId === t.id ? (
                     <div className="flex justify-end gap-2">
@@ -237,20 +237,20 @@ function AdminTagsPage() {
                         type="button"
                         disabled={saving}
                         onClick={() => void handleUpdate(t.id)}
-                        className="text-xs font-medium text-[var(--lagoon)] hover:underline disabled:opacity-60"
+                        className="text-xs font-medium text-primary hover:underline disabled:opacity-60"
                       >
                         Save
                       </button>
-                      <button type="button" onClick={cancelEdit} className="text-xs text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]">
+                      <button type="button" onClick={cancelEdit} className="text-xs text-muted-foreground hover:text-foreground">
                         Cancel
                       </button>
                     </div>
                   ) : (
                     <div className="flex justify-end gap-2">
-                      <button type="button" onClick={() => openEdit(t)} aria-label="Edit" className="text-[var(--sea-ink-soft)] hover:text-[var(--lagoon)]">
+                      <button type="button" onClick={() => openEdit(t)} aria-label="Edit" className="text-muted-foreground hover:text-primary">
                         <Pencil className="h-3.5 w-3.5" />
                       </button>
-                      <button type="button" onClick={() => void handleDelete(t.id)} aria-label="Delete" className="text-[var(--sea-ink-soft)] hover:text-red-500">
+                      <button type="button" onClick={() => void handleDelete(t.id)} aria-label="Delete" className="text-muted-foreground hover:text-red-500">
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>
                     </div>

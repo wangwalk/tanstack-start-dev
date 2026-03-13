@@ -66,11 +66,11 @@ export function SaveToolButton({
         size="sm"
         disabled={isPending}
         onClick={() => void handleToggle()}
-        className="rounded-full border-[var(--line)] bg-[var(--surface)] text-[var(--sea-ink)] hover:border-[var(--lagoon)] hover:bg-[var(--surface)]"
+        className="rounded-full border-border bg-card text-foreground hover:border-primary hover:bg-card"
       >
-        {isSaved ? <BookmarkCheck className="h-4 w-4 text-[var(--lagoon-deep)]" /> : <Bookmark className="h-4 w-4" />}
+        {isSaved ? <BookmarkCheck className="h-4 w-4 text-primary" /> : <Bookmark className="h-4 w-4" />}
         <span>{isSaved ? 'Saved' : 'Save'}</span>
-        <span className="text-xs text-[var(--sea-ink-soft)]">{formattedCount}</span>
+        <span className="text-xs text-muted-foreground">{formattedCount}</span>
       </Button>
     )
   }
@@ -80,11 +80,11 @@ export function SaveToolButton({
       type="button"
       disabled={isPending}
       onClick={() => void handleToggle()}
-      className="inline-flex items-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--sea-ink-soft)] transition hover:border-[var(--lagoon)] hover:text-[var(--lagoon-deep)] disabled:pointer-events-none disabled:opacity-50"
+      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-2 text-xs font-semibold text-muted-foreground transition hover:border-primary hover:text-primary disabled:pointer-events-none disabled:opacity-50"
       aria-pressed={isSaved}
       aria-label={isSaved ? 'Remove from saved tools' : 'Save tool'}
     >
-      {isSaved ? <BookmarkCheck className="h-3.5 w-3.5 text-[var(--lagoon-deep)]" /> : <Bookmark className="h-3.5 w-3.5" />}
+      {isSaved ? <BookmarkCheck className="h-3.5 w-3.5 text-primary" /> : <Bookmark className="h-3.5 w-3.5" />}
       <span aria-hidden="true">{formattedCount}</span>
     </button>
   )

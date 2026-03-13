@@ -46,7 +46,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Mobile backdrop */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-[var(--sea-ink)]/30 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -54,18 +54,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 flex w-60 flex-col border-r border-[var(--line)] bg-[var(--surface-strong)] backdrop-blur-sm',
+          'fixed inset-y-0 left-0 z-50 flex w-60 flex-col border-r border-border bg-card backdrop-blur-sm',
           'transition-transform duration-200 md:static md:z-auto',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
         )}
       >
         {/* Logo */}
-        <div className="flex h-14 items-center justify-between border-b border-[var(--line)] px-4">
+        <div className="flex h-14 items-center justify-between border-b border-border px-4">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--sea-ink)] no-underline"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-foreground no-underline"
           >
-            <span className="h-2 w-2 rounded-full bg-[var(--logo-gradient)]" />
+            <span className="h-2 w-2 rounded-full bg-primary" />
             Stockholm
           </Link>
           <Button
@@ -73,7 +73,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             variant="ghost"
             size="icon"
             onClick={() => setSidebarOpen(false)}
-            className="text-[var(--sea-ink-soft)] hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)] md:hidden"
+            className="text-muted-foreground hover:bg-accent hover:text-foreground md:hidden"
           >
             <X className="h-5 w-5" />
           </Button>
@@ -90,7 +90,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               return (
                 <span
                   key={item.to}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[var(--sea-ink-soft)] opacity-50 cursor-not-allowed"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground opacity-50 cursor-not-allowed"
                 >
                   <item.icon className="h-4 w-4" />
                   {item.label}
@@ -107,8 +107,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 className={cn(
                   'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition',
                   isActive
-                    ? 'bg-[rgba(79,184,178,0.12)] text-[var(--sea-ink)] font-semibold'
-                    : 'text-[var(--sea-ink-soft)] hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]',
+                    ? 'bg-primary/10 text-foreground font-semibold'
+                    : 'text-muted-foreground hover:bg-accent hover:text-foreground',
                 )}
               >
                 <item.icon className="h-4 w-4" />
@@ -123,7 +123,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="px-3 pb-2">
             <Link
               to="/dashboard/settings/credits"
-              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-accent hover:text-foreground"
             >
               <Zap className="h-4 w-4 text-teal-500" />
               <span className="text-teal-600 dark:text-teal-400 font-semibold">
@@ -135,9 +135,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* User section */}
         {session?.user && (
-          <div className="border-t border-[var(--line)] p-4">
+          <div className="border-t border-border p-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[rgba(79,184,178,0.15)] text-xs font-semibold text-[var(--lagoon-deep)]">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/15 text-xs font-semibold text-primary">
                 {session.user.image ? (
                   <img
                     src={session.user.image}
@@ -149,10 +149,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-[var(--sea-ink)]">
+                <p className="truncate text-sm font-medium text-foreground">
                   {session.user.name}
                 </p>
-                <p className="truncate text-xs text-[var(--sea-ink-soft)]">
+                <p className="truncate text-xs text-muted-foreground">
                   {session.user.email}
                 </p>
               </div>
@@ -162,7 +162,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               variant="outline"
               size="sm"
               onClick={() => void authClient.signOut()}
-              className="mt-3 w-full gap-2 rounded-lg border-[var(--line)] text-[var(--sea-ink-soft)] hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
+              className="mt-3 w-full gap-2 rounded-lg border-border text-muted-foreground hover:bg-accent hover:text-foreground"
             >
               <LogOut className="h-3.5 w-3.5" />
               Sign out
@@ -174,13 +174,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main content */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top header */}
-        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-[var(--line)] bg-[var(--header-bg)] px-4 backdrop-blur-sm md:px-6">
+        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-card px-4 backdrop-blur-sm md:px-6">
           <Button
             type="button"
             variant="ghost"
             size="icon"
             onClick={() => setSidebarOpen(true)}
-            className="text-[var(--sea-ink-soft)] hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)] md:hidden"
+            className="text-muted-foreground hover:bg-accent hover:text-foreground md:hidden"
           >
             <Menu className="h-5 w-5" />
           </Button>

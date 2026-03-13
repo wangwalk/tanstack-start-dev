@@ -101,17 +101,16 @@ function SignUpPage() {
     return (
       <AuthLayout title={m.auth_signup_success_title()} subtitle={`We sent a verification link to ${email}`}>
         <div className="mt-6 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--sand)]">
-            <svg viewBox="0 0 24 24" fill="none" stroke="var(--lagoon)" strokeWidth="1.5" className="h-8 w-8">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-8 w-8 text-primary">
               <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
             </svg>
           </div>
-          <p className="mb-6 text-sm text-[var(--sea-ink-soft)]">
+          <p className="mb-6 text-sm text-muted-foreground">
             Click the link in the email to verify your account, then sign in.
           </p>
           <Button
             asChild
-            className="btn-brand"
           >
             <Link to="/auth/sign-in">{m.auth_signup_success_go()}</Link>
           </Button>
@@ -198,7 +197,7 @@ function SignUpPage() {
         <Button
           type="submit"
           disabled={isLoading}
-          className="btn-brand w-full"
+          className="w-full"
         >
           {isLoading ? (
             <span className="inline-flex items-center gap-2">
@@ -215,10 +214,10 @@ function SignUpPage() {
 
         <div className="relative my-2">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-[var(--line)]" />
+            <div className="w-full border-t border-border" />
           </div>
           <div className="relative flex justify-center text-xs">
-            <span className="bg-[var(--surface)] px-3 text-[var(--sea-ink-soft)]">{m.auth_signin_or_continue()}</span>
+            <span className="bg-card px-3 text-muted-foreground">{m.auth_signin_or_continue()}</span>
           </div>
         </div>
 
@@ -240,7 +239,7 @@ function SignUpPage() {
                 setSocialLoading(null)
               }
             }}
-            className="w-full rounded-full border-[var(--line)] bg-[var(--surface)] hover:bg-[var(--sand)]"
+            className="w-full rounded-full border-border bg-card hover:bg-accent"
           >
             {socialLoading === 'github' ? (
               <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
@@ -272,7 +271,7 @@ function SignUpPage() {
                 setSocialLoading(null)
               }
             }}
-            className="w-full rounded-full border-[var(--line)] bg-[var(--surface)] hover:bg-[var(--sand)]"
+            className="w-full rounded-full border-border bg-card hover:bg-accent"
           >
             {socialLoading === 'google' ? (
               <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
@@ -291,9 +290,9 @@ function SignUpPage() {
           </Button>
         </div>
 
-        <p className="text-center text-sm text-[var(--sea-ink-soft)]">
+        <p className="text-center text-sm text-muted-foreground">
           {m.auth_signup_have_account()}{' '}
-          <Link to="/auth/sign-in" className="font-medium text-[var(--lagoon)] hover:underline">
+          <Link to="/auth/sign-in" className="font-medium text-primary hover:underline">
             {m.auth_signup_sign_in()}
           </Link>
         </p>

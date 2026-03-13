@@ -3,6 +3,8 @@ import { z } from 'zod'
 import { searchTools, getPublicCategories } from '#/lib/public'
 import { ToolCard } from '#/components/tools/ToolCard'
 import { Pagination } from '#/components/tools/Pagination'
+import { Button } from '#/components/ui/button'
+import { Input } from '#/components/ui/input'
 import { SITE_TITLE } from '#/lib/site'
 
 const searchSchema = z.object({
@@ -62,33 +64,30 @@ function SearchPage() {
   return (
     <main className="page-wrap px-4 pb-16 pt-8">
       {/* Breadcrumb */}
-      <nav className="mb-6 flex items-center gap-2 text-sm text-[var(--sea-ink-soft)]">
-        <Link to="/tools" className="hover:text-[var(--lagoon)]">首页</Link>
+      <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
+        <Link to="/tools" className="hover:text-primary">首页</Link>
         <span>/</span>
-        <span className="text-[var(--sea-ink)]">搜索</span>
+        <span className="text-foreground">搜索</span>
       </nav>
 
       <div className="mb-8">
-        <h1 className="display-title mb-4 text-3xl font-bold text-[var(--sea-ink)]">
+        <h1 className="mb-4 text-3xl font-bold text-foreground">
           {q ? `"${q}" 的搜索结果` : '搜索工具'}
         </h1>
 
         {/* Search bar */}
         <form onSubmit={handleSearch} className="flex max-w-xl gap-2">
-          <input
+          <Input
             name="q"
             type="search"
             defaultValue={q ?? ''}
             aria-label="Search tools"
             placeholder="搜索工具名称或描述..."
-            className="flex-1 rounded-full border border-[var(--line)] bg-[var(--surface)] px-5 py-3 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20"
+            className="flex-1 rounded-full px-5 py-3"
           />
-          <button
-            type="submit"
-            className="btn-brand px-6 py-3"
-          >
+          <Button type="submit" className="px-6 py-3">
             搜索
-          </button>
+          </Button>
         </form>
       </div>
 
@@ -101,8 +100,8 @@ function SearchPage() {
             onClick={() => void navigate({ search: { ...search, category: undefined, page: 1 } })}
             className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
               !search.category
-                ? 'border-[var(--lagoon)] bg-[var(--lagoon)]/10 text-[var(--lagoon-deep)]'
-                : 'border-[var(--line)] text-[var(--sea-ink-soft)] hover:border-[var(--lagoon)]'
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-border text-muted-foreground hover:border-primary'
             }`}
           >
             全部分类
@@ -122,8 +121,8 @@ function SearchPage() {
               }
               className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
                 search.category === cat.slug
-                  ? 'border-[var(--lagoon)] bg-[var(--lagoon)]/10 text-[var(--lagoon-deep)]'
-                  : 'border-[var(--line)] text-[var(--sea-ink-soft)] hover:border-[var(--lagoon)]'
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-border text-muted-foreground hover:border-primary'
               }`}
             >
               {cat.name}
@@ -149,8 +148,8 @@ function SearchPage() {
                 }
                 className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
                   (search.pricingType ?? 'all') === opt.value
-                    ? 'border-[var(--lagoon)] bg-[var(--lagoon)]/10 text-[var(--lagoon-deep)]'
-                    : 'border-[var(--line)] text-[var(--sea-ink-soft)] hover:border-[var(--lagoon)]'
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-border text-muted-foreground hover:border-primary'
                 }`}
               >
                 {opt.label}
@@ -165,7 +164,7 @@ function SearchPage() {
                   search: { ...search, sort: e.target.value as 'latest' | 'name', page: 1 },
                 })
               }
-              className="rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--sea-ink)] focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20"
+              className="rounded-xl border border-border bg-card px-4 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus-visible:ring-ring"
             >
               <option value="latest">最新上架</option>
               <option value="name">名称 A-Z</option>
@@ -175,17 +174,17 @@ function SearchPage() {
       </div>
 
       {/* Results count */}
-      <p className="mb-4 text-sm text-[var(--sea-ink-soft)]">找到 {total} 个工具</p>
+      <p className="mb-4 text-sm text-muted-foreground">找到 {total} 个工具</p>
 
       {/* Tool grid */}
       {tools.length === 0 ? (
-        <div className="island-shell rounded-2xl py-16 text-center">
-          <p className="text-lg font-medium text-[var(--sea-ink)]">未找到相关工具</p>
-          <p className="mt-2 text-sm text-[var(--sea-ink-soft)]">尝试其他关键词或清除筛选条件</p>
+        <div className="border border-border bg-card shadow-sm rounded-2xl py-16 text-center">
+          <p className="text-lg font-medium text-foreground">未找到相关工具</p>
+          <p className="mt-2 text-sm text-muted-foreground">尝试其他关键词或清除筛选条件</p>
           <button
             type="button"
             onClick={() => void navigate({ to: '/tools/search' })}
-            className="mt-4 rounded-full border border-[var(--lagoon)] px-5 py-2 text-sm font-medium text-[var(--lagoon-deep)] transition hover:bg-[var(--lagoon)]/10"
+            className="mt-4 rounded-full border border-primary px-5 py-2 text-sm font-medium text-primary transition hover:bg-primary/10"
           >
             清除所有筛选
           </button>

@@ -2,6 +2,9 @@ import { useState } from 'react'
 import { createFileRoute, Link, redirect } from '@tanstack/react-router'
 import { getPublicCategories, getPublicTags } from '#/lib/public'
 import { submitTool } from '#/lib/submissions'
+import { Button } from '#/components/ui/button'
+import { Input } from '#/components/ui/input'
+import { Textarea } from '#/components/ui/textarea'
 import { SITE_TITLE } from '#/lib/site'
 
 export const Route = createFileRoute('/tools/submit')({
@@ -107,17 +110,17 @@ function SubmitToolPage() {
   return (
     <main className="page-wrap px-4 pb-16 pt-8">
       {/* Breadcrumb */}
-      <nav className="mb-6 flex items-center gap-2 text-sm text-[var(--sea-ink-soft)]">
-        <Link to="/tools" className="hover:text-[var(--lagoon)]">首页</Link>
+      <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
+        <Link to="/tools" className="hover:text-primary">首页</Link>
         <span>/</span>
-        <span className="text-[var(--sea-ink)]">提交工具</span>
+        <span className="text-foreground">提交工具</span>
       </nav>
 
       <div className="mx-auto max-w-2xl">
         <div className="mb-8">
-          <p className="island-kicker mb-1">提交工具</p>
-          <h1 className="display-title text-3xl font-bold text-[var(--sea-ink)]">提交新工具</h1>
-          <p className="mt-2 text-[var(--sea-ink-soft)]">
+          <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">提交工具</p>
+          <h1 className="text-3xl font-bold text-foreground">提交新工具</h1>
+          <p className="mt-2 text-muted-foreground">
             填写工具信息后提交，管理员审核通过后即可在目录中展示。
           </p>
         </div>
@@ -131,54 +134,52 @@ function SubmitToolPage() {
 
           {/* Name */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]">
+            <label className="mb-1.5 block text-sm font-medium text-foreground">
               工具名称 <span className="text-red-500">*</span>
             </label>
-            <input
+            <Input
               type="text"
               value={form.name}
               onChange={handleNameChange}
               placeholder="例如：ChatGPT"
               maxLength={100}
-              className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20"
             />
           </div>
 
           {/* URL */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]">
+            <label className="mb-1.5 block text-sm font-medium text-foreground">
               官网 URL <span className="text-red-500">*</span>
             </label>
-            <input
+            <Input
               type="url"
               value={form.url}
               onChange={(e) => setForm((f) => ({ ...f, url: e.target.value }))}
               placeholder="https://example.com"
-              className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]">
+            <label className="mb-1.5 block text-sm font-medium text-foreground">
               简短描述{' '}
-              <span className="text-xs font-normal text-[var(--sea-ink-soft)]">（最多 200 字）</span>
+              <span className="text-xs font-normal text-muted-foreground">（最多 200 字）</span>
             </label>
-            <textarea
+            <Textarea
               value={form.description}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value.slice(0, 200) }))}
               rows={3}
               placeholder="一两句话介绍这个工具的核心功能..."
-              className="w-full resize-none rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20"
+              className="resize-none"
             />
-            <p className="mt-1 text-right text-xs text-[var(--sea-ink-soft)]">
+            <p className="mt-1 text-right text-xs text-muted-foreground">
               {form.description.length}/200
             </p>
           </div>
 
           {/* Pricing type */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]">
+            <label className="mb-1.5 block text-sm font-medium text-foreground">
               定价类型 <span className="text-red-500">*</span>
             </label>
             <div className="flex flex-wrap gap-2">
@@ -194,8 +195,8 @@ function SubmitToolPage() {
                   onClick={() => setForm((f) => ({ ...f, pricingType: opt.value }))}
                   className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
                     form.pricingType === opt.value
-                      ? 'border-[var(--lagoon)] bg-[var(--lagoon)]/10 text-[var(--lagoon-deep)]'
-                      : 'border-[var(--line)] text-[var(--sea-ink-soft)] hover:border-[var(--lagoon)]'
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border text-muted-foreground hover:border-primary'
                   }`}
                 >
                   {opt.label}
@@ -206,9 +207,9 @@ function SubmitToolPage() {
 
           {/* Categories */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]">
+            <label className="mb-1.5 block text-sm font-medium text-foreground">
               分类 <span className="text-red-500">*</span>{' '}
-              <span className="text-xs font-normal text-[var(--sea-ink-soft)]">（最多 3 个）</span>
+              <span className="text-xs font-normal text-muted-foreground">（最多 3 个）</span>
             </label>
             <div className="flex flex-wrap gap-2">
               {categories.map((cat) => (
@@ -218,8 +219,8 @@ function SubmitToolPage() {
                   onClick={() => toggleCategory(cat.id)}
                   className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
                     form.categoryIds.includes(cat.id)
-                      ? 'border-[var(--lagoon)] bg-[var(--lagoon)]/10 text-[var(--lagoon-deep)]'
-                      : 'border-[var(--line)] text-[var(--sea-ink-soft)] hover:border-[var(--lagoon)]'
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border text-muted-foreground hover:border-primary'
                   }`}
                 >
                   {cat.name}
@@ -231,9 +232,9 @@ function SubmitToolPage() {
           {/* Tags */}
           {tags.length > 0 && (
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]">
+              <label className="mb-1.5 block text-sm font-medium text-foreground">
                 标签{' '}
-                <span className="text-xs font-normal text-[var(--sea-ink-soft)]">（可选，最多 5 个）</span>
+                <span className="text-xs font-normal text-muted-foreground">（可选，最多 5 个）</span>
               </label>
               <div className="flex flex-wrap gap-2">
                 {tags.map((t) => (
@@ -243,8 +244,8 @@ function SubmitToolPage() {
                     onClick={() => toggleTag(t.id)}
                     className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
                       form.tagIds.includes(t.id)
-                        ? 'border-[var(--lagoon)] bg-[var(--lagoon)]/10 text-[var(--lagoon-deep)]'
-                        : 'border-[var(--line)] text-[var(--sea-ink-soft)] hover:border-[var(--lagoon)]'
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border text-muted-foreground hover:border-primary'
                     }`}
                   >
                     #{t.name}
@@ -256,11 +257,7 @@ function SubmitToolPage() {
 
           {/* Submit */}
           <div className="flex items-center gap-4 pt-2">
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="btn-brand px-8 py-3"
-            >
+            <Button type="submit" disabled={isSubmitting} className="px-8 py-3">
               {isSubmitting ? (
                 <span className="inline-flex items-center gap-2">
                   <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
@@ -270,8 +267,8 @@ function SubmitToolPage() {
                   提交中…
                 </span>
               ) : '提交工具'}
-            </button>
-            <Link to="/tools" className="text-sm text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]">
+            </Button>
+            <Link to="/tools" className="text-sm text-muted-foreground hover:text-foreground">
               取消
             </Link>
           </div>

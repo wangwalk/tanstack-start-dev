@@ -3,7 +3,7 @@ export function FeatureCheck({ className }: { className?: string }) {
     <svg
       viewBox="0 0 20 20"
       fill="currentColor"
-      className={className ?? 'mt-0.5 h-4 w-4 shrink-0 text-[var(--lagoon)]'}
+      className={className ?? 'mt-0.5 h-4 w-4 shrink-0 text-primary'}
       aria-hidden="true"
     >
       <path
@@ -20,7 +20,7 @@ export function FeatureDash({ className }: { className?: string }) {
     <svg
       viewBox="0 0 20 20"
       fill="currentColor"
-      className={className ?? 'mt-0.5 h-4 w-4 shrink-0 text-[var(--line)]'}
+      className={className ?? 'mt-0.5 h-4 w-4 shrink-0 text-border'}
       aria-hidden="true"
     >
       <path

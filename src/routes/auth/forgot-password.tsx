@@ -87,17 +87,16 @@ function ForgotPasswordPage() {
     return (
       <AuthLayout title="Check your email" subtitle={`We sent a reset link to ${email}`}>
         <div className="mt-6 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--sand)]">
-            <svg viewBox="0 0 24 24" fill="none" stroke="var(--lagoon)" strokeWidth="1.5" className="h-8 w-8">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-8 w-8 text-primary">
               <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
             </svg>
           </div>
-          <p className="mb-6 text-sm text-[var(--sea-ink-soft)]">
+          <p className="mb-6 text-sm text-muted-foreground">
             Click the link in the email to reset your password. The link expires in 60 minutes.
           </p>
           <Button
             asChild
-            className="btn-brand"
           >
             <Link to="/auth/sign-in">Back to Sign In</Link>
           </Button>
@@ -139,7 +138,7 @@ function ForgotPasswordPage() {
         <Button
           type="submit"
           disabled={isLoading}
-          className="btn-brand w-full"
+          className="w-full"
         >
           {isLoading ? (
             <span className="inline-flex items-center gap-2">
@@ -154,9 +153,9 @@ function ForgotPasswordPage() {
           )}
         </Button>
 
-        <p className="text-center text-sm text-[var(--sea-ink-soft)]">
+        <p className="text-center text-sm text-muted-foreground">
           Remember your password?{' '}
-          <Link to="/auth/sign-in" className="font-medium text-[var(--lagoon)] hover:underline">
+          <Link to="/auth/sign-in" className="font-medium text-primary hover:underline">
             Sign in
           </Link>
         </p>

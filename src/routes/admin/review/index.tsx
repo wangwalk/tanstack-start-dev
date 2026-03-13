@@ -99,9 +99,9 @@ function AdminReviewPage() {
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="display-title text-2xl font-bold text-[var(--sea-ink)]">
+        <h1 className="text-2xl font-bold text-foreground">
           审核队列
-          <span className="ml-2 text-base font-normal text-[var(--sea-ink-soft)]">
+          <span className="ml-2 text-base font-normal text-muted-foreground">
             ({total} 待审核)
           </span>
         </h1>
@@ -109,8 +109,8 @@ function AdminReviewPage() {
 
       {/* Batch actions */}
       {selected.size > 0 && (
-        <div className="flex items-center gap-3 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-3">
-          <span className="text-sm text-[var(--sea-ink-soft)]">已选 {selected.size} 个</span>
+        <div className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3">
+          <span className="text-sm text-muted-foreground">已选 {selected.size} 个</span>
           <button
             type="button"
             disabled={loading === 'batch'}
@@ -130,7 +130,7 @@ function AdminReviewPage() {
           <button
             type="button"
             onClick={() => setSelected(new Set())}
-            className="ml-auto text-sm text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+            className="ml-auto text-sm text-muted-foreground hover:text-foreground"
           >
             取消选择
           </button>
@@ -138,17 +138,17 @@ function AdminReviewPage() {
       )}
 
       {/* Table */}
-      <div className="island-shell overflow-hidden rounded-2xl">
+      <div className="border border-border bg-card shadow-sm overflow-hidden rounded-2xl">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[var(--line)] text-left text-xs uppercase tracking-wider text-[var(--sea-ink-soft)]">
+              <tr className="border-b border-border text-left text-xs uppercase tracking-wider text-muted-foreground">
                 <th className="px-4 py-3 font-medium">
                   <input
                     type="checkbox"
                     checked={selected.size === tools.length && tools.length > 0}
                     onChange={toggleAll}
-                    className="cursor-pointer rounded border-[var(--line)]"
+                    className="cursor-pointer rounded border-border"
                   />
                 </th>
                 <th className="px-4 py-3 font-medium">工具</th>
@@ -160,7 +160,7 @@ function AdminReviewPage() {
             <tbody>
               {tools.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-12 text-center text-[var(--sea-ink-soft)]">
+                  <td colSpan={5} className="px-4 py-12 text-center text-muted-foreground">
                     暂无待审核工具 🎉
                   </td>
                 </tr>
@@ -169,8 +169,8 @@ function AdminReviewPage() {
                 <tr
                   key={t.id}
                   className={cn(
-                    'border-b border-[var(--line)] last:border-0 transition hover:bg-[var(--link-bg-hover)]',
-                    selected.has(t.id) && 'bg-[var(--lagoon)]/5',
+                    'border-b border-border last:border-0 transition hover:bg-accent',
+                    selected.has(t.id) && 'bg-primary/5',
                   )}
                 >
                   <td className="px-4 py-3">
@@ -178,27 +178,27 @@ function AdminReviewPage() {
                       type="checkbox"
                       checked={selected.has(t.id)}
                       onChange={() => toggleSelect(t.id)}
-                      className="cursor-pointer rounded border-[var(--line)]"
+                      className="cursor-pointer rounded border-border"
                     />
                   </td>
                   <td className="px-4 py-3">
-                    <p className="font-medium text-[var(--sea-ink)]">{t.name}</p>
+                    <p className="font-medium text-foreground">{t.name}</p>
                     <a
                       href={t.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-[var(--lagoon)] hover:underline"
+                      className="text-xs text-primary hover:underline"
                     >
                       {t.url}
                     </a>
                     {t.description && (
-                      <p className="mt-0.5 max-w-xs truncate text-xs text-[var(--sea-ink-soft)]">
+                      <p className="mt-0.5 max-w-xs truncate text-xs text-muted-foreground">
                         {t.description}
                       </p>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-[var(--sea-ink-soft)]">{t.pricingType}</td>
-                  <td className="px-4 py-3 text-[var(--sea-ink-soft)]">
+                  <td className="px-4 py-3 text-muted-foreground">{t.pricingType}</td>
+                  <td className="px-4 py-3 text-muted-foreground">
                     {new Date(t.createdAt).toLocaleDateString('zh-CN')}
                   </td>
                   <td className="px-4 py-3">
@@ -207,14 +207,14 @@ function AdminReviewPage() {
                         to="/tools/$slug"
                         params={{ slug: t.slug }}
                         target="_blank"
-                        className="text-xs text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+                        className="text-xs text-muted-foreground hover:text-foreground"
                       >
                         预览
                       </Link>
                       <Link
                         to="/admin/tools/$toolId"
                         params={{ toolId: t.id }}
-                        className="text-xs text-[var(--lagoon)] hover:underline"
+                        className="text-xs text-primary hover:underline"
                       >
                         编辑
                       </Link>
@@ -245,14 +245,14 @@ function AdminReviewPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between text-sm text-[var(--sea-ink-soft)]">
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>第 {page} / {totalPages} 页</span>
           <div className="flex gap-2">
             <button
               type="button"
               disabled={page <= 1}
               onClick={() => void navigate({ search: { ...search, page: page - 1 } })}
-              className="rounded-lg border border-[var(--line)] px-3 py-1.5 transition hover:bg-[var(--link-bg-hover)] disabled:pointer-events-none disabled:opacity-40"
+              className="rounded-lg border border-border px-3 py-1.5 transition hover:bg-accent disabled:pointer-events-none disabled:opacity-40"
             >
               上一页
             </button>
@@ -260,7 +260,7 @@ function AdminReviewPage() {
               type="button"
               disabled={page >= totalPages}
               onClick={() => void navigate({ search: { ...search, page: page + 1 } })}
-              className="rounded-lg border border-[var(--line)] px-3 py-1.5 transition hover:bg-[var(--link-bg-hover)] disabled:pointer-events-none disabled:opacity-40"
+              className="rounded-lg border border-border px-3 py-1.5 transition hover:bg-accent disabled:pointer-events-none disabled:opacity-40"
             >
               下一页
             </button>

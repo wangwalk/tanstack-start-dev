@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react'
 import { getUserById } from '#/lib/admin'
 import { authClient } from '#/lib/auth-client'
 import { cn } from '#/lib/utils'
+import { Button } from '#/components/ui/button'
 
 const BAN_DURATION_OPTIONS = [
   { label: 'Permanent', value: 0 },
@@ -94,41 +95,41 @@ function AdminUserDetailPage() {
     <div className="mx-auto max-w-2xl space-y-6">
       <Link
         to="/admin/users"
-        className="inline-flex items-center gap-1.5 text-sm text-[var(--sea-ink-soft)] transition hover:text-[var(--sea-ink)]"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition hover:text-foreground"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to users
       </Link>
 
-      <h1 className="display-title text-2xl font-bold text-[var(--sea-ink)]">
+      <h1 className="text-2xl font-bold text-foreground">
         {userDetail.name}
       </h1>
 
       {/* Info card */}
-      <section className="island-shell rounded-2xl px-6 py-6">
-        <p className="island-kicker mb-4">Account details</p>
+      <section className="border border-border bg-card shadow-sm rounded-2xl px-6 py-6">
+        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">Account details</p>
         <dl className="space-y-3 text-sm">
           <div className="flex justify-between">
-            <dt className="text-[var(--sea-ink-soft)]">Email</dt>
-            <dd className="font-medium text-[var(--sea-ink)]">
+            <dt className="text-muted-foreground">Email</dt>
+            <dd className="font-medium text-foreground">
               {userDetail.email}
             </dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-[var(--sea-ink-soft)]">Email verified</dt>
-            <dd className="font-medium text-[var(--sea-ink)]">
+            <dt className="text-muted-foreground">Email verified</dt>
+            <dd className="font-medium text-foreground">
               {userDetail.emailVerified ? 'Yes' : 'No'}
             </dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-[var(--sea-ink-soft)]">Joined</dt>
-            <dd className="font-medium text-[var(--sea-ink)]">
+            <dt className="text-muted-foreground">Joined</dt>
+            <dd className="font-medium text-foreground">
               {new Date(userDetail.createdAt).toLocaleDateString()}
             </dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-[var(--sea-ink-soft)]">Subscription</dt>
-            <dd className="font-medium text-[var(--sea-ink)]">
+            <dt className="text-muted-foreground">Subscription</dt>
+            <dd className="font-medium text-foreground">
               {userDetail.subscriptionStatus ?? 'Free'}
               {userDetail.subscriptionPlan
                 ? ` (${userDetail.subscriptionPlan})`
@@ -136,7 +137,7 @@ function AdminUserDetailPage() {
             </dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-[var(--sea-ink-soft)]">Status</dt>
+            <dt className="text-muted-foreground">Status</dt>
             <dd className="font-medium">
               {isBanned ? (
                 <span className="text-red-500">Banned</span>
@@ -147,16 +148,16 @@ function AdminUserDetailPage() {
           </div>
           {isBanned && userDetail.banReason && (
             <div className="flex justify-between">
-              <dt className="text-[var(--sea-ink-soft)]">Ban reason</dt>
-              <dd className="font-medium text-[var(--sea-ink)]">
+              <dt className="text-muted-foreground">Ban reason</dt>
+              <dd className="font-medium text-foreground">
                 {userDetail.banReason}
               </dd>
             </div>
           )}
           {isBanned && userDetail.banExpires && (
             <div className="flex justify-between">
-              <dt className="text-[var(--sea-ink-soft)]">Ban expires</dt>
-              <dd className="font-medium text-[var(--sea-ink)]">
+              <dt className="text-muted-foreground">Ban expires</dt>
+              <dd className="font-medium text-foreground">
                 {new Date(userDetail.banExpires).toLocaleDateString()}
               </dd>
             </div>
@@ -165,26 +166,25 @@ function AdminUserDetailPage() {
       </section>
 
       {/* Role editor */}
-      <section className="island-shell rounded-2xl px-6 py-6">
-        <p className="island-kicker mb-4">Role</p>
+      <section className="border border-border bg-card shadow-sm rounded-2xl px-6 py-6">
+        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">Role</p>
         <div className="flex items-center gap-4">
           <select
             value={role}
             onChange={(e) => setRole(e.target.value as 'user' | 'admin')}
             disabled={isSelf}
-            className="rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--sea-ink)] focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 disabled:opacity-50"
+            className="rounded-xl border border-border bg-card px-4 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus-visible:ring-ring disabled:opacity-50"
           >
             <option value="user">user</option>
             <option value="admin">admin</option>
           </select>
-          <button
+          <Button
             type="button"
             disabled={saving || role === userDetail.role || isSelf}
             onClick={() => void handleRoleSave()}
-            className="btn-brand"
           >
             {saving ? 'Saving…' : saved ? 'Saved!' : 'Save role'}
-          </button>
+          </Button>
         </div>
         {isSelf && (
           <p className="mt-2 text-xs text-amber-600">
@@ -195,20 +195,20 @@ function AdminUserDetailPage() {
           <p className="mt-2 text-xs text-red-500">{roleError}</p>
         )}
         {!isSelf && (
-          <p className="mt-2 text-xs text-[var(--sea-ink-soft)]">
+          <p className="mt-2 text-xs text-muted-foreground">
             Role changes take effect immediately on the user's next request.
           </p>
         )}
       </section>
 
       {/* Ban / unban */}
-      <section className="island-shell rounded-2xl px-6 py-6">
-        <p className="island-kicker mb-4">Access</p>
+      <section className="border border-border bg-card shadow-sm rounded-2xl px-6 py-6">
+        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">Access</p>
         {isSelf ? (
           <p className="text-sm text-amber-600">You cannot ban your own account.</p>
         ) : isBanned ? (
           <div className="flex items-center gap-4">
-            <p className="text-sm text-[var(--sea-ink-soft)]">
+            <p className="text-sm text-muted-foreground">
               This user is currently banned.
             </p>
             <button
@@ -230,12 +230,12 @@ function AdminUserDetailPage() {
               placeholder="Ban reason (optional)"
               value={banReason}
               onChange={(e) => setBanReason(e.target.value)}
-              className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-400/20"
+              className="w-full rounded-xl border border-border bg-card px-4 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-400/20"
             />
             <select
               value={banDuration}
               onChange={(e) => setBanDuration(Number(e.target.value))}
-              className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--sea-ink)] focus:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-400/20"
+              className="w-full rounded-xl border border-border bg-card px-4 py-2 text-sm text-foreground focus:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-400/20"
             >
               {BAN_DURATION_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -254,7 +254,7 @@ function AdminUserDetailPage() {
             >
               {banning ? 'Banning…' : 'Ban user'}
             </button>
-            <p className="text-xs text-[var(--sea-ink-soft)]">
+            <p className="text-xs text-muted-foreground">
               Banning immediately revokes all active sessions.
             </p>
           </div>

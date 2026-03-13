@@ -41,9 +41,9 @@ function AdminUsersPage() {
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="display-title text-2xl font-bold text-[var(--sea-ink)]">
+        <h1 className="text-2xl font-bold text-foreground">
           Users
-          <span className="ml-2 text-base font-normal text-[var(--sea-ink-soft)]">
+          <span className="ml-2 text-base font-normal text-muted-foreground">
             ({total})
           </span>
         </h1>
@@ -60,7 +60,7 @@ function AdminUsersPage() {
               search: { ...search, search: e.target.value || undefined, page: 1 },
             })
           }}
-          className="rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20 sm:w-72"
+          className="rounded-xl border border-border bg-card px-4 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus-visible:ring-ring sm:w-72"
         />
         <select
           value={search.status ?? 'all'}
@@ -73,7 +73,7 @@ function AdminUsersPage() {
               },
             })
           }}
-          className="rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--sea-ink)] focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20"
+          className="rounded-xl border border-border bg-card px-4 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus-visible:ring-ring"
         >
           <option value="all">All statuses</option>
           <option value="active">Active</option>
@@ -84,11 +84,11 @@ function AdminUsersPage() {
       </div>
 
       {/* Table */}
-      <div className="island-shell overflow-hidden rounded-2xl">
+      <div className="border border-border bg-card shadow-sm overflow-hidden rounded-2xl">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[var(--line)] text-left text-xs uppercase tracking-wider text-[var(--sea-ink-soft)]">
+              <tr className="border-b border-border text-left text-xs uppercase tracking-wider text-muted-foreground">
                 <th className="px-4 py-3 font-medium">User</th>
                 <th className="px-4 py-3 font-medium">Status</th>
                 <th className="px-4 py-3 font-medium">Role</th>
@@ -101,7 +101,7 @@ function AdminUsersPage() {
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-4 py-8 text-center text-[var(--sea-ink-soft)]"
+                    className="px-4 py-8 text-center text-muted-foreground"
                   >
                     No users found.
                   </td>
@@ -110,18 +110,18 @@ function AdminUsersPage() {
               {users.map((u) => (
                 <tr
                   key={u.id}
-                  className="border-b border-[var(--line)] last:border-0 transition hover:bg-[var(--link-bg-hover)]"
+                  className="border-b border-border last:border-0 transition hover:bg-accent"
                 >
                   <td className="px-4 py-3">
-                    <p className="font-medium text-[var(--sea-ink)]">{u.name}</p>
-                    <p className="text-xs text-[var(--sea-ink-soft)]">{u.email}</p>
+                    <p className="font-medium text-foreground">{u.name}</p>
+                    <p className="text-xs text-muted-foreground">{u.email}</p>
                   </td>
                   <td className="px-4 py-3">
                     <span
                       className={cn(
                         'inline-block rounded-full px-2 py-0.5 text-xs font-medium',
                         statusColors[u.subscriptionStatus ?? ''] ??
-                          'bg-[var(--line)] text-[var(--sea-ink-soft)]',
+                          'bg-border text-muted-foreground',
                       )}
                     >
                       {u.subscriptionStatus ?? 'free'}
@@ -132,21 +132,21 @@ function AdminUsersPage() {
                       className={cn(
                         'inline-block rounded-full px-2 py-0.5 text-xs font-medium',
                         u.role === 'admin'
-                          ? 'bg-[rgba(79,184,178,0.15)] text-[var(--lagoon-deep)]'
-                          : 'bg-[var(--line)] text-[var(--sea-ink-soft)]',
+                          ? 'bg-primary/15 text-primary'
+                          : 'bg-border text-muted-foreground',
                       )}
                     >
                       {u.role}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-[var(--sea-ink-soft)]">
+                  <td className="px-4 py-3 text-muted-foreground">
                     {new Date(u.createdAt).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Link
                       to="/admin/users/$userId"
                       params={{ userId: u.id }}
-                      className="text-xs font-medium text-[var(--lagoon)] hover:underline"
+                      className="text-xs font-medium text-primary hover:underline"
                     >
                       View
                     </Link>
@@ -160,7 +160,7 @@ function AdminUsersPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between text-sm text-[var(--sea-ink-soft)]">
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>
             Page {page} of {totalPages}
           </span>
@@ -171,7 +171,7 @@ function AdminUsersPage() {
               onClick={() => {
                 void navigate({ search: { ...search, page: page - 1 } })
               }}
-              className="rounded-lg border border-[var(--line)] px-3 py-1.5 transition hover:bg-[var(--link-bg-hover)] disabled:opacity-40 disabled:pointer-events-none"
+              className="rounded-lg border border-border px-3 py-1.5 transition hover:bg-accent disabled:opacity-40 disabled:pointer-events-none"
             >
               Previous
             </button>
@@ -181,7 +181,7 @@ function AdminUsersPage() {
               onClick={() => {
                 void navigate({ search: { ...search, page: page + 1 } })
               }}
-              className="rounded-lg border border-[var(--line)] px-3 py-1.5 transition hover:bg-[var(--link-bg-hover)] disabled:opacity-40 disabled:pointer-events-none"
+              className="rounded-lg border border-border px-3 py-1.5 transition hover:bg-accent disabled:opacity-40 disabled:pointer-events-none"
             >
               Next
             </button>

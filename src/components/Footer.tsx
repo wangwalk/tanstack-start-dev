@@ -32,17 +32,17 @@ export default function Footer() {
   }
 
   return (
-    <footer className="mt-20 px-4 pb-14 pt-8 text-[var(--sea-ink-soft)]">
+    <footer className="mt-20 px-4 pb-14 pt-8 text-muted-foreground">
       <div className="page-wrap">
         {siteConfig.features.newsletter && (
-          <section className="footer-panel rounded-[2rem] px-5 py-6 sm:px-7">
+          <section className="border border-border bg-card rounded-[2rem] px-5 py-6 sm:px-7">
             <div className="grid gap-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:items-center">
               <div>
-                <p className="island-kicker mb-2">Field Notes</p>
-                <h2 className="font-[Fraunces] text-2xl font-semibold tracking-tight text-[var(--sea-ink)]">
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">Field Notes</p>
+                <h2 className="font-bold text-2xl tracking-tight text-foreground">
                   Product updates without the template-footer bulk.
                 </h2>
-                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--sea-ink-soft)]">
+                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
                   A tighter digest for launches, directory additions, and experiments happening inside the product.
                 </p>
               </div>
@@ -51,18 +51,18 @@ export default function Footer() {
           </section>
         )}
 
-        <section className="footer-panel mt-6 rounded-[2rem] px-5 py-6 sm:px-7 sm:py-7">
+        <section className="border border-border bg-card mt-6 rounded-[2rem] px-5 py-6 sm:px-7 sm:py-7">
           <div className="flex flex-col gap-8">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="max-w-xl">
                 <Link
                   to="/"
-                  className="inline-flex items-center gap-2 rounded-full border border-[var(--chip-line)] bg-[var(--chip-bg)] px-3 py-1.5 text-sm font-semibold text-[var(--sea-ink)] no-underline shadow-[0_10px_24px_rgba(30,90,72,0.08)]"
+                  className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-semibold text-foreground no-underline shadow-sm"
                 >
-                  <span className="h-2 w-2 rounded-full bg-[var(--logo-gradient)]" />
+                  <span className="h-2 w-2 rounded-full bg-primary" />
                   {siteConfig.name}
                 </Link>
-                <p className="mt-4 text-sm leading-relaxed text-[var(--sea-ink-soft)]">
+                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
                   A tighter discovery surface for AI tools, organized around categories instead of clutter.
                 </p>
               </div>
@@ -72,7 +72,7 @@ export default function Footer() {
                   <Link
                     key={link.label}
                     to={link.to}
-                    className="footer-chip"
+                    className="inline-flex items-center justify-center rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium text-muted-foreground no-underline transition hover:bg-accent hover:text-foreground"
                   >
                     {link.label}
                   </Link>
@@ -80,12 +80,12 @@ export default function Footer() {
               </div>
             </div>
 
-            <div className="footer-divider" />
+            <div className="h-px bg-border" />
 
             <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
               <div className="grid gap-5 md:grid-cols-2">
                 <div>
-                  <p className="footer-label">Language</p>
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Language</p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {locales.map((locale) => {
                       const active = locale === currentLocale
@@ -93,7 +93,11 @@ export default function Footer() {
                         <a
                           key={locale}
                           href={getLocalizedHref(locale)}
-                          className={active ? 'footer-chip is-active' : 'footer-chip'}
+                          className={
+                            active
+                              ? 'inline-flex items-center justify-center rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium text-primary no-underline transition hover:bg-accent hover:text-foreground'
+                              : 'inline-flex items-center justify-center rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium text-muted-foreground no-underline transition hover:bg-accent hover:text-foreground'
+                          }
                         >
                           {LOCALE_LABELS[locale] ?? locale}
                         </a>
@@ -103,15 +107,15 @@ export default function Footer() {
                 </div>
 
                 <div>
-                  <p className="footer-label">Contact</p>
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Contact</p>
                   <div className="mt-3 flex flex-wrap items-center gap-3">
                     <a
                       href={`mailto:${siteConfig.supportEmail}`}
-                      className="text-sm font-medium text-[var(--lagoon-deep)] no-underline transition hover:text-[var(--sea-ink)]"
+                      className="text-sm font-medium text-primary no-underline transition hover:text-foreground"
                     >
                       {siteConfig.supportEmail}
                     </a>
-                    <span className="text-xs uppercase tracking-[0.18em] text-[var(--sea-ink-soft)]/70">
+                    <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground/70">
                       Response within 2 business days
                     </span>
                   </div>
@@ -125,7 +129,7 @@ export default function Footer() {
                       href={siteConfig.social.twitter}
                       target="_blank"
                       rel="noreferrer"
-                      className="footer-icon-link"
+                      className="inline-flex items-center justify-center rounded-full border border-border bg-card h-10 w-10 text-muted-foreground transition hover:bg-accent hover:text-foreground"
                     >
                       <span className="sr-only">Follow us on X</span>
                       <svg viewBox="0 0 16 16" aria-hidden="true" width="18" height="18">
@@ -141,7 +145,7 @@ export default function Footer() {
                       href={siteConfig.social.github}
                       target="_blank"
                       rel="noreferrer"
-                      className="footer-icon-link"
+                      className="inline-flex items-center justify-center rounded-full border border-border bg-card h-10 w-10 text-muted-foreground transition hover:bg-accent hover:text-foreground"
                     >
                       <span className="sr-only">GitHub</span>
                       <svg viewBox="0 0 16 16" aria-hidden="true" width="18" height="18">

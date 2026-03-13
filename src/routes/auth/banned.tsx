@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { authClient } from '#/lib/auth-client'
 import AuthLayout from '#/components/AuthLayout'
 import { SITE_TITLE } from '#/lib/site'
+import { Button } from '#/components/ui/button'
 
 export const Route = createFileRoute('/auth/banned')({
   head: () => ({
@@ -41,20 +42,21 @@ function BannedPage() {
           </svg>
         </div>
         {banReason && (
-          <p className="mb-4 text-sm text-[var(--sea-ink-soft)]">
-            Reason: <span className="font-medium text-[var(--sea-ink)]">{banReason}</span>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Reason: <span className="font-medium text-foreground">{banReason}</span>
           </p>
         )}
-        <p className="mb-6 text-sm text-[var(--sea-ink-soft)]">
+        <p className="mb-6 text-sm text-muted-foreground">
           If you believe this is a mistake, please contact support.
         </p>
-        <button
+        <Button
+          variant="outline"
           type="button"
           onClick={() => void handleSignOut()}
-          className="inline-block rounded-full border border-[var(--line)] bg-[var(--surface)] px-6 py-2.5 text-sm font-semibold text-[var(--sea-ink)] transition hover:-translate-y-0.5 hover:bg-[var(--link-bg-hover)]"
+          className="rounded-full transition hover:-translate-y-0.5"
         >
           Sign out
-        </button>
+        </Button>
       </div>
     </AuthLayout>
   )

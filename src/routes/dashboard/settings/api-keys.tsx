@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react'
 import { Plus, Copy, Trash2, Check, AlertTriangle } from 'lucide-react'
 import { authClient } from '#/lib/auth-client'
 import { createApiKey, listApiKeys, revokeApiKey } from '#/lib/api-keys'
+import { Button } from '#/components/ui/button'
+import { Input } from '#/components/ui/input'
 
 export const Route = createFileRoute('/dashboard/settings/api-keys')({
   component: ApiKeysPage,
@@ -110,7 +112,7 @@ function ApiKeysPage() {
                 Save your API key now. You won't be able to see it again.
               </p>
               <div className="mt-3 flex items-center gap-2">
-                <code className="min-w-0 flex-1 truncate rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-[var(--sea-ink)] dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-100">
+                <code className="min-w-0 flex-1 truncate rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-foreground dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-100">
                   {newlyCreatedKey}
                 </code>
                 <button
@@ -139,23 +141,23 @@ function ApiKeysPage() {
       )}
 
       {/* Create key section */}
-      <section className="island-shell rise-in rounded-[2rem] px-6 py-8 sm:px-10">
+      <section className="rise-in border border-border bg-card shadow-sm rounded-[2rem] px-6 py-8 sm:px-10">
         <div className="flex items-center justify-between">
           <div>
-            <p className="island-kicker mb-1">API Keys</p>
-            <p className="text-sm text-[var(--sea-ink-soft)]">
+            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">API Keys</p>
+            <p className="text-sm text-muted-foreground">
               Create keys to authenticate API requests.
             </p>
           </div>
           {!showCreate && !newlyCreatedKey && (
-            <button
+            <Button
               type="button"
               onClick={() => setShowCreate(true)}
-              className="btn-brand inline-flex items-center gap-2"
+              className="inline-flex items-center gap-2"
             >
               <Plus className="h-4 w-4" />
               Create key
-            </button>
+            </Button>
           )}
         </div>
 
@@ -164,64 +166,63 @@ function ApiKeysPage() {
             <div className="flex-1">
               <label
                 htmlFor="key-name"
-                className="mb-1.5 block text-sm font-medium text-[var(--sea-ink)]"
+                className="mb-1.5 block text-sm font-medium text-foreground"
               >
                 Key name
               </label>
-              <input
+              <Input
                 id="key-name"
                 type="text"
                 value={newKeyName}
                 onChange={(e) => setNewKeyName(e.target.value)}
                 placeholder="e.g. Production, CI/CD"
-                className="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--sea-ink)] placeholder:text-[var(--sea-ink-soft)]/50 focus:border-[var(--lagoon)] focus:outline-none focus:ring-2 focus:ring-[var(--lagoon)]/20"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && newKeyName.trim()) handleCreate()
                 }}
               />
             </div>
-            <button
+            <Button
               type="button"
               onClick={handleCreate}
               disabled={creating || !newKeyName.trim()}
-              className="btn-brand"
             >
               {creating ? 'Creating\u2026' : 'Create'}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="outline"
               onClick={() => {
                 setShowCreate(false)
                 setNewKeyName('')
               }}
-              className="rounded-full border border-[var(--line)] px-5 py-2.5 text-sm font-medium text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
+              className="rounded-full"
             >
               Cancel
-            </button>
+            </Button>
           </div>
         )}
       </section>
 
       {/* Key list */}
-      <section className="island-shell rise-in rounded-[2rem] px-6 py-8 sm:px-10">
+      <section className="rise-in border border-border bg-card shadow-sm rounded-[2rem] px-6 py-8 sm:px-10">
         {loading ? (
-          <p className="text-sm text-[var(--sea-ink-soft)]">Loading keys\u2026</p>
+          <p className="text-sm text-muted-foreground">Loading keys\u2026</p>
         ) : keys.length === 0 ? (
-          <p className="text-sm text-[var(--sea-ink-soft)]">
+          <p className="text-sm text-muted-foreground">
             No API keys yet. Create one to get started.
           </p>
         ) : (
-          <div className="divide-y divide-[var(--line)]">
+          <div className="divide-y divide-border">
             {keys.map((k) => (
               <div
                 key={k.id}
                 className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-[var(--sea-ink)]">
+                  <p className="text-sm font-medium text-foreground">
                     {k.name}
                   </p>
-                  <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--sea-ink-soft)]">
+                  <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
                     <span className="font-mono">{k.keyPrefix}\u2026</span>
                     <span>Created {formatDate(k.createdAt)}</span>
                     <span>Last used {formatDate(k.lastUsedAt)}</span>
@@ -245,7 +246,7 @@ function ApiKeysPage() {
                       <button
                         type="button"
                         onClick={() => setConfirmRevoke(null)}
-                        className="rounded-lg border border-[var(--line)] px-3 py-1.5 text-xs font-medium text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)]"
+                        className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:bg-accent"
                       >
                         Cancel
                       </button>
@@ -254,7 +255,7 @@ function ApiKeysPage() {
                     <button
                       type="button"
                       onClick={() => setConfirmRevoke(k.id)}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--line)] px-3 py-1.5 text-xs font-medium text-[var(--sea-ink-soft)] transition hover:border-red-200 hover:bg-red-50 hover:text-red-700 dark:hover:border-red-800/40 dark:hover:bg-red-950/30 dark:hover:text-red-400"
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:border-red-200 hover:bg-red-50 hover:text-red-700 dark:hover:border-red-800/40 dark:hover:bg-red-950/30 dark:hover:text-red-400"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                       Revoke

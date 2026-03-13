@@ -35,7 +35,7 @@ export default function LanguageSwitcher() {
         type="button"
         aria-label={m.lang_switcher_label()}
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-sm font-medium text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
+        className="flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-sm font-medium text-muted-foreground transition hover:bg-accent hover:text-foreground"
       >
         <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 shrink-0">
           <path
@@ -59,20 +59,20 @@ export default function LanguageSwitcher() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-1.5 min-w-[7.5rem] overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--surface)] shadow-lg">
+        <div className="absolute right-0 top-full z-50 mt-1.5 min-w-[7.5rem] overflow-hidden rounded-xl border border-border bg-card shadow-lg">
           {locales.map((locale) => (
             <a
               key={locale}
               href={getLocalizedHref(locale)}
               onClick={() => setOpen(false)}
-              className={`flex items-center gap-2 px-4 py-2 text-sm no-underline transition hover:bg-[var(--link-bg-hover)] ${
+              className={`flex items-center gap-2 px-4 py-2 text-sm no-underline transition hover:bg-accent ${
                 locale === currentLocale
-                  ? 'font-semibold text-[var(--lagoon-deep)]'
-                  : 'text-[var(--sea-ink-soft)]'
+                  ? 'font-semibold text-primary'
+                  : 'text-muted-foreground'
               }`}
             >
               {locale === currentLocale && (
-                <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5 text-[var(--lagoon)]">
+                <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5 text-primary">
                   <path
                     fillRule="evenodd"
                     d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"

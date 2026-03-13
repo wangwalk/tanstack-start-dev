@@ -17,15 +17,15 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--header-bg)] backdrop-blur-lg">
+    <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-lg">
       <nav className="page-wrap flex items-center gap-x-3 px-4 py-3 sm:py-4">
         {/* Logo */}
         <span className="m-0 flex-shrink-0 text-base font-semibold tracking-tight">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 rounded-full border border-[var(--chip-line)] bg-[var(--chip-bg)] px-3 py-1.5 text-sm text-[var(--sea-ink)] no-underline shadow-[0_8px_24px_rgba(30,90,72,0.08)] sm:px-4 sm:py-2"
+            className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-sm text-foreground no-underline shadow-sm sm:px-4 sm:py-2"
           >
-            <span className="h-2 w-2 rounded-full bg-[var(--logo-gradient)]" />
+            <span className="h-2 w-2 rounded-full bg-primary" />
             {siteConfig.name}
           </Link>
         </span>
@@ -36,8 +36,8 @@ export default function Header() {
             <Link
               key={item.href}
               to={item.href as '/tools'}
-              className="nav-link"
-              activeProps={{ className: 'nav-link is-active' }}
+              className="text-sm font-medium text-muted-foreground no-underline transition hover:text-foreground"
+              activeProps={{ className: 'text-sm font-medium text-foreground no-underline transition hover:text-foreground' }}
             >
               {item.label}
             </Link>
@@ -51,7 +51,7 @@ export default function Header() {
               href={siteConfig.social.twitter}
               target="_blank"
               rel="noreferrer"
-              className="hidden rounded-xl p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)] sm:block"
+              className="hidden rounded-xl p-2 text-muted-foreground transition hover:bg-accent hover:text-foreground sm:block"
             >
               <span className="sr-only">Follow us on X</span>
               <svg viewBox="0 0 16 16" aria-hidden="true" width="20" height="20">
@@ -64,7 +64,7 @@ export default function Header() {
               href={siteConfig.social.github}
               target="_blank"
               rel="noreferrer"
-              className="hidden rounded-xl p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)] sm:block"
+              className="hidden rounded-xl p-2 text-muted-foreground transition hover:bg-accent hover:text-foreground sm:block"
             >
               <span className="sr-only">GitHub</span>
               <svg viewBox="0 0 16 16" aria-hidden="true" width="20" height="20">
@@ -82,7 +82,7 @@ export default function Header() {
             type="button"
             aria-label="Toggle menu"
             onClick={() => setMobileOpen((o) => !o)}
-            className="flex items-center justify-center rounded-xl p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)] sm:hidden"
+            className="flex items-center justify-center rounded-xl p-2 text-muted-foreground transition hover:bg-accent hover:text-foreground sm:hidden"
           >
             {mobileOpen ? (
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-5 w-5">
@@ -99,15 +99,15 @@ export default function Header() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="border-t border-[var(--line)] bg-[var(--header-bg)] px-4 pb-4 sm:hidden">
+        <div className="border-t border-border bg-background/80 px-4 pb-4 sm:hidden">
           <nav className="flex flex-col gap-1 pt-2">
             {NAV_LINKS.map((item) => (
               <Link
                 key={item.href}
                 to={item.href as '/tools'}
                 onClick={() => setMobileOpen(false)}
-                className="rounded-xl px-3 py-2.5 text-sm font-medium text-[var(--sea-ink-soft)] no-underline transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
-                activeProps={{ className: 'rounded-xl px-3 py-2.5 text-sm font-medium text-[var(--sea-ink)] no-underline bg-[var(--link-bg-hover)]' }}
+                className="rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground no-underline transition hover:bg-accent hover:text-foreground"
+                activeProps={{ className: 'rounded-xl px-3 py-2.5 text-sm font-medium text-foreground no-underline bg-accent' }}
               >
                 {item.label}
               </Link>
